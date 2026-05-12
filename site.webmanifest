@@ -1,0 +1,17 @@
+{
+  "name": "Cosmetic House LK",
+  "short_name": "Cosmetic House",
+  "description": "Premium online cosmetics store in Sri Lanka.",
+  "start_url": "https://cosmetichouse.lk/",
+  "scope": "https://cosmetichouse.lk/",
+  "display": "standalone",
+  "background_color": "#070508",
+  "theme_color": "#ff1493",
+  "icons": [
+    {
+      "src": "cosmetic-house-logo.jpeg",
+      "sizes": "512x512",
+      "type": "image/jpeg"
+    }
+  ]
+}

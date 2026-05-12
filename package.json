@@ -1,0 +1,16 @@
+{
+  "name": "cosmetic-house-lk",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start:whatsapp": "node whatsapp-bot-server.mjs",
+    "start:social": "node social-bot-server.mjs",
+    "schedule:social": "node social-automation-runner.mjs",
+    "check:whatsapp": "node check-whatsapp-status.mjs",
+    "check:social": "node check-social-status.mjs"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "feed": "https://cosmocosmetic.lk/products.json?limit=250",
+  "products": 338,
+  "downloaded": 0,
+  "existing": 338,
+  "skipped": 0,
+  "outputDir": "assets/products",
+  "catalogPath": "catalog-data.json"
+}
