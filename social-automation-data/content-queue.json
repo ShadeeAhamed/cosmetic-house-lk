@@ -1,7 +1,7 @@
 [
   {
     "id": "business-suite-2026-05-15",
-    "status": "ready_for_business_suite",
+    "status": "posted_manually",
     "platforms": [
       "facebook",
       "instagram"
@@ -30,7 +30,8 @@
         "8-12s: CTA: DM us to order or ask for a routine match"
       ]
     },
-    "ownerCheck": "Owner review only."
+    "ownerCheck": "Owner review only.",
+    "postedNote": "Owner corrected and posted manually; automation should continue from the second scheduled item."
   },
   {
     "id": "business-suite-2026-05-16",
