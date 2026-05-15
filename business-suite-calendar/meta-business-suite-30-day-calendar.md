@@ -1,15 +1,8 @@
 # Cosmetic House Meta Business Suite 30-Day Calendar
 
 Use this to schedule posts in Meta Business Suite for Facebook and Instagram together.
-## Canva Templates
 
-Feed post editable Canva template: https://www.canva.com/d/HZ1sszDIeaVdcJy
-Story editable Canva template: https://www.canva.com/d/6udCyJe3svZkrgS
-
-Watermark rule: remove every non-Cosmetic House watermark. Use only one small Cosmetic House.lk logo/watermark matched to the post colors.
-
-
-## 2026-05-12 20:30 - Routine booster
+## 2026-05-15 20:30 - Routine booster
 
 Product: Beauty of Joseon Ground Rice and Honey Glow Mask 150ml
 Brand: Beauty of Joseon
@@ -19,27 +12,26 @@ Image full path: C:\Users\U S E R\Documents\New project 6\assets\products\beauty
 
 Caption:
 
-Routine booster: Beauty of Joseon Ground Rice and Honey Glow Mask 150ml
-A thoughtful trending beauty pick for customers building a simple beauty routine in Sri Lanka.
-Message Sophia with your skin type, main concern, current products, and budget. We will help you choose without overloading your routine.
-Supplier price and availability will be confirmed before payment.
-#CosmeticHouse #CosmeticHouseLK #SkincareSriLanka #SriLankaBeauty #BeautyRoutine
-#BeautyofJoseon
+A little self-care moment for your weekly glow.
+Beauty of Joseon Ground Rice and Honey Glow Mask 150ml
+For anyone building a simple trending beauty routine with products that feel easy to use and easy to love.
+DM us to order or ask which routine step this fits into.
+#cosmetic_house_lk #CosmeticHouseLK #SkincareSriLanka #SriLankaBeauty #BeautySriLanka #SkincareRoutine #GlowRoutine #OnlineShoppingSriLanka #ColomboBeauty #BeautyofJoseon
 
 Story frames:
 1. Routine booster: Beauty of Joseon Ground Rice and Honey Glow Mask 150ml
-2. Best for: Customers looking for this product type. Ask skin type, routine, and concern before recommending.
-3. Reply with your skin type + budget. Sophia will suggest a simple routine after price and availability are confirmed.
+2. Would you add this to your routine?
+3. Reply with your skin type or beauty goal and we will help you pick the right match.
 
 Reel: 12-second product routine reel for Beauty of Joseon Ground Rice and Honey Glow Mask 150ml
 - 0-2s: Product close-up on Cosmetic House theme background
 - 2-5s: Texture / packaging detail
 - 5-8s: Routine placement text overlay
-- 8-12s: CTA: DM Sophia your skin concern + budget
+- 8-12s: CTA: DM us to order or ask for a routine match
 
-Owner check: Confirm supplier price, availability, and approved image before scheduling.
+Owner check: Owner review only.
 
-## 2026-05-13 12:30 - SPF reminder
+## 2026-05-16 12:30 - SPF reminder
 
 Product: the ordinary UV Filters SPF 45 Serum
 Brand: The Ordinary
@@ -49,27 +41,26 @@ Image full path: C:\Users\U S E R\Documents\New project 6\assets\products\the-or
 
 Caption:
 
-SPF reminder: the ordinary UV Filters SPF 45 Serum
-A thoughtful SPF pick for customers building a simple beauty routine in Sri Lanka.
-Message Sophia with your skin type, main concern, current products, and budget. We will help you choose without overloading your routine.
-Supplier price and availability will be confirmed before payment.
-#CosmeticHouse #CosmeticHouseLK #SkincareSriLanka #SriLankaBeauty #BeautyRoutine
-#TheOrdinary
+Your glow routine is not complete without SPF.
+the ordinary UV Filters SPF 45 Serum
+For anyone building a simple SPF routine with products that feel easy to use and easy to love.
+DM us to order or ask which routine step this fits into.
+#cosmetic_house_lk #CosmeticHouseLK #SkincareSriLanka #SriLankaBeauty #BeautySriLanka #SkincareRoutine #GlowRoutine #OnlineShoppingSriLanka #ColomboBeauty #TheOrdinary
 
 Story frames:
 1. SPF reminder: the ordinary UV Filters SPF 45 Serum
-2. Best for: Customers looking for this product type. Ask skin type, routine, and concern before recommending.
-3. Reply with your skin type + budget. Sophia will suggest a simple routine after price and availability are confirmed.
+2. Would you add this to your routine?
+3. Reply with your skin type or beauty goal and we will help you pick the right match.
 
 Reel: 12-second product routine reel for the ordinary UV Filters SPF 45 Serum
 - 0-2s: Product close-up on Cosmetic House theme background
 - 2-5s: Texture / packaging detail
 - 5-8s: Routine placement text overlay
-- 8-12s: CTA: DM Sophia your skin concern + budget
+- 8-12s: CTA: DM us to order or ask for a routine match
 
-Owner check: Confirm supplier price, availability, and approved image before scheduling.
+Owner check: Owner review only.
 
-## 2026-05-14 21:15 - Clean routine starter
+## 2026-05-17 21:15 - Clean routine starter
 
 Product: CLEAN & CLEAR Daily pore cleanser|Deep action cleanser|acne cleanser
 Brand: Beauty Edit
@@ -79,26 +70,26 @@ Image full path: C:\Users\U S E R\Documents\New project 6\assets\products\clean-
 
 Caption:
 
-Clean routine starter: CLEAN & CLEAR Daily pore cleanser|Deep action cleanser|acne cleanser
-A thoughtful cleanser pick for customers building a simple beauty routine in Sri Lanka.
-Message Sophia with your skin type, main concern, current products, and budget. We will help you choose without overloading your routine.
-Supplier price and availability will be confirmed before payment.
-#CosmeticHouse #CosmeticHouseLK #SkincareSriLanka #SriLankaBeauty #BeautyRoutine
+Fresh skin starts with a cleanser that fits your routine.
+CLEAN & CLEAR Daily pore cleanser|Deep action cleanser|acne cleanser
+For anyone building a simple cleanser routine with products that feel easy to use and easy to love.
+DM us to order or ask which routine step this fits into.
+#cosmetic_house_lk #CosmeticHouseLK #SkincareSriLanka #SriLankaBeauty #BeautySriLanka #SkincareRoutine #GlowRoutine #OnlineShoppingSriLanka #ColomboBeauty
 
 Story frames:
 1. Clean routine starter: CLEAN & CLEAR Daily pore cleanser|Deep action cleanser|acne cleanser
-2. Best for: Customers looking for this product type. Ask skin type, routine, and concern before recommending.
-3. Reply with your skin type + budget. Sophia will suggest a simple routine after price and availability are confirmed.
+2. Would you add this to your routine?
+3. Reply with your skin type or beauty goal and we will help you pick the right match.
 
 Reel: 12-second product routine reel for CLEAN & CLEAR Daily pore cleanser|Deep action cleanser|acne cleanser
 - 0-2s: Product close-up on Cosmetic House theme background
 - 2-5s: Texture / packaging detail
 - 5-8s: Routine placement text overlay
-- 8-12s: CTA: DM Sophia your skin concern + budget
+- 8-12s: CTA: DM us to order or ask for a routine match
 
-Owner check: Confirm supplier price, availability, and approved image before scheduling.
+Owner check: Owner review only.
 
-## 2026-05-15 19:45 - Barrier support
+## 2026-05-18 19:45 - Barrier support
 
 Product: Medicube Kojic Acid Turmeric Vita Capsule Cream
 Brand: Medicube
@@ -108,27 +99,26 @@ Image full path: C:\Users\U S E R\Documents\New project 6\assets\products\medicu
 
 Caption:
 
-Barrier support: Medicube Kojic Acid Turmeric Vita Capsule Cream
-A thoughtful moisturizer pick for customers building a simple beauty routine in Sri Lanka.
-Message Sophia with your skin type, main concern, current products, and budget. We will help you choose without overloading your routine.
-Supplier price and availability will be confirmed before payment.
-#CosmeticHouse #CosmeticHouseLK #SkincareSriLanka #SriLankaBeauty #BeautyRoutine
-#Medicube
+Soft, calm, comfortable skin is always in.
+Medicube Kojic Acid Turmeric Vita Capsule Cream
+For anyone building a simple moisturizer routine with products that feel easy to use and easy to love.
+DM us to order or ask which routine step this fits into.
+#cosmetic_house_lk #CosmeticHouseLK #SkincareSriLanka #SriLankaBeauty #BeautySriLanka #SkincareRoutine #GlowRoutine #OnlineShoppingSriLanka #ColomboBeauty #Medicube
 
 Story frames:
 1. Barrier support: Medicube Kojic Acid Turmeric Vita Capsule Cream
-2. Best for: Customers looking for this product type. Ask skin type, routine, and concern before recommending.
-3. Reply with your skin type + budget. Sophia will suggest a simple routine after price and availability are confirmed.
+2. Would you add this to your routine?
+3. Reply with your skin type or beauty goal and we will help you pick the right match.
 
 Reel: 12-second product routine reel for Medicube Kojic Acid Turmeric Vita Capsule Cream
 - 0-2s: Product close-up on Cosmetic House theme background
 - 2-5s: Texture / packaging detail
 - 5-8s: Routine placement text overlay
-- 8-12s: CTA: DM Sophia your skin concern + budget
+- 8-12s: CTA: DM us to order or ask for a routine match
 
-Owner check: Confirm supplier price, availability, and approved image before scheduling.
+Owner check: Owner review only.
 
-## 2026-05-16 13:15 - Makeup pick
+## 2026-05-19 13:15 - Makeup pick
 
 Product: Rhodes peptide lip tint raspberry jelly
 Brand: Rhode
@@ -138,27 +128,26 @@ Image full path: C:\Users\U S E R\Documents\New project 6\assets\products\peptid
 
 Caption:
 
-Makeup pick: Rhodes peptide lip tint raspberry jelly
-A thoughtful makeup pick for customers building a simple beauty routine in Sri Lanka.
-Message Sophia with your skin type, main concern, current products, and budget. We will help you choose without overloading your routine.
-Supplier price and availability will be confirmed before payment.
-#CosmeticHouse #CosmeticHouseLK #SkincareSriLanka #SriLankaBeauty #BeautyRoutine
-#Rhode
+A pretty little beauty pick for your everyday bag.
+Rhodes peptide lip tint raspberry jelly
+For anyone building a simple makeup routine with products that feel easy to use and easy to love.
+DM us to order or ask which routine step this fits into.
+#cosmetic_house_lk #CosmeticHouseLK #SkincareSriLanka #SriLankaBeauty #BeautySriLanka #SkincareRoutine #GlowRoutine #OnlineShoppingSriLanka #ColomboBeauty #Rhode
 
 Story frames:
 1. Makeup pick: Rhodes peptide lip tint raspberry jelly
-2. Best for: Customers looking for this product type. Ask skin type, routine, and concern before recommending.
-3. Reply with your skin type + budget. Sophia will suggest a simple routine after price and availability are confirmed.
+2. Would you add this to your routine?
+3. Reply with your skin type or beauty goal and we will help you pick the right match.
 
 Reel: 12-second product routine reel for Rhodes peptide lip tint raspberry jelly
 - 0-2s: Product close-up on Cosmetic House theme background
 - 2-5s: Texture / packaging detail
 - 5-8s: Routine placement text overlay
-- 8-12s: CTA: DM Sophia your skin concern + budget
+- 8-12s: CTA: DM us to order or ask for a routine match
 
-Owner check: Confirm supplier price, availability, and approved image before scheduling.
+Owner check: Owner review only.
 
-## 2026-05-17 20:00 - Hair care reset
+## 2026-05-20 20:00 - Hair care reset
 
 Product: OGX Shampoo and Conditioner Set, Nourishing + Coconut Milk,
 Brand: OGX
@@ -168,27 +157,26 @@ Image full path: C:\Users\U S E R\Documents\New project 6\assets\products\ogx-sh
 
 Caption:
 
-Hair care reset: OGX Shampoo and Conditioner Set, Nourishing + Coconut Milk,
-A thoughtful hair care pick for customers building a simple beauty routine in Sri Lanka.
-Message Sophia with your skin type, main concern, current products, and budget. We will help you choose without overloading your routine.
-Supplier price and availability will be confirmed before payment.
-#CosmeticHouse #CosmeticHouseLK #SkincareSriLanka #SriLankaBeauty #BeautyRoutine
-#OGX
+Good hair days start in the wash.
+OGX Shampoo and Conditioner Set, Nourishing + Coconut Milk,
+For anyone building a simple hair care routine with products that feel easy to use and easy to love.
+DM us to order or ask which routine step this fits into.
+#cosmetic_house_lk #CosmeticHouseLK #SkincareSriLanka #SriLankaBeauty #BeautySriLanka #SkincareRoutine #GlowRoutine #OnlineShoppingSriLanka #ColomboBeauty #OGX
 
 Story frames:
 1. Hair care reset: OGX Shampoo and Conditioner Set, Nourishing + Coconut Milk,
-2. Best for: Customers looking for this product type. Ask skin type, routine, and concern before recommending.
-3. Reply with your skin type + budget. Sophia will suggest a simple routine after price and availability are confirmed.
+2. Would you add this to your routine?
+3. Reply with your skin type or beauty goal and we will help you pick the right match.
 
 Reel: 12-second product routine reel for OGX Shampoo and Conditioner Set, Nourishing + Coconut Milk,
 - 0-2s: Product close-up on Cosmetic House theme background
 - 2-5s: Texture / packaging detail
 - 5-8s: Routine placement text overlay
-- 8-12s: CTA: DM Sophia your skin concern + budget
+- 8-12s: CTA: DM us to order or ask for a routine match
 
-Owner check: Confirm supplier price, availability, and approved image before scheduling.
+Owner check: Owner review only.
 
-## 2026-05-18 18:45 - Barrier support
+## 2026-05-21 18:45 - Barrier support
 
 Product: The Body Shop Vitamin C Glow Boosting Moisturiser 50g
 Brand: The Body Shop
@@ -198,27 +186,26 @@ Image full path: C:\Users\U S E R\Documents\New project 6\assets\products\the-bo
 
 Caption:
 
-Barrier support: The Body Shop Vitamin C Glow Boosting Moisturiser 50g
-A thoughtful body care pick for customers building a simple beauty routine in Sri Lanka.
-Message Sophia with your skin type, main concern, current products, and budget. We will help you choose without overloading your routine.
-Supplier price and availability will be confirmed before payment.
-#CosmeticHouse #CosmeticHouseLK #SkincareSriLanka #SriLankaBeauty #BeautyRoutine
-#TheBodyShop
+Soft, calm, comfortable skin is always in.
+The Body Shop Vitamin C Glow Boosting Moisturiser 50g
+For anyone building a simple body care routine with products that feel easy to use and easy to love.
+DM us to order or ask which routine step this fits into.
+#cosmetic_house_lk #CosmeticHouseLK #SkincareSriLanka #SriLankaBeauty #BeautySriLanka #SkincareRoutine #GlowRoutine #OnlineShoppingSriLanka #ColomboBeauty #TheBodyShop
 
 Story frames:
 1. Barrier support: The Body Shop Vitamin C Glow Boosting Moisturiser 50g
-2. Best for: Customers looking for this product type. Ask skin type, routine, and concern before recommending.
-3. Reply with your skin type + budget. Sophia will suggest a simple routine after price and availability are confirmed.
+2. Would you add this to your routine?
+3. Reply with your skin type or beauty goal and we will help you pick the right match.
 
 Reel: 12-second product routine reel for The Body Shop Vitamin C Glow Boosting Moisturiser 50g
 - 0-2s: Product close-up on Cosmetic House theme background
 - 2-5s: Texture / packaging detail
 - 5-8s: Routine placement text overlay
-- 8-12s: CTA: DM Sophia your skin concern + budget
+- 8-12s: CTA: DM us to order or ask for a routine match
 
-Owner check: Confirm supplier price, availability, and approved image before scheduling.
+Owner check: Owner review only.
 
-## 2026-05-19 20:30 - Treatment focus
+## 2026-05-22 20:30 - Treatment focus
 
 Product: Dr. Althea Gentle Vitamin C Serum 30ml
 Brand: Beauty Edit
@@ -228,26 +215,26 @@ Image full path: C:\Users\U S E R\Documents\New project 6\assets\products\dr-alt
 
 Caption:
 
-Treatment focus: Dr. Althea Gentle Vitamin C Serum 30ml
-A thoughtful trending beauty pick for customers building a simple beauty routine in Sri Lanka.
-Message Sophia with your skin type, main concern, current products, and budget. We will help you choose without overloading your routine.
-Supplier price and availability will be confirmed before payment.
-#CosmeticHouse #CosmeticHouseLK #SkincareSriLanka #SriLankaBeauty #BeautyRoutine
+Small routine step, big glow energy.
+Dr. Althea Gentle Vitamin C Serum 30ml
+For anyone building a simple trending beauty routine with products that feel easy to use and easy to love.
+DM us to order or ask which routine step this fits into.
+#cosmetic_house_lk #CosmeticHouseLK #SkincareSriLanka #SriLankaBeauty #BeautySriLanka #SkincareRoutine #GlowRoutine #OnlineShoppingSriLanka #ColomboBeauty
 
 Story frames:
 1. Treatment focus: Dr. Althea Gentle Vitamin C Serum 30ml
-2. Best for: Customers looking for this product type. Ask skin type, routine, and concern before recommending.
-3. Reply with your skin type + budget. Sophia will suggest a simple routine after price and availability are confirmed.
+2. Would you add this to your routine?
+3. Reply with your skin type or beauty goal and we will help you pick the right match.
 
 Reel: 12-second product routine reel for Dr. Althea Gentle Vitamin C Serum 30ml
 - 0-2s: Product close-up on Cosmetic House theme background
 - 2-5s: Texture / packaging detail
 - 5-8s: Routine placement text overlay
-- 8-12s: CTA: DM Sophia your skin concern + budget
+- 8-12s: CTA: DM us to order or ask for a routine match
 
-Owner check: Confirm supplier price, availability, and approved image before scheduling.
+Owner check: Owner review only.
 
-## 2026-05-20 12:30 - SPF reminder
+## 2026-05-23 12:30 - SPF reminder
 
 Product: la Roche posay ANTHELIOS UVMUNE 400 OIL CONTROL INVISIBLE FLUID
 Brand: La Roche-Posay
@@ -257,27 +244,26 @@ Image full path: C:\Users\U S E R\Documents\New project 6\assets\products\la-roc
 
 Caption:
 
-SPF reminder: la Roche posay ANTHELIOS UVMUNE 400 OIL CONTROL INVISIBLE FLUID
-A thoughtful SPF pick for customers building a simple beauty routine in Sri Lanka.
-Message Sophia with your skin type, main concern, current products, and budget. We will help you choose without overloading your routine.
-Supplier price and availability will be confirmed before payment.
-#CosmeticHouse #CosmeticHouseLK #SkincareSriLanka #SriLankaBeauty #BeautyRoutine
-#LaRochePosay
+Your glow routine is not complete without SPF.
+la Roche posay ANTHELIOS UVMUNE 400 OIL CONTROL INVISIBLE FLUID
+For anyone building a simple SPF routine with products that feel easy to use and easy to love.
+DM us to order or ask which routine step this fits into.
+#cosmetic_house_lk #CosmeticHouseLK #SkincareSriLanka #SriLankaBeauty #BeautySriLanka #SkincareRoutine #GlowRoutine #OnlineShoppingSriLanka #ColomboBeauty #LaRochePosay
 
 Story frames:
 1. SPF reminder: la Roche posay ANTHELIOS UVMUNE 400 OIL CONTROL INVISIBLE FLUID
-2. Best for: Customers looking for this product type. Ask skin type, routine, and concern before recommending.
-3. Reply with your skin type + budget. Sophia will suggest a simple routine after price and availability are confirmed.
+2. Would you add this to your routine?
+3. Reply with your skin type or beauty goal and we will help you pick the right match.
 
 Reel: 12-second product routine reel for la Roche posay ANTHELIOS UVMUNE 400 OIL CONTROL INVISIBLE FLUID
 - 0-2s: Product close-up on Cosmetic House theme background
 - 2-5s: Texture / packaging detail
 - 5-8s: Routine placement text overlay
-- 8-12s: CTA: DM Sophia your skin concern + budget
+- 8-12s: CTA: DM us to order or ask for a routine match
 
-Owner check: Confirm supplier price, availability, and approved image before scheduling.
+Owner check: Owner review only.
 
-## 2026-05-21 21:15 - Clean routine starter
+## 2026-05-24 21:15 - Clean routine starter
 
 Product: Cosrx  Salicylic Acid Daily Gentle Cleanser 150ml
 Brand: COSRX
@@ -287,27 +273,26 @@ Image full path: C:\Users\U S E R\Documents\New project 6\assets\products\cosrx-
 
 Caption:
 
-Clean routine starter: Cosrx  Salicylic Acid Daily Gentle Cleanser 150ml
-A thoughtful cleanser pick for customers building a simple beauty routine in Sri Lanka.
-Message Sophia with your skin type, main concern, current products, and budget. We will help you choose without overloading your routine.
-Supplier price and availability will be confirmed before payment.
-#CosmeticHouse #CosmeticHouseLK #SkincareSriLanka #SriLankaBeauty #BeautyRoutine
-#COSRX
+Fresh skin starts with a cleanser that fits your routine.
+Cosrx  Salicylic Acid Daily Gentle Cleanser 150ml
+For anyone building a simple cleanser routine with products that feel easy to use and easy to love.
+DM us to order or ask which routine step this fits into.
+#cosmetic_house_lk #CosmeticHouseLK #SkincareSriLanka #SriLankaBeauty #BeautySriLanka #SkincareRoutine #GlowRoutine #OnlineShoppingSriLanka #ColomboBeauty #COSRX
 
 Story frames:
 1. Clean routine starter: Cosrx  Salicylic Acid Daily Gentle Cleanser 150ml
-2. Best for: Customers looking for this product type. Ask skin type, routine, and concern before recommending.
-3. Reply with your skin type + budget. Sophia will suggest a simple routine after price and availability are confirmed.
+2. Would you add this to your routine?
+3. Reply with your skin type or beauty goal and we will help you pick the right match.
 
 Reel: 12-second product routine reel for Cosrx  Salicylic Acid Daily Gentle Cleanser 150ml
 - 0-2s: Product close-up on Cosmetic House theme background
 - 2-5s: Texture / packaging detail
 - 5-8s: Routine placement text overlay
-- 8-12s: CTA: DM Sophia your skin concern + budget
+- 8-12s: CTA: DM us to order or ask for a routine match
 
-Owner check: Confirm supplier price, availability, and approved image before scheduling.
+Owner check: Owner review only.
 
-## 2026-05-22 19:45 - Barrier support
+## 2026-05-25 19:45 - Barrier support
 
 Product: Medicube PDRN Pink Collagen Capsule Cream 55g
 Brand: Medicube
@@ -317,27 +302,26 @@ Image full path: C:\Users\U S E R\Documents\New project 6\assets\products\medicu
 
 Caption:
 
-Barrier support: Medicube PDRN Pink Collagen Capsule Cream 55g
-A thoughtful moisturizer pick for customers building a simple beauty routine in Sri Lanka.
-Message Sophia with your skin type, main concern, current products, and budget. We will help you choose without overloading your routine.
-Supplier price and availability will be confirmed before payment.
-#CosmeticHouse #CosmeticHouseLK #SkincareSriLanka #SriLankaBeauty #BeautyRoutine
-#Medicube
+Soft, calm, comfortable skin is always in.
+Medicube PDRN Pink Collagen Capsule Cream 55g
+For anyone building a simple moisturizer routine with products that feel easy to use and easy to love.
+DM us to order or ask which routine step this fits into.
+#cosmetic_house_lk #CosmeticHouseLK #SkincareSriLanka #SriLankaBeauty #BeautySriLanka #SkincareRoutine #GlowRoutine #OnlineShoppingSriLanka #ColomboBeauty #Medicube
 
 Story frames:
 1. Barrier support: Medicube PDRN Pink Collagen Capsule Cream 55g
-2. Best for: Customers looking for this product type. Ask skin type, routine, and concern before recommending.
-3. Reply with your skin type + budget. Sophia will suggest a simple routine after price and availability are confirmed.
+2. Would you add this to your routine?
+3. Reply with your skin type or beauty goal and we will help you pick the right match.
 
 Reel: 12-second product routine reel for Medicube PDRN Pink Collagen Capsule Cream 55g
 - 0-2s: Product close-up on Cosmetic House theme background
 - 2-5s: Texture / packaging detail
 - 5-8s: Routine placement text overlay
-- 8-12s: CTA: DM Sophia your skin concern + budget
+- 8-12s: CTA: DM us to order or ask for a routine match
 
-Owner check: Confirm supplier price, availability, and approved image before scheduling.
+Owner check: Owner review only.
 
-## 2026-05-23 13:15 - Makeup pick
+## 2026-05-26 13:15 - Makeup pick
 
 Product: Labello Men Active Lip Balm SFP15
 Brand: Beauty Edit
@@ -347,26 +331,26 @@ Image full path: C:\Users\U S E R\Documents\New project 6\assets\products\labell
 
 Caption:
 
-Makeup pick: Labello Men Active Lip Balm SFP15
-A thoughtful makeup pick for customers building a simple beauty routine in Sri Lanka.
-Message Sophia with your skin type, main concern, current products, and budget. We will help you choose without overloading your routine.
-Supplier price and availability will be confirmed before payment.
-#CosmeticHouse #CosmeticHouseLK #SkincareSriLanka #SriLankaBeauty #BeautyRoutine
+A pretty little beauty pick for your everyday bag.
+Labello Men Active Lip Balm SFP15
+For anyone building a simple makeup routine with products that feel easy to use and easy to love.
+DM us to order or ask which routine step this fits into.
+#cosmetic_house_lk #CosmeticHouseLK #SkincareSriLanka #SriLankaBeauty #BeautySriLanka #SkincareRoutine #GlowRoutine #OnlineShoppingSriLanka #ColomboBeauty
 
 Story frames:
 1. Makeup pick: Labello Men Active Lip Balm SFP15
-2. Best for: Customers looking for this product type. Ask skin type, routine, and concern before recommending.
-3. Reply with your skin type + budget. Sophia will suggest a simple routine after price and availability are confirmed.
+2. Would you add this to your routine?
+3. Reply with your skin type or beauty goal and we will help you pick the right match.
 
 Reel: 12-second product routine reel for Labello Men Active Lip Balm SFP15
 - 0-2s: Product close-up on Cosmetic House theme background
 - 2-5s: Texture / packaging detail
 - 5-8s: Routine placement text overlay
-- 8-12s: CTA: DM Sophia your skin concern + budget
+- 8-12s: CTA: DM us to order or ask for a routine match
 
-Owner check: Confirm supplier price, availability, and approved image before scheduling.
+Owner check: Owner review only.
 
-## 2026-05-24 20:00 - Hair care reset
+## 2026-05-27 20:00 - Hair care reset
 
 Product: L'Oreal Paris Elvive Hyaluron Plump Shampoo & Conditioner Set - 25.2 fl oz
 Brand: Beauty Edit
@@ -376,26 +360,26 @@ Image full path: C:\Users\U S E R\Documents\New project 6\assets\products\loreal
 
 Caption:
 
-Hair care reset: L'Oreal Paris Elvive Hyaluron Plump Shampoo & Conditioner Set - 25.2 fl oz
-A thoughtful hair care pick for customers building a simple beauty routine in Sri Lanka.
-Message Sophia with your skin type, main concern, current products, and budget. We will help you choose without overloading your routine.
-Supplier price and availability will be confirmed before payment.
-#CosmeticHouse #CosmeticHouseLK #SkincareSriLanka #SriLankaBeauty #BeautyRoutine
+Good hair days start in the wash.
+L'Oreal Paris Elvive Hyaluron Plump Shampoo & Conditioner Set - 25.2 fl oz
+For anyone building a simple hair care routine with products that feel easy to use and easy to love.
+DM us to order or ask which routine step this fits into.
+#cosmetic_house_lk #CosmeticHouseLK #SkincareSriLanka #SriLankaBeauty #BeautySriLanka #SkincareRoutine #GlowRoutine #OnlineShoppingSriLanka #ColomboBeauty
 
 Story frames:
 1. Hair care reset: L'Oreal Paris Elvive Hyaluron Plump Shampoo & Conditioner Set - 25.2 fl oz
-2. Best for: Customers looking for this product type. Ask skin type, routine, and concern before recommending.
-3. Reply with your skin type + budget. Sophia will suggest a simple routine after price and availability are confirmed.
+2. Would you add this to your routine?
+3. Reply with your skin type or beauty goal and we will help you pick the right match.
 
 Reel: 12-second product routine reel for L'Oreal Paris Elvive Hyaluron Plump Shampoo & Conditioner Set - 25.2 fl oz
 - 0-2s: Product close-up on Cosmetic House theme background
 - 2-5s: Texture / packaging detail
 - 5-8s: Routine placement text overlay
-- 8-12s: CTA: DM Sophia your skin concern + budget
+- 8-12s: CTA: DM us to order or ask for a routine match
 
-Owner check: Confirm supplier price, availability, and approved image before scheduling.
+Owner check: Owner review only.
 
-## 2026-05-25 18:45 - Treatment focus
+## 2026-05-28 18:45 - Treatment focus
 
 Product: Vaseline Body Wash Glutaglow Luminous Glow Hyaluronic Hydrate Radiant Skin 425ml
 Brand: Vaseline
@@ -405,27 +389,26 @@ Image full path: C:\Users\U S E R\Documents\New project 6\assets\products\vaseli
 
 Caption:
 
-Treatment focus: Vaseline Body Wash Glutaglow Luminous Glow Hyaluronic Hydrate Radiant Skin 425ml
-A thoughtful body care pick for customers building a simple beauty routine in Sri Lanka.
-Message Sophia with your skin type, main concern, current products, and budget. We will help you choose without overloading your routine.
-Supplier price and availability will be confirmed before payment.
-#CosmeticHouse #CosmeticHouseLK #SkincareSriLanka #SriLankaBeauty #BeautyRoutine
-#Vaseline
+Small routine step, big glow energy.
+Vaseline Body Wash Glutaglow Luminous Glow Hyaluronic Hydrate Radiant Skin 425ml
+For anyone building a simple body care routine with products that feel easy to use and easy to love.
+DM us to order or ask which routine step this fits into.
+#cosmetic_house_lk #CosmeticHouseLK #SkincareSriLanka #SriLankaBeauty #BeautySriLanka #SkincareRoutine #GlowRoutine #OnlineShoppingSriLanka #ColomboBeauty #Vaseline
 
 Story frames:
 1. Treatment focus: Vaseline Body Wash Glutaglow Luminous Glow Hyaluronic Hydrate Radiant Skin 425ml
-2. Best for: Customers looking for this product type. Ask skin type, routine, and concern before recommending.
-3. Reply with your skin type + budget. Sophia will suggest a simple routine after price and availability are confirmed.
+2. Would you add this to your routine?
+3. Reply with your skin type or beauty goal and we will help you pick the right match.
 
 Reel: 12-second product routine reel for Vaseline Body Wash Glutaglow Luminous Glow Hyaluronic Hydrate Radiant Skin 425ml
 - 0-2s: Product close-up on Cosmetic House theme background
 - 2-5s: Texture / packaging detail
 - 5-8s: Routine placement text overlay
-- 8-12s: CTA: DM Sophia your skin concern + budget
+- 8-12s: CTA: DM us to order or ask for a routine match
 
-Owner check: Confirm supplier price, availability, and approved image before scheduling.
+Owner check: Owner review only.
 
-## 2026-05-26 20:30 - Routine booster
+## 2026-05-29 20:30 - Routine booster
 
 Product: SOME BY MI AHA BHA PHA 30 Days Miracle Toner 150ml
 Brand: Some By Mi
@@ -435,27 +418,26 @@ Image full path: C:\Users\U S E R\Documents\New project 6\assets\products\some-b
 
 Caption:
 
-Routine booster: SOME BY MI AHA BHA PHA 30 Days Miracle Toner 150ml
-A thoughtful trending beauty pick for customers building a simple beauty routine in Sri Lanka.
-Message Sophia with your skin type, main concern, current products, and budget. We will help you choose without overloading your routine.
-Supplier price and availability will be confirmed before payment.
-#CosmeticHouse #CosmeticHouseLK #SkincareSriLanka #SriLankaBeauty #BeautyRoutine
-#SomeByMi
+A little self-care moment for your weekly glow.
+SOME BY MI AHA BHA PHA 30 Days Miracle Toner 150ml
+For anyone building a simple trending beauty routine with products that feel easy to use and easy to love.
+DM us to order or ask which routine step this fits into.
+#cosmetic_house_lk #CosmeticHouseLK #SkincareSriLanka #SriLankaBeauty #BeautySriLanka #SkincareRoutine #GlowRoutine #OnlineShoppingSriLanka #ColomboBeauty #SomeByMi
 
 Story frames:
 1. Routine booster: SOME BY MI AHA BHA PHA 30 Days Miracle Toner 150ml
-2. Best for: Customers looking for this product type. Ask skin type, routine, and concern before recommending.
-3. Reply with your skin type + budget. Sophia will suggest a simple routine after price and availability are confirmed.
+2. Would you add this to your routine?
+3. Reply with your skin type or beauty goal and we will help you pick the right match.
 
 Reel: 12-second product routine reel for SOME BY MI AHA BHA PHA 30 Days Miracle Toner 150ml
 - 0-2s: Product close-up on Cosmetic House theme background
 - 2-5s: Texture / packaging detail
 - 5-8s: Routine placement text overlay
-- 8-12s: CTA: DM Sophia your skin concern + budget
+- 8-12s: CTA: DM us to order or ask for a routine match
 
-Owner check: Confirm supplier price, availability, and approved image before scheduling.
+Owner check: Owner review only.
 
-## 2026-05-27 12:30 - SPF reminder
+## 2026-05-30 12:30 - SPF reminder
 
 Product: Fade Out  ANTI-WRINKLE BRIGHTENING DAY CREAM SPF25
 Brand: Beauty Edit
@@ -465,26 +447,26 @@ Image full path: C:\Users\U S E R\Documents\New project 6\assets\products\fade-o
 
 Caption:
 
-SPF reminder: Fade Out  ANTI-WRINKLE BRIGHTENING DAY CREAM SPF25
-A thoughtful SPF pick for customers building a simple beauty routine in Sri Lanka.
-Message Sophia with your skin type, main concern, current products, and budget. We will help you choose without overloading your routine.
-Supplier price and availability will be confirmed before payment.
-#CosmeticHouse #CosmeticHouseLK #SkincareSriLanka #SriLankaBeauty #BeautyRoutine
+Your glow routine is not complete without SPF.
+Fade Out  ANTI-WRINKLE BRIGHTENING DAY CREAM SPF25
+For anyone building a simple SPF routine with products that feel easy to use and easy to love.
+DM us to order or ask which routine step this fits into.
+#cosmetic_house_lk #CosmeticHouseLK #SkincareSriLanka #SriLankaBeauty #BeautySriLanka #SkincareRoutine #GlowRoutine #OnlineShoppingSriLanka #ColomboBeauty
 
 Story frames:
 1. SPF reminder: Fade Out  ANTI-WRINKLE BRIGHTENING DAY CREAM SPF25
-2. Best for: Customers looking for this product type. Ask skin type, routine, and concern before recommending.
-3. Reply with your skin type + budget. Sophia will suggest a simple routine after price and availability are confirmed.
+2. Would you add this to your routine?
+3. Reply with your skin type or beauty goal and we will help you pick the right match.
 
 Reel: 12-second product routine reel for Fade Out  ANTI-WRINKLE BRIGHTENING DAY CREAM SPF25
 - 0-2s: Product close-up on Cosmetic House theme background
 - 2-5s: Texture / packaging detail
 - 5-8s: Routine placement text overlay
-- 8-12s: CTA: DM Sophia your skin concern + budget
+- 8-12s: CTA: DM us to order or ask for a routine match
 
-Owner check: Confirm supplier price, availability, and approved image before scheduling.
+Owner check: Owner review only.
 
-## 2026-05-28 21:15 - Clean routine starter
+## 2026-05-31 21:15 - Clean routine starter
 
 Product: Cerave Blemish Control Cleanser 236ml
 Brand: CeraVe
@@ -494,27 +476,26 @@ Image full path: C:\Users\U S E R\Documents\New project 6\assets\products\cerave
 
 Caption:
 
-Clean routine starter: Cerave Blemish Control Cleanser 236ml
-A thoughtful cleanser pick for customers building a simple beauty routine in Sri Lanka.
-Message Sophia with your skin type, main concern, current products, and budget. We will help you choose without overloading your routine.
-Supplier price and availability will be confirmed before payment.
-#CosmeticHouse #CosmeticHouseLK #SkincareSriLanka #SriLankaBeauty #BeautyRoutine
-#CeraVe
+Fresh skin starts with a cleanser that fits your routine.
+Cerave Blemish Control Cleanser 236ml
+For anyone building a simple cleanser routine with products that feel easy to use and easy to love.
+DM us to order or ask which routine step this fits into.
+#cosmetic_house_lk #CosmeticHouseLK #SkincareSriLanka #SriLankaBeauty #BeautySriLanka #SkincareRoutine #GlowRoutine #OnlineShoppingSriLanka #ColomboBeauty #CeraVe
 
 Story frames:
 1. Clean routine starter: Cerave Blemish Control Cleanser 236ml
-2. Best for: Customers looking for this product type. Ask skin type, routine, and concern before recommending.
-3. Reply with your skin type + budget. Sophia will suggest a simple routine after price and availability are confirmed.
+2. Would you add this to your routine?
+3. Reply with your skin type or beauty goal and we will help you pick the right match.
 
 Reel: 12-second product routine reel for Cerave Blemish Control Cleanser 236ml
 - 0-2s: Product close-up on Cosmetic House theme background
 - 2-5s: Texture / packaging detail
 - 5-8s: Routine placement text overlay
-- 8-12s: CTA: DM Sophia your skin concern + budget
+- 8-12s: CTA: DM us to order or ask for a routine match
 
-Owner check: Confirm supplier price, availability, and approved image before scheduling.
+Owner check: Owner review only.
 
-## 2026-05-29 19:45 - Barrier support
+## 2026-06-01 19:45 - Barrier support
 
 Product: Johnson’s® Baby Cream 100g
 Brand: Beauty Edit
@@ -524,26 +505,26 @@ Image full path: C:\Users\U S E R\Documents\New project 6\assets\products\johnso
 
 Caption:
 
-Barrier support: Johnson’s® Baby Cream 100g
-A thoughtful moisturizer pick for customers building a simple beauty routine in Sri Lanka.
-Message Sophia with your skin type, main concern, current products, and budget. We will help you choose without overloading your routine.
-Supplier price and availability will be confirmed before payment.
-#CosmeticHouse #CosmeticHouseLK #SkincareSriLanka #SriLankaBeauty #BeautyRoutine
+Soft, calm, comfortable skin is always in.
+Johnson’s® Baby Cream 100g
+For anyone building a simple moisturizer routine with products that feel easy to use and easy to love.
+DM us to order or ask which routine step this fits into.
+#cosmetic_house_lk #CosmeticHouseLK #SkincareSriLanka #SriLankaBeauty #BeautySriLanka #SkincareRoutine #GlowRoutine #OnlineShoppingSriLanka #ColomboBeauty
 
 Story frames:
 1. Barrier support: Johnson’s® Baby Cream 100g
-2. Best for: Customers looking for this product type. Ask skin type, routine, and concern before recommending.
-3. Reply with your skin type + budget. Sophia will suggest a simple routine after price and availability are confirmed.
+2. Would you add this to your routine?
+3. Reply with your skin type or beauty goal and we will help you pick the right match.
 
 Reel: 12-second product routine reel for Johnson’s® Baby Cream 100g
 - 0-2s: Product close-up on Cosmetic House theme background
 - 2-5s: Texture / packaging detail
 - 5-8s: Routine placement text overlay
-- 8-12s: CTA: DM Sophia your skin concern + budget
+- 8-12s: CTA: DM us to order or ask for a routine match
 
-Owner check: Confirm supplier price, availability, and approved image before scheduling.
+Owner check: Owner review only.
 
-## 2026-05-30 13:15 - Makeup pick
+## 2026-06-02 13:15 - Makeup pick
 
 Product: Vaseline   LIP THERAPY ROSY LIPS TIN
 Brand: Vaseline
@@ -553,27 +534,26 @@ Image full path: C:\Users\U S E R\Documents\New project 6\assets\products\vaseli
 
 Caption:
 
-Makeup pick: Vaseline   LIP THERAPY ROSY LIPS TIN
-A thoughtful makeup pick for customers building a simple beauty routine in Sri Lanka.
-Message Sophia with your skin type, main concern, current products, and budget. We will help you choose without overloading your routine.
-Supplier price and availability will be confirmed before payment.
-#CosmeticHouse #CosmeticHouseLK #SkincareSriLanka #SriLankaBeauty #BeautyRoutine
-#Vaseline
+A pretty little beauty pick for your everyday bag.
+Vaseline   LIP THERAPY ROSY LIPS TIN
+For anyone building a simple makeup routine with products that feel easy to use and easy to love.
+DM us to order or ask which routine step this fits into.
+#cosmetic_house_lk #CosmeticHouseLK #SkincareSriLanka #SriLankaBeauty #BeautySriLanka #SkincareRoutine #GlowRoutine #OnlineShoppingSriLanka #ColomboBeauty #Vaseline
 
 Story frames:
 1. Makeup pick: Vaseline   LIP THERAPY ROSY LIPS TIN
-2. Best for: Customers looking for this product type. Ask skin type, routine, and concern before recommending.
-3. Reply with your skin type + budget. Sophia will suggest a simple routine after price and availability are confirmed.
+2. Would you add this to your routine?
+3. Reply with your skin type or beauty goal and we will help you pick the right match.
 
 Reel: 12-second product routine reel for Vaseline   LIP THERAPY ROSY LIPS TIN
 - 0-2s: Product close-up on Cosmetic House theme background
 - 2-5s: Texture / packaging detail
 - 5-8s: Routine placement text overlay
-- 8-12s: CTA: DM Sophia your skin concern + budget
+- 8-12s: CTA: DM us to order or ask for a routine match
 
-Owner check: Confirm supplier price, availability, and approved image before scheduling.
+Owner check: Owner review only.
 
-## 2026-05-31 20:00 - Hair care reset
+## 2026-06-03 20:00 - Hair care reset
 
 Product: Cocoa Butter Hair Food 3-in-1 Multi Use Hair Mask
 Brand: Beauty Edit
@@ -583,26 +563,26 @@ Image full path: C:\Users\U S E R\Documents\New project 6\assets\products\cocoa-
 
 Caption:
 
-Hair care reset: Cocoa Butter Hair Food 3-in-1 Multi Use Hair Mask
-A thoughtful hair care pick for customers building a simple beauty routine in Sri Lanka.
-Message Sophia with your skin type, main concern, current products, and budget. We will help you choose without overloading your routine.
-Supplier price and availability will be confirmed before payment.
-#CosmeticHouse #CosmeticHouseLK #SkincareSriLanka #SriLankaBeauty #BeautyRoutine
+Good hair days start in the wash.
+Cocoa Butter Hair Food 3-in-1 Multi Use Hair Mask
+For anyone building a simple hair care routine with products that feel easy to use and easy to love.
+DM us to order or ask which routine step this fits into.
+#cosmetic_house_lk #CosmeticHouseLK #SkincareSriLanka #SriLankaBeauty #BeautySriLanka #SkincareRoutine #GlowRoutine #OnlineShoppingSriLanka #ColomboBeauty
 
 Story frames:
 1. Hair care reset: Cocoa Butter Hair Food 3-in-1 Multi Use Hair Mask
-2. Best for: Customers looking for this product type. Ask skin type, routine, and concern before recommending.
-3. Reply with your skin type + budget. Sophia will suggest a simple routine after price and availability are confirmed.
+2. Would you add this to your routine?
+3. Reply with your skin type or beauty goal and we will help you pick the right match.
 
 Reel: 12-second product routine reel for Cocoa Butter Hair Food 3-in-1 Multi Use Hair Mask
 - 0-2s: Product close-up on Cosmetic House theme background
 - 2-5s: Texture / packaging detail
 - 5-8s: Routine placement text overlay
-- 8-12s: CTA: DM Sophia your skin concern + budget
+- 8-12s: CTA: DM us to order or ask for a routine match
 
-Owner check: Confirm supplier price, availability, and approved image before scheduling.
+Owner check: Owner review only.
 
-## 2026-06-01 18:45 - Body care glow
+## 2026-06-04 18:45 - Body care glow
 
 Product: Dove Nourishing Secrets Awakening Ritual Body Wash 500ml
 Brand: Dove
@@ -612,27 +592,26 @@ Image full path: C:\Users\U S E R\Documents\New project 6\assets\products\dove-n
 
 Caption:
 
-Body care glow: Dove Nourishing Secrets Awakening Ritual Body Wash 500ml
-A thoughtful body care pick for customers building a simple beauty routine in Sri Lanka.
-Message Sophia with your skin type, main concern, current products, and budget. We will help you choose without overloading your routine.
-Supplier price and availability will be confirmed before payment.
-#CosmeticHouse #CosmeticHouseLK #SkincareSriLanka #SriLankaBeauty #BeautyRoutine
-#Dove
+Body care deserves the same love as skincare.
+Dove Nourishing Secrets Awakening Ritual Body Wash 500ml
+For anyone building a simple body care routine with products that feel easy to use and easy to love.
+DM us to order or ask which routine step this fits into.
+#cosmetic_house_lk #CosmeticHouseLK #SkincareSriLanka #SriLankaBeauty #BeautySriLanka #SkincareRoutine #GlowRoutine #OnlineShoppingSriLanka #ColomboBeauty #Dove
 
 Story frames:
 1. Body care glow: Dove Nourishing Secrets Awakening Ritual Body Wash 500ml
-2. Best for: Customers looking for this product type. Ask skin type, routine, and concern before recommending.
-3. Reply with your skin type + budget. Sophia will suggest a simple routine after price and availability are confirmed.
+2. Would you add this to your routine?
+3. Reply with your skin type or beauty goal and we will help you pick the right match.
 
 Reel: 12-second product routine reel for Dove Nourishing Secrets Awakening Ritual Body Wash 500ml
 - 0-2s: Product close-up on Cosmetic House theme background
 - 2-5s: Texture / packaging detail
 - 5-8s: Routine placement text overlay
-- 8-12s: CTA: DM Sophia your skin concern + budget
+- 8-12s: CTA: DM us to order or ask for a routine match
 
-Owner check: Confirm supplier price, availability, and approved image before scheduling.
+Owner check: Owner review only.
 
-## 2026-06-02 20:30 - Routine booster
+## 2026-06-05 20:30 - Routine booster
 
 Product: SKIN1004 Tea-Trica Relief Ampoule
 Brand: SKIN1004
@@ -642,27 +621,26 @@ Image full path: C:\Users\U S E R\Documents\New project 6\assets\products\skin10
 
 Caption:
 
-Routine booster: SKIN1004 Tea-Trica Relief Ampoule
-A thoughtful trending beauty pick for customers building a simple beauty routine in Sri Lanka.
-Message Sophia with your skin type, main concern, current products, and budget. We will help you choose without overloading your routine.
-Supplier price and availability will be confirmed before payment.
-#CosmeticHouse #CosmeticHouseLK #SkincareSriLanka #SriLankaBeauty #BeautyRoutine
-#SKIN1004
+A little self-care moment for your weekly glow.
+SKIN1004 Tea-Trica Relief Ampoule
+For anyone building a simple trending beauty routine with products that feel easy to use and easy to love.
+DM us to order or ask which routine step this fits into.
+#cosmetic_house_lk #CosmeticHouseLK #SkincareSriLanka #SriLankaBeauty #BeautySriLanka #SkincareRoutine #GlowRoutine #OnlineShoppingSriLanka #ColomboBeauty #SKIN1004
 
 Story frames:
 1. Routine booster: SKIN1004 Tea-Trica Relief Ampoule
-2. Best for: Customers looking for this product type. Ask skin type, routine, and concern before recommending.
-3. Reply with your skin type + budget. Sophia will suggest a simple routine after price and availability are confirmed.
+2. Would you add this to your routine?
+3. Reply with your skin type or beauty goal and we will help you pick the right match.
 
 Reel: 12-second product routine reel for SKIN1004 Tea-Trica Relief Ampoule
 - 0-2s: Product close-up on Cosmetic House theme background
 - 2-5s: Texture / packaging detail
 - 5-8s: Routine placement text overlay
-- 8-12s: CTA: DM Sophia your skin concern + budget
+- 8-12s: CTA: DM us to order or ask for a routine match
 
-Owner check: Confirm supplier price, availability, and approved image before scheduling.
+Owner check: Owner review only.
 
-## 2026-06-03 12:30 - SPF reminder
+## 2026-06-06 12:30 - SPF reminder
 
 Product: la roche posay ANTHELIOS XL DRY TOUCH GEL-CREAM SPF 50+ / UVA-PF 28 NON-PERFUMED
 Brand: La Roche-Posay
@@ -672,27 +650,26 @@ Image full path: C:\Users\U S E R\Documents\New project 6\assets\products\la-roc
 
 Caption:
 
-SPF reminder: la roche posay ANTHELIOS XL DRY TOUCH GEL-CREAM SPF 50+ / UVA-PF 28 NON-PERFUMED
-A thoughtful SPF pick for customers building a simple beauty routine in Sri Lanka.
-Message Sophia with your skin type, main concern, current products, and budget. We will help you choose without overloading your routine.
-Supplier price and availability will be confirmed before payment.
-#CosmeticHouse #CosmeticHouseLK #SkincareSriLanka #SriLankaBeauty #BeautyRoutine
-#LaRochePosay
+Your glow routine is not complete without SPF.
+la roche posay ANTHELIOS XL DRY TOUCH GEL-CREAM SPF 50+ / UVA-PF 28 NON-PERFUMED
+For anyone building a simple SPF routine with products that feel easy to use and easy to love.
+DM us to order or ask which routine step this fits into.
+#cosmetic_house_lk #CosmeticHouseLK #SkincareSriLanka #SriLankaBeauty #BeautySriLanka #SkincareRoutine #GlowRoutine #OnlineShoppingSriLanka #ColomboBeauty #LaRochePosay
 
 Story frames:
 1. SPF reminder: la roche posay ANTHELIOS XL DRY TOUCH GEL-CREAM SPF 50+ / UVA-PF 28 NON-PERFUMED
-2. Best for: Customers looking for this product type. Ask skin type, routine, and concern before recommending.
-3. Reply with your skin type + budget. Sophia will suggest a simple routine after price and availability are confirmed.
+2. Would you add this to your routine?
+3. Reply with your skin type or beauty goal and we will help you pick the right match.
 
 Reel: 12-second product routine reel for la roche posay ANTHELIOS XL DRY TOUCH GEL-CREAM SPF 50+ / UVA-PF 28 NON-PERFUMED
 - 0-2s: Product close-up on Cosmetic House theme background
 - 2-5s: Texture / packaging detail
 - 5-8s: Routine placement text overlay
-- 8-12s: CTA: DM Sophia your skin concern + budget
+- 8-12s: CTA: DM us to order or ask for a routine match
 
-Owner check: Confirm supplier price, availability, and approved image before scheduling.
+Owner check: Owner review only.
 
-## 2026-06-04 21:15 - Clean routine starter
+## 2026-06-07 21:15 - Clean routine starter
 
 Product: Cetaphil Gentle Skin Cleanser 591ml
 Brand: Cetaphil
@@ -702,27 +679,26 @@ Image full path: C:\Users\U S E R\Documents\New project 6\assets\products\cetaph
 
 Caption:
 
-Clean routine starter: Cetaphil Gentle Skin Cleanser 591ml
-A thoughtful cleanser pick for customers building a simple beauty routine in Sri Lanka.
-Message Sophia with your skin type, main concern, current products, and budget. We will help you choose without overloading your routine.
-Supplier price and availability will be confirmed before payment.
-#CosmeticHouse #CosmeticHouseLK #SkincareSriLanka #SriLankaBeauty #BeautyRoutine
-#Cetaphil
+Fresh skin starts with a cleanser that fits your routine.
+Cetaphil Gentle Skin Cleanser 591ml
+For anyone building a simple cleanser routine with products that feel easy to use and easy to love.
+DM us to order or ask which routine step this fits into.
+#cosmetic_house_lk #CosmeticHouseLK #SkincareSriLanka #SriLankaBeauty #BeautySriLanka #SkincareRoutine #GlowRoutine #OnlineShoppingSriLanka #ColomboBeauty #Cetaphil
 
 Story frames:
 1. Clean routine starter: Cetaphil Gentle Skin Cleanser 591ml
-2. Best for: Customers looking for this product type. Ask skin type, routine, and concern before recommending.
-3. Reply with your skin type + budget. Sophia will suggest a simple routine after price and availability are confirmed.
+2. Would you add this to your routine?
+3. Reply with your skin type or beauty goal and we will help you pick the right match.
 
 Reel: 12-second product routine reel for Cetaphil Gentle Skin Cleanser 591ml
 - 0-2s: Product close-up on Cosmetic House theme background
 - 2-5s: Texture / packaging detail
 - 5-8s: Routine placement text overlay
-- 8-12s: CTA: DM Sophia your skin concern + budget
+- 8-12s: CTA: DM us to order or ask for a routine match
 
-Owner check: Confirm supplier price, availability, and approved image before scheduling.
+Owner check: Owner review only.
 
-## 2026-06-05 19:45 - Barrier support
+## 2026-06-08 19:45 - Barrier support
 
 Product: Good Molecules Gentle Retinol Cream
 Brand: Beauty Edit
@@ -732,26 +708,26 @@ Image full path: C:\Users\U S E R\Documents\New project 6\assets\products\good-m
 
 Caption:
 
-Barrier support: Good Molecules Gentle Retinol Cream
-A thoughtful moisturizer pick for customers building a simple beauty routine in Sri Lanka.
-Message Sophia with your skin type, main concern, current products, and budget. We will help you choose without overloading your routine.
-Supplier price and availability will be confirmed before payment.
-#CosmeticHouse #CosmeticHouseLK #SkincareSriLanka #SriLankaBeauty #BeautyRoutine
+Soft, calm, comfortable skin is always in.
+Good Molecules Gentle Retinol Cream
+For anyone building a simple moisturizer routine with products that feel easy to use and easy to love.
+DM us to order or ask which routine step this fits into.
+#cosmetic_house_lk #CosmeticHouseLK #SkincareSriLanka #SriLankaBeauty #BeautySriLanka #SkincareRoutine #GlowRoutine #OnlineShoppingSriLanka #ColomboBeauty
 
 Story frames:
 1. Barrier support: Good Molecules Gentle Retinol Cream
-2. Best for: Customers looking for this product type. Ask skin type, routine, and concern before recommending.
-3. Reply with your skin type + budget. Sophia will suggest a simple routine after price and availability are confirmed.
+2. Would you add this to your routine?
+3. Reply with your skin type or beauty goal and we will help you pick the right match.
 
 Reel: 12-second product routine reel for Good Molecules Gentle Retinol Cream
 - 0-2s: Product close-up on Cosmetic House theme background
 - 2-5s: Texture / packaging detail
 - 5-8s: Routine placement text overlay
-- 8-12s: CTA: DM Sophia your skin concern + budget
+- 8-12s: CTA: DM us to order or ask for a routine match
 
-Owner check: Confirm supplier price, availability, and approved image before scheduling.
+Owner check: Owner review only.
 
-## 2026-06-06 13:15 - Makeup pick
+## 2026-06-09 13:15 - Makeup pick
 
 Product: Vaseline Lip Therapy Original Lip Balm
 Brand: Vaseline
@@ -761,27 +737,26 @@ Image full path: C:\Users\U S E R\Documents\New project 6\assets\products\vaseli
 
 Caption:
 
-Makeup pick: Vaseline Lip Therapy Original Lip Balm
-A thoughtful makeup pick for customers building a simple beauty routine in Sri Lanka.
-Message Sophia with your skin type, main concern, current products, and budget. We will help you choose without overloading your routine.
-Supplier price and availability will be confirmed before payment.
-#CosmeticHouse #CosmeticHouseLK #SkincareSriLanka #SriLankaBeauty #BeautyRoutine
-#Vaseline
+A pretty little beauty pick for your everyday bag.
+Vaseline Lip Therapy Original Lip Balm
+For anyone building a simple makeup routine with products that feel easy to use and easy to love.
+DM us to order or ask which routine step this fits into.
+#cosmetic_house_lk #CosmeticHouseLK #SkincareSriLanka #SriLankaBeauty #BeautySriLanka #SkincareRoutine #GlowRoutine #OnlineShoppingSriLanka #ColomboBeauty #Vaseline
 
 Story frames:
 1. Makeup pick: Vaseline Lip Therapy Original Lip Balm
-2. Best for: Customers looking for this product type. Ask skin type, routine, and concern before recommending.
-3. Reply with your skin type + budget. Sophia will suggest a simple routine after price and availability are confirmed.
+2. Would you add this to your routine?
+3. Reply with your skin type or beauty goal and we will help you pick the right match.
 
 Reel: 12-second product routine reel for Vaseline Lip Therapy Original Lip Balm
 - 0-2s: Product close-up on Cosmetic House theme background
 - 2-5s: Texture / packaging detail
 - 5-8s: Routine placement text overlay
-- 8-12s: CTA: DM Sophia your skin concern + budget
+- 8-12s: CTA: DM us to order or ask for a routine match
 
-Owner check: Confirm supplier price, availability, and approved image before scheduling.
+Owner check: Owner review only.
 
-## 2026-06-07 20:00 - Hair care reset
+## 2026-06-10 20:00 - Hair care reset
 
 Product: OGX Quenching + Coconut Curls Curl-Defining Shampoo + conditioner
 Brand: OGX
@@ -791,27 +766,26 @@ Image full path: C:\Users\U S E R\Documents\New project 6\assets\products\ogx-qu
 
 Caption:
 
-Hair care reset: OGX Quenching + Coconut Curls Curl-Defining Shampoo + conditioner
-A thoughtful hair care pick for customers building a simple beauty routine in Sri Lanka.
-Message Sophia with your skin type, main concern, current products, and budget. We will help you choose without overloading your routine.
-Supplier price and availability will be confirmed before payment.
-#CosmeticHouse #CosmeticHouseLK #SkincareSriLanka #SriLankaBeauty #BeautyRoutine
-#OGX
+Good hair days start in the wash.
+OGX Quenching + Coconut Curls Curl-Defining Shampoo + conditioner
+For anyone building a simple hair care routine with products that feel easy to use and easy to love.
+DM us to order or ask which routine step this fits into.
+#cosmetic_house_lk #CosmeticHouseLK #SkincareSriLanka #SriLankaBeauty #BeautySriLanka #SkincareRoutine #GlowRoutine #OnlineShoppingSriLanka #ColomboBeauty #OGX
 
 Story frames:
 1. Hair care reset: OGX Quenching + Coconut Curls Curl-Defining Shampoo + conditioner
-2. Best for: Customers looking for this product type. Ask skin type, routine, and concern before recommending.
-3. Reply with your skin type + budget. Sophia will suggest a simple routine after price and availability are confirmed.
+2. Would you add this to your routine?
+3. Reply with your skin type or beauty goal and we will help you pick the right match.
 
 Reel: 12-second product routine reel for OGX Quenching + Coconut Curls Curl-Defining Shampoo + conditioner
 - 0-2s: Product close-up on Cosmetic House theme background
 - 2-5s: Texture / packaging detail
 - 5-8s: Routine placement text overlay
-- 8-12s: CTA: DM Sophia your skin concern + budget
+- 8-12s: CTA: DM us to order or ask for a routine match
 
-Owner check: Confirm supplier price, availability, and approved image before scheduling.
+Owner check: Owner review only.
 
-## 2026-06-08 18:45 - Body care glow
+## 2026-06-11 18:45 - Body care glow
 
 Product: Dove Bath Therapy Glow - Body Scrub
 Brand: Dove
@@ -821,27 +795,26 @@ Image full path: C:\Users\U S E R\Documents\New project 6\assets\products\dove-b
 
 Caption:
 
-Body care glow: Dove Bath Therapy Glow - Body Scrub
-A thoughtful body care pick for customers building a simple beauty routine in Sri Lanka.
-Message Sophia with your skin type, main concern, current products, and budget. We will help you choose without overloading your routine.
-Supplier price and availability will be confirmed before payment.
-#CosmeticHouse #CosmeticHouseLK #SkincareSriLanka #SriLankaBeauty #BeautyRoutine
-#Dove
+Body care deserves the same love as skincare.
+Dove Bath Therapy Glow - Body Scrub
+For anyone building a simple body care routine with products that feel easy to use and easy to love.
+DM us to order or ask which routine step this fits into.
+#cosmetic_house_lk #CosmeticHouseLK #SkincareSriLanka #SriLankaBeauty #BeautySriLanka #SkincareRoutine #GlowRoutine #OnlineShoppingSriLanka #ColomboBeauty #Dove
 
 Story frames:
 1. Body care glow: Dove Bath Therapy Glow - Body Scrub
-2. Best for: Customers looking for this product type. Ask skin type, routine, and concern before recommending.
-3. Reply with your skin type + budget. Sophia will suggest a simple routine after price and availability are confirmed.
+2. Would you add this to your routine?
+3. Reply with your skin type or beauty goal and we will help you pick the right match.
 
 Reel: 12-second product routine reel for Dove Bath Therapy Glow - Body Scrub
 - 0-2s: Product close-up on Cosmetic House theme background
 - 2-5s: Texture / packaging detail
 - 5-8s: Routine placement text overlay
-- 8-12s: CTA: DM Sophia your skin concern + budget
+- 8-12s: CTA: DM us to order or ask for a routine match
 
-Owner check: Confirm supplier price, availability, and approved image before scheduling.
+Owner check: Owner review only.
 
-## 2026-06-09 20:30 - Routine booster
+## 2026-06-12 20:30 - Routine booster
 
 Product: Biodance Bio Collagen Real Deep Mask
 Brand: Beauty Edit
@@ -851,26 +824,26 @@ Image full path: C:\Users\U S E R\Documents\New project 6\assets\products\biodan
 
 Caption:
 
-Routine booster: Biodance Bio Collagen Real Deep Mask
-A thoughtful trending beauty pick for customers building a simple beauty routine in Sri Lanka.
-Message Sophia with your skin type, main concern, current products, and budget. We will help you choose without overloading your routine.
-Supplier price and availability will be confirmed before payment.
-#CosmeticHouse #CosmeticHouseLK #SkincareSriLanka #SriLankaBeauty #BeautyRoutine
+A little self-care moment for your weekly glow.
+Biodance Bio Collagen Real Deep Mask
+For anyone building a simple trending beauty routine with products that feel easy to use and easy to love.
+DM us to order or ask which routine step this fits into.
+#cosmetic_house_lk #CosmeticHouseLK #SkincareSriLanka #SriLankaBeauty #BeautySriLanka #SkincareRoutine #GlowRoutine #OnlineShoppingSriLanka #ColomboBeauty
 
 Story frames:
 1. Routine booster: Biodance Bio Collagen Real Deep Mask
-2. Best for: Customers looking for this product type. Ask skin type, routine, and concern before recommending.
-3. Reply with your skin type + budget. Sophia will suggest a simple routine after price and availability are confirmed.
+2. Would you add this to your routine?
+3. Reply with your skin type or beauty goal and we will help you pick the right match.
 
 Reel: 12-second product routine reel for Biodance Bio Collagen Real Deep Mask
 - 0-2s: Product close-up on Cosmetic House theme background
 - 2-5s: Texture / packaging detail
 - 5-8s: Routine placement text overlay
-- 8-12s: CTA: DM Sophia your skin concern + budget
+- 8-12s: CTA: DM us to order or ask for a routine match
 
-Owner check: Confirm supplier price, availability, and approved image before scheduling.
+Owner check: Owner review only.
 
-## 2026-06-10 12:30 - SPF reminder
+## 2026-06-13 12:30 - SPF reminder
 
 Product: Beauty of Joseon Relief Sun Aqua-fresh: Rice + B5 (SPF50+ PA++++)
 Brand: Beauty of Joseon
@@ -880,23 +853,22 @@ Image full path: C:\Users\U S E R\Documents\New project 6\assets\products\beauty
 
 Caption:
 
-SPF reminder: Beauty of Joseon Relief Sun Aqua-fresh: Rice + B5 (SPF50+ PA++++)
-A thoughtful SPF pick for customers building a simple beauty routine in Sri Lanka.
-Message Sophia with your skin type, main concern, current products, and budget. We will help you choose without overloading your routine.
-Supplier price and availability will be confirmed before payment.
-#CosmeticHouse #CosmeticHouseLK #SkincareSriLanka #SriLankaBeauty #BeautyRoutine
-#BeautyofJoseon
+Your glow routine is not complete without SPF.
+Beauty of Joseon Relief Sun Aqua-fresh: Rice + B5 (SPF50+ PA++++)
+For anyone building a simple SPF routine with products that feel easy to use and easy to love.
+DM us to order or ask which routine step this fits into.
+#cosmetic_house_lk #CosmeticHouseLK #SkincareSriLanka #SriLankaBeauty #BeautySriLanka #SkincareRoutine #GlowRoutine #OnlineShoppingSriLanka #ColomboBeauty #BeautyofJoseon
 
 Story frames:
 1. SPF reminder: Beauty of Joseon Relief Sun Aqua-fresh: Rice + B5 (SPF50+ PA++++)
-2. Best for: Customers looking for this product type. Ask skin type, routine, and concern before recommending.
-3. Reply with your skin type + budget. Sophia will suggest a simple routine after price and availability are confirmed.
+2. Would you add this to your routine?
+3. Reply with your skin type or beauty goal and we will help you pick the right match.
 
 Reel: 12-second product routine reel for Beauty of Joseon Relief Sun Aqua-fresh: Rice + B5 (SPF50+ PA++++)
 - 0-2s: Product close-up on Cosmetic House theme background
 - 2-5s: Texture / packaging detail
 - 5-8s: Routine placement text overlay
-- 8-12s: CTA: DM Sophia your skin concern + budget
+- 8-12s: CTA: DM us to order or ask for a routine match
 
-Owner check: Confirm supplier price, availability, and approved image before scheduling.
+Owner check: Owner review only.
 

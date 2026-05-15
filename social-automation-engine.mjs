@@ -153,18 +153,18 @@ export async function dailyContentKit(date = new Date()) {
       title: "Today skin check",
       frames: [
         "Frame 1: What is your skin concern today? Oily, dry, dark spots, or acne?",
-        "Frame 2: Reply with your budget and Sophia will suggest a simple routine.",
-        "Frame 3: Reminder: supplier price and availability are confirmed before payment.",
+        "Frame 2: Reply with your skin type and budget for a simple routine match.",
+        "Frame 3: DM us to order your beauty picks.",
       ],
     },
     post: {
       caption:
-        "Glow starts with a simple routine. Tell us your skin type, concern, and budget, and Sophia from Cosmetic House will help match cleanser, treatment, moisturizer, and sunscreen options. Islandwide delivery available after final cart confirmation.",
-      hashtags: ["#CosmeticHouse", "#SkincareSriLanka", "#SriLankaBeauty", "#TheOrdinarySriLanka", "#BeautyRoutine"],
+        "Glow starts with a routine you can actually keep. Cleanser, treatment, moisturizer, SPF - simple steps, pretty results. DM us your skin type and beauty goal to find your next match.",
+      hashtags: ["#cosmetic_house_lk", "#CosmeticHouseLK", "#SkincareSriLanka", "#SriLankaBeauty", "#GlowRoutine", "#ColomboBeauty", "#OnlineShoppingSriLanka"],
     },
     reel: {
-      idea: "Fast 12-second routine reel: cleanser -> serum -> moisturizer -> sunscreen, ending with 'DM Sophia your skin concern'.",
-      shotList: ["Product shelf pan", "Close-up of serum texture", "Routine steps text overlay", "CTA to DM Sophia"],
+      idea: "Fast 12-second routine reel: cleanser -> serum -> moisturizer -> sunscreen, ending with 'DM us your skin goal'.",
+      shotList: ["Product shelf pan", "Close-up of serum texture", "Routine steps text overlay", "CTA to DM us"],
     },
   };
 }

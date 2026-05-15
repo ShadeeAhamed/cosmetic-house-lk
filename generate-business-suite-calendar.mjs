@@ -3,7 +3,7 @@ import { resolve } from "node:path";
 
 const outDir = "business-suite-calendar";
 const days = Number(process.argv[2] || 30);
-const startDate = new Date();
+const startDate = process.argv[3] ? new Date(`${process.argv[3]}T00:00:00+05:30`) : new Date();
 const scheduleTimes = ["20:30", "12:30", "21:15", "19:45", "13:15", "20:00", "18:45"];
 
 function normalize(value) {
@@ -52,7 +52,12 @@ function cleanBrand(product) {
 }
 
 function dateString(date) {
-  return date.toISOString().slice(0, 10);
+  return new Intl.DateTimeFormat("en-CA", {
+    timeZone: "Asia/Colombo",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).format(date);
 }
 
 function addDays(date, count) {
@@ -107,17 +112,40 @@ function categoryLabel(category) {
 }
 
 function caption(product, brand, theme) {
+  const brandTag = brand !== "Beauty Edit" ? `#${brand.replace(/[^A-Za-z0-9]/g, "")}` : "";
+  const productKind = categoryLabel(product.category);
+  const hooks = {
+    "SPF reminder": "Your glow routine is not complete without SPF.",
+    "Clean routine starter": "Fresh skin starts with a cleanser that fits your routine.",
+    "Barrier support": "Soft, calm, comfortable skin is always in.",
+    "Treatment focus": "Small routine step, big glow energy.",
+    "Hair care reset": "Good hair days start in the wash.",
+    "Routine booster": "A little self-care moment for your weekly glow.",
+    "Body care glow": "Body care deserves the same love as skincare.",
+    "Makeup pick": "A pretty little beauty pick for your everyday bag.",
+  };
+  const opener = hooks[theme] || "New beauty shelf favourite.";
   return [
-    `${theme}: ${product.name}`,
+    opener,
     "",
-    `A thoughtful ${categoryLabel(product.category)} pick for customers building a simple beauty routine in Sri Lanka.`,
+    `${product.name}`,
     "",
-    "Message Sophia with your skin type, main concern, current products, and budget. We will help you choose without overloading your routine.",
+    `For anyone building a simple ${productKind} routine with products that feel easy to use and easy to love.`,
     "",
-    "Supplier price and availability will be confirmed before payment.",
+    "DM us to order or ask which routine step this fits into.",
     "",
-    "#CosmeticHouse #CosmeticHouseLK #SkincareSriLanka #SriLankaBeauty #BeautyRoutine",
-    brand !== "Beauty Edit" ? `#${brand.replace(/[^A-Za-z0-9]/g, "")}` : "",
+    [
+      "#cosmetic_house_lk",
+      "#CosmeticHouseLK",
+      "#SkincareSriLanka",
+      "#SriLankaBeauty",
+      "#BeautySriLanka",
+      "#SkincareRoutine",
+      "#GlowRoutine",
+      "#OnlineShoppingSriLanka",
+      "#ColomboBeauty",
+      brandTag,
+    ].filter(Boolean).join(" "),
   ]
     .filter(Boolean)
     .join("\n");
@@ -126,8 +154,8 @@ function caption(product, brand, theme) {
 function storyFrames(product, theme) {
   return [
     `${theme}: ${product.name}`,
-    `Best for: ${product.bestFor || "customers looking for a simple routine match"}`,
-    "Reply with your skin type + budget. Sophia will suggest a simple routine after price and availability are confirmed.",
+    "Would you add this to your routine?",
+    "Reply with your skin type or beauty goal and we will help you pick the right match.",
   ];
 }
 
@@ -138,7 +166,7 @@ function reelIdea(product) {
       "0-2s: Product close-up on Cosmetic House theme background",
       "2-5s: Texture / packaging detail",
       "5-8s: Routine placement text overlay",
-      "8-12s: CTA: DM Sophia your skin concern + budget",
+      "8-12s: CTA: DM us to order or ask for a routine match",
     ],
   };
 }
@@ -168,7 +196,7 @@ for (let index = 0; index < days; index += 1) {
     feedCaption: caption(product, brand, theme),
     storyFrames: storyFrames(product, theme),
     reel: reelIdea(product),
-    ownerCheck: "Confirm supplier price, availability, and approved image before scheduling.",
+    ownerCheck: "Owner review only.",
   });
 }
 
