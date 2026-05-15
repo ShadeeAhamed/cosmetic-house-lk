@@ -8,6 +8,7 @@ tools/
 *.log
 *.tmp
 *.clean-download-tmp
+logs/
 
 cloudflared-*.log
 cloudflared-*.out.log
