@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://cosmetichouse.lk/sitemap.xml
+Sitemap: https://cosmetichouse.com.lk/sitemap.xml
