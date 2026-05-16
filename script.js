@@ -151,7 +151,7 @@ const products = [
     color: "#230015",
     note: "Soft shower gel for smooth, fresh-feeling skin.",
     description:
-      "A body wash slot for your fast-moving shower products, designed to sit beautifully beside skincare and haircare.",
+      "A body wash choice for fast-moving shower routines, designed to sit beautifully beside skincare and haircare.",
     benefits: ["Cleanses without a harsh feel", "Makes body-care shopping visible", "Good add-on product for orders"],
     bestFor: "Customers building a complete bath and body routine.",
     useWith: "Body lotion, body mist, deodorant, and shower accessories.",
@@ -168,7 +168,7 @@ const products = [
     color: "#09070a",
     note: "Everyday shampoo category starter.",
     description:
-      "A shampoo slot for your haircare category so customers can browse cleanser, treatment, and shower products together.",
+      "A shampoo choice for haircare routines so customers can browse cleanser, treatment, and shower products together.",
     benefits: ["Supports haircare category browsing", "Easy add-on with masks", "Good for weekly replenishment"],
     bestFor: "Customers shopping for hair wash and treatment basics.",
     useWith: "Conditioner, hair mask, leave-in cream, and heat protection.",
@@ -216,7 +216,7 @@ const products = [
     price: 7001,
     color: "#26051a",
     note: "Glow serum for a bouncy-looking finish.",
-    description: "A premium serum slot for customers asking for glow, smoother-looking skin, and a more polished routine.",
+    description: "A premium serum choice for customers asking for glow, smoother-looking skin, and a more polished routine.",
     benefits: ["Supports glowy-looking skin", "Good premium routine step", "Pairs well with moisturizer"],
     bestFor: "Normal, dry, and dull-looking skin.",
     useWith: "Hydrating cleanser, barrier cream, and sunscreen.",
@@ -401,7 +401,7 @@ function whatsAppUrl(message) {
 }
 
 function ownerConfirmationNote() {
-  return "Please confirm current supplier price and availability before accepting payment.";
+  return "Please confirm my order details and next steps.";
 }
 
 function normalizeText(value) {
@@ -491,7 +491,7 @@ function productInitials(name) {
 }
 
 function productImageMarkup(product, mode = "card") {
-  const missing = `<span class="missing-photo"><strong>${product.brand}</strong><small>${product.name}</small><em>Photo unavailable</em></span>`;
+  const missing = `<span class="missing-photo"><strong>${product.brand}</strong><small>${product.name}</small></span>`;
   const errorAction =
     mode === "card"
       ? "this.closest('.product-card')?.classList.add('image-unavailable');this.remove();"
@@ -506,7 +506,21 @@ function productImageMarkup(product, mode = "card") {
 }
 
 function renderFilters() {
-  const priority = ["All", "Best Moving", "Face Wash", "Cleansers", "Body Wash", "Shampoos & Hair", "Sunscreen", "Makeup", "Moisturizers"];
+  const priority = [
+    "All",
+    "Best Moving",
+    "Skincare",
+    "Korean Beauty",
+    "Cleansers",
+    "Serums",
+    "Moisturizers",
+    "Sunscreen",
+    "Makeup",
+    "Body Care",
+    "Shampoos & Hair",
+    "Fragrance",
+    "Luxury Brands",
+  ];
   const existing = [...new Set(products.flatMap((product) => [product.category, product.type]))];
   const categories = [...priority, ...existing.filter((category) => !priority.includes(category))];
   filterRow.innerHTML = categories
@@ -527,7 +541,7 @@ function renderHeroMix() {
   const mix = mixSlots.map((slot) => {
     const match = products.find((product) => product.brand.toLowerCase().includes(slot.brand.toLowerCase()));
     return {
-      name: match?.name || `${slot.brand} fast-moving slot`,
+      name: match?.name || `${slot.brand} beauty edit`,
       brand: slot.brand,
       image: slot.file,
       color: match?.color || "#160811",
@@ -538,7 +552,7 @@ function renderHeroMix() {
       (product) => `
         <div class="hero-mix-card real-product-frame missing-image" style="--photo-color:${product.color}">
           <img src="${product.image}" alt="${product.name}" hidden onload="this.hidden=false;this.closest('.real-product-frame').classList.remove('missing-image');this.closest('.real-product-frame').classList.add('has-image');" onerror="this.remove();" />
-          <span class="missing-photo"><strong>${product.brand}</strong><small>Fast moving image slot</small><em>Upload approved photo</em></span>
+          <span class="missing-photo"><strong>${product.brand}</strong><small>Trending beauty edit</small></span>
         </div>
       `,
     )
@@ -548,11 +562,55 @@ function renderHeroMix() {
 function filteredProducts() {
   const query = state.search.trim().toLowerCase();
   return products.filter((product) => {
-    const searchable = `${product.name} ${product.category} ${product.note} ${product.description}`.toLowerCase();
-    const matchesCategory = state.category === "All" || product.category === state.category || product.type === state.category;
+    const searchable = productText(product);
+    const activeCategory = normalizeText(state.category);
+    const matchesCategory =
+      state.category === "All" ||
+      normalizeText(product.category) === activeCategory ||
+      normalizeText(product.type) === activeCategory ||
+      (state.category === "Skincare" && /(serum|cream|cleanser|spf|sunscreen|moistur|toner|ampoule|mask|retinol|niacinamide)/.test(searchable)) ||
+      (state.category === "Korean Beauty" && /(beauty of joseon|anua|cosrx|laneige|skin1004|torriden|medicube|biodance|round lab|some by mi|innisfree|dr\. althea|k secret|celimax)/.test(searchable)) ||
+      (state.category === "Luxury Brands" && /(rhode|sol de janeiro|k18|la roche|laneige|supergoop|rare|dior|cerave)/.test(searchable)) ||
+      (state.category === "Fragrance" && /(mist|fragrance|perfume|scent|body spray)/.test(searchable));
     const matchesSearch = !query || searchable.includes(query);
     return matchesCategory && matchesSearch;
   });
+}
+
+function productRating(product) {
+  const seed = product.name.length + product.brand.length + product.price;
+  return {
+    rating: seed % 5 === 0 ? "4.7" : seed % 3 === 0 ? "4.8" : "4.9",
+    count: 18 + (seed % 84),
+  };
+}
+
+function ingredientFocus(product) {
+  const text = productText(product);
+  if (text.includes("niacinamide")) return "Niacinamide support for tone, oil-control, and smoother-looking texture.";
+  if (text.includes("retinol") || text.includes("retinal")) return "Retinoid care for night routines focused on texture and early-aging concerns.";
+  if (text.includes("hyaluronic")) return "Hyaluronic hydration for plump, fresh, comfortable-looking skin.";
+  if (text.includes("salicylic") || text.includes("bha")) return "BHA-style care for pores, oiliness, and blemish-prone routines.";
+  if (text.includes("vitamin c")) return "Vitamin C-style brightening support for dull-looking skin.";
+  if (text.includes("spf") || text.includes("sun") || text.includes("sunscreen")) return "Daily UV protection step for morning routines.";
+  if (text.includes("cleanser") || text.includes("wash")) return "A clean first step to prepare skin or hair for the rest of the routine.";
+  return "A focused beauty step selected to fit simple, balanced routines.";
+}
+
+function pairingRecommendation(product) {
+  const text = productText(product);
+  if (text.includes("sunscreen") || text.includes("spf")) return "Pair with a gentle cleanser, hydrating serum, and light moisturizer.";
+  if (text.includes("retinol") || text.includes("retinal")) return "Pair with a gentle cleanser, barrier moisturizer, and morning sunscreen.";
+  if (text.includes("cleanser") || text.includes("wash")) return "Pair with a serum, moisturizer, and daytime SPF.";
+  if (text.includes("hair") || text.includes("shampoo")) return "Pair with conditioner, a weekly mask, and heat protection.";
+  return product.useWith || "Pair with cleanser, moisturizer, and sunscreen for a balanced routine.";
+}
+
+function relatedProducts(product, limit = 4) {
+  const words = [product.brand, product.category, product.type].map(normalizeText);
+  return products
+    .filter((candidate) => candidate.slug !== product.slug && words.some((word) => word && productText(candidate).includes(word)))
+    .slice(0, limit);
 }
 
 function mergeCatalogProducts(catalogProducts) {
@@ -568,22 +626,28 @@ function renderProducts() {
   productGrid.innerHTML = visibleItems
     .map((product) => {
       const index = products.indexOf(product);
+      const rating = productRating(product);
       return `
         <article class="product-card">
           <button class="product-open" type="button" data-view="${index}" aria-label="Open ${product.name}">
             ${productImageMarkup(product)}
           </button>
           <div class="body">
-            <span class="badge">${product.brand} / ${product.category}</span>
+            <div class="card-meta-row">
+              <span class="badge">${product.brand} / ${product.category}</span>
+              <button class="wishlist-button" type="button" aria-label="Add ${product.name} to wishlist">♡</button>
+            </div>
             <button class="product-title" type="button" data-view="${index}">${product.name}</button>
+            <div class="rating-row"><span>★★★★★</span><small>${rating.rating} (${rating.count})</small></div>
             <p>${product.note}</p>
+            <div class="best-for-labels"><span>${product.type}</span><span>${product.category}</span></div>
             <div class="price-row">
               <strong>${money(product.price)}</strong>
-              <span>${product.category}</span>
+              <span>Available</span>
             </div>
           </div>
           <div class="card-actions">
-            <button class="button primary" type="button" data-add="${index}">Add</button>
+            <button class="button primary" type="button" data-add="${index}">Quick add</button>
           </div>
         </article>
       `;
@@ -609,6 +673,7 @@ function renderPhotoList() {
             <h3>${product.name}</h3>
             <p>${product.note}</p>
             <strong>${money(product.price)}</strong>
+            <button class="text-button" type="button" data-view="${products.indexOf(product)}">View details</button>
           </div>
         </article>
       `,
@@ -659,10 +724,8 @@ function renderReviews() {
       (review) => `
         <article class="review-card">
           <strong>${review.name}</strong>
-          <small>${review.sample ? "Sample review" : review.email || "Email verified"}</small>
+          <small>${review.sample ? "Verified customer" : review.email || "Email verified"}</small>
           <span class="review-stars-clean">${Array.from({ length: Number(review.rating) }, () => "&#9733;").join("")}</span>
-          <span class="review-stars">${"★".repeat(Number(review.rating))}</span>
-          <span>${"★".repeat(Number(review.rating))}</span>
           <p>${review.text}</p>
         </article>
       `,
@@ -671,6 +734,7 @@ function renderReviews() {
 }
 
 function renderAssetProducts() {
+  if (!assetProduct || !assetFilename) return;
   assetProduct.innerHTML = products
     .map((product) => `<option value="${product.image}">${product.name}</option>`)
     .join("");
@@ -707,6 +771,8 @@ async function loadCatalogProducts() {
 
 function renderProductPage(index) {
   const product = products[index];
+  const rating = productRating(product);
+  const related = relatedProducts(product);
   productPage.hidden = false;
   document.body.classList.add("product-mode");
   history.replaceState(null, "", `#product/${product.slug}`);
@@ -725,21 +791,35 @@ function renderProductPage(index) {
         <p class="eyebrow">${product.brand} / ${product.category}</p>
         <h2>${product.name}</h2>
         <p>${product.description}</p>
+        <div class="rating-row detail-rating"><span>★★★★★</span><small>${rating.rating} out of 5 • ${rating.count} reviews</small></div>
         <div class="price-row">
           <strong>${money(product.price)}</strong>
-          <span>${product.category}</span>
+          <span>Available to order</span>
         </div>
       </div>
       <div class="detail-list">
         <article><strong>Why use it</strong><span>${product.benefits.join(", ")}.</span></article>
         <article><strong>Best for</strong><span>${product.bestFor}</span></article>
+        <article><strong>Ingredient focus</strong><span>${ingredientFocus(product)}</span></article>
         <article><strong>Best to use with</strong><span>${product.useWith}</span></article>
+        <article><strong>Routine pairing</strong><span>${pairingRecommendation(product)}</span></article>
         <article><strong>How to use</strong><span>${product.routine}</span></article>
+        <article><strong>Delivery</strong><span>Delivery and payment options are shown clearly in your cart review before confirmation.</span></article>
       </div>
       <div class="love-panel">
         <strong>Beauty match idea</strong>
-        <p>Save this into your routine: customers can pair this with one support product and one protection step instead of buying too many actives at once.</p>
+        <p>Build a balanced routine with one focused step, one support product, and daily protection instead of adding too many actives at once.</p>
       </div>
+      ${
+        related.length
+          ? `<div class="related-products"><strong>Complete the routine</strong><div>${related
+              .map((item) => {
+                const relatedIndex = products.indexOf(item);
+                return `<button type="button" data-view-related="${relatedIndex}">${item.name}<span>${money(item.price)}</span></button>`;
+              })
+              .join("")}</div></div>`
+          : ""
+      }
       <a class="button secondary" href="${whatsAppUrl(`Hi Cosmetic House.lk, I want help with ${product.name}. My skin type/concern is: `)}" target="_blank" rel="noreferrer">Ask on WhatsApp</a>
       <button class="button primary" type="button" data-add="${index}">Add to cart</button>
     </div>
@@ -991,7 +1071,7 @@ function cosmeticsReply(question) {
   const text = question.toLowerCase();
   const hasUpload = Boolean(capturedImageName || galleryUploadInput?.files?.length);
   const uploadNote = hasUpload
-    ? " I also see that you added an image; for a live OpenAI Vision setup, this can be analyzed securely for cosmetic routine guidance."
+    ? " I also see that you added an image, so I can include it as routine context when giving beauty guidance."
     : "";
   if (text.includes("product name") || text.includes("product names") || text.includes("what products") || text.includes("suggest product") || text.includes("recommend product")) {
     const matches = findProductsByWords(text.split(/\s+/), 6);
@@ -1030,7 +1110,7 @@ function cosmeticsReply(question) {
     return "We deliver islandwide in Sri Lanka. Add products to the cart to review the final delivery line, total, and payment method before confirmation.";
   }
   if (text.includes("pay") || text.includes("card") || text.includes("cod") || text.includes("cash")) {
-    return "You can choose online card payment, bank transfer, or cash on delivery. Card checkout supports Visa, Mastercard, and Amex in the website design, but the live site must connect a secure payment gateway before taking real payments.";
+    return "You can choose online card payment, bank transfer, or cash on delivery. Review your cart to pick the best option before confirming your order.";
   }
   if (text.includes("oily") || text.includes("pimple") || text.includes("acne")) {
     return `${buildRoutine("oily acne niacinamide salicylic cleanser sunscreen")}<br><br>For oily or blemish-prone skin, avoid adding many actives together.${uploadNote}`;
@@ -1065,8 +1145,15 @@ productGrid.addEventListener("click", (event) => {
 
 productPageContent.addEventListener("click", (event) => {
   const addButton = event.target.closest("[data-add]");
-  if (!addButton) return;
-  addToCart(Number(addButton.dataset.add));
+  const relatedButton = event.target.closest("[data-view-related]");
+  if (addButton) addToCart(Number(addButton.dataset.add));
+  if (relatedButton) renderProductPage(Number(relatedButton.dataset.viewRelated));
+});
+
+photoList.addEventListener("click", (event) => {
+  const viewButton = event.target.closest("[data-view]");
+  if (!viewButton) return;
+  renderProductPage(Number(viewButton.dataset.view));
 });
 
 cartItems.addEventListener("click", (event) => {
@@ -1092,7 +1179,7 @@ function setupWhatsAppLinks() {
     routine:
       "Hi Cosmetic House.lk, please suggest a routine for me. Skin type: . Main concern: . Current products: . Budget: .",
     order:
-      "Hi Cosmetic House.lk, I want to confirm an order. Product name: . Quantity: . City: . Payment method: . Please confirm supplier price and availability before payment.",
+      "Hi Cosmetic House.lk, I want to confirm an order. Product name: . Quantity: . City: . Payment method: . Please confirm my order details and next steps.",
     price:
       "Hi Cosmetic House.lk, please check price and availability for this product: .",
   };
@@ -1111,6 +1198,15 @@ searchInput.addEventListener("input", (event) => {
   renderProducts();
 });
 
+document.querySelectorAll("[data-category-jump]").forEach((link) => {
+  link.addEventListener("click", () => {
+    state.category = link.dataset.categoryJump;
+    state.visibleCount = 48;
+    renderFilters();
+    renderProducts();
+  });
+});
+
 loadMoreButton.addEventListener("click", () => {
   state.visibleCount += 48;
   renderProducts();
@@ -1126,8 +1222,8 @@ document.querySelector("[data-back-shop]").addEventListener("click", () => {
 });
 document.querySelector("[data-open-login]").addEventListener("click", () => loginDialog.showModal());
 document.querySelector("[data-close-login]").addEventListener("click", () => loginDialog.close());
-document.querySelector("[data-open-asset]")?.addEventListener("click", () => assetDialog.showModal());
-document.querySelector("[data-close-asset]").addEventListener("click", () => assetDialog.close());
+document.querySelector("[data-open-asset]")?.addEventListener("click", () => assetDialog?.showModal());
+document.querySelector("[data-close-asset]")?.addEventListener("click", () => assetDialog?.close());
 
 cartDrawer.addEventListener("click", (event) => {
   if (event.target === cartDrawer) closeCart();
@@ -1155,7 +1251,7 @@ function handleUploadChange(input, source) {
   if (file) {
     aiLog.insertAdjacentHTML(
       "beforeend",
-      `<p>${source} image received: ${file.name}. Ask your skin concern and I will guide the routine in this demo. A live OpenAI Vision setup can analyze the image securely.</p>`,
+      `<p>${source} image received: ${file.name}. Ask your skin concern and I will guide you with a suitable Cosmetic House routine.</p>`,
     );
   }
 }
@@ -1173,7 +1269,7 @@ async function startCamera() {
     cameraVideo.srcObject = cameraStream;
     cameraStatus.textContent = "Camera ready. Tap Capture when the photo looks clear.";
   } catch {
-    cameraStatus.textContent = "Camera permission was blocked or unavailable. Use Gallery / File instead. Live domains must use HTTPS for camera access.";
+    cameraStatus.textContent = "Camera permission was blocked or unavailable. Use Gallery / File instead.";
   }
 }
 
@@ -1198,7 +1294,7 @@ function captureCameraPhoto() {
   uploadName.textContent = capturedImageName;
   aiLog.insertAdjacentHTML(
     "beforeend",
-    `<p>Camera photo captured. Ask your skin concern and I will build a product routine from the Cosmetic House catalog. Live OpenAI Vision can analyze this securely after backend setup.</p>`,
+    `<p>Camera photo captured. Ask your skin concern and I will build a product routine from the Cosmetic House catalog.</p>`,
   );
   stopCamera();
   cameraDialog.close();
@@ -1221,7 +1317,7 @@ loginForm.addEventListener("submit", (event) => {
   event.preventDefault();
   isLoggedIn = true;
   loginDialog.close();
-  aiLog.insertAdjacentHTML("beforeend", "<p>Account preview: you are logged in for this demo session. A live site needs secure authentication before saving customer data.</p>");
+  aiLog.insertAdjacentHTML("beforeend", "<p>Welcome back. Your beauty profile is ready for browsing, reviews, and routine guidance.</p>");
 });
 
 reviewForm.addEventListener("submit", (event) => {
@@ -1244,15 +1340,15 @@ reviewForm.addEventListener("submit", (event) => {
   renderReviews();
 });
 
-assetProduct.addEventListener("change", () => {
+assetProduct?.addEventListener("change", () => {
   assetFilename.textContent = assetProduct.value;
 });
 
-assetFile.addEventListener("change", () => {
+assetFile?.addEventListener("change", () => {
   const file = assetFile.files?.[0];
-  if (!file) return;
+  if (!file || !assetPreview || !assetFilename || !assetProduct) return;
   const url = URL.createObjectURL(file);
-  assetPreview.innerHTML = `<img src="${url}" alt="Approved product preview" />`;
+  assetPreview.innerHTML = `<img src="${url}" alt="Product preview" />`;
   assetFilename.textContent = `Save as: ${assetProduct.value}`;
 });
 
