@@ -1,5 +1,6 @@
 const deliveryCharge = 450;
 const whatsappNumber = "94762245570";
+const paymentApiBase = (window.COSMETIC_HOUSE_PAYMENT_API || "").replace(/\/$/, "");
 
 const products = [
   {
@@ -889,6 +890,7 @@ function renderCart() {
   if (orderPaymentField) orderPaymentField.value = payment;
   if (orderWhatsAppField) orderWhatsAppField.value = message;
   if (checkoutButton) checkoutButton.disabled = !state.cart.length;
+  if (checkoutButton) checkoutButton.textContent = payment === "Online card payment" ? "Pay securely" : "Place order";
   cardForm.hidden = selectedPaymentMethod() !== "Online card payment";
 }
 
@@ -1090,6 +1092,57 @@ function removeFromCart(index) {
   renderCart();
 }
 
+function submitPayherePayment(fields, action) {
+  const form = document.createElement("form");
+  form.method = "POST";
+  form.action = action;
+  form.hidden = true;
+  Object.entries(fields).forEach(([name, value]) => {
+    const input = document.createElement("input");
+    input.type = "hidden";
+    input.name = name;
+    input.value = value;
+    form.appendChild(input);
+  });
+  document.body.appendChild(form);
+  form.submit();
+}
+
+async function startPayhereCheckout(form) {
+  if (!paymentApiBase) {
+    throw new Error("Online card payment is being activated. Please choose cash on delivery or bank transfer for now.");
+  }
+
+  const formData = new FormData(form);
+  const subtotal = state.cart.reduce((sum, product) => sum + product.price, 0);
+  const total = subtotal + deliveryCharge;
+  const response = await fetch(`${paymentApiBase}/api/payhere/checkout`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      orderId: state.currentOrderId,
+      amount: total,
+      items: state.cart.map((product) => ({
+        name: product.name,
+        price: product.price,
+        quantity: 1,
+      })),
+      customer: {
+        name: formData.get("customer_name"),
+        email: formData.get("customer_email"),
+        phone: formData.get("customer_phone"),
+        city: formData.get("delivery_city"),
+        address: formData.get("delivery_address"),
+      },
+    }),
+  });
+  const payload = await response.json();
+  if (!response.ok || !payload.fields || !payload.action) {
+    throw new Error(payload.message || "Payment gateway could not start.");
+  }
+  submitPayherePayment(payload.fields, payload.action);
+}
+
 function setTheme(theme) {
   document.documentElement.dataset.theme = theme;
   localStorage.setItem("cosmetic-house-theme", theme);
@@ -1221,13 +1274,26 @@ document.querySelectorAll('input[name="payment"]').forEach((input) => {
   input.addEventListener("change", renderCart);
 });
 
-orderForm?.addEventListener("submit", (event) => {
+orderForm?.addEventListener("submit", async (event) => {
   if (!state.cart.length) {
     event.preventDefault();
     alert("Please add at least one product before placing an order.");
     return;
   }
   renderCart();
+  if (selectedPaymentMethod() === "Online card payment") {
+    event.preventDefault();
+    checkoutButton.disabled = true;
+    checkoutButton.textContent = "Opening secure payment...";
+    try {
+      await startPayhereCheckout(orderForm);
+    } catch (error) {
+      alert(error.message);
+      checkoutButton.disabled = false;
+      checkoutButton.textContent = "Place order";
+    }
+    return;
+  }
   const order = {
     id: state.currentOrderId,
     createdAt: new Date().toISOString(),

@@ -1,4 +1,5 @@
 import http from "node:http";
+import crypto from "node:crypto";
 import { readFile } from "node:fs/promises";
 import { existsSync } from "node:fs";
 
@@ -36,6 +37,11 @@ const ownerNumber = process.env.OWNER_WHATSAPP_NUMBER || "94762245570";
 const graphApiVersion = process.env.GRAPH_API_VERSION || "v20.0";
 const businessName = process.env.BUSINESS_NAME || "Cosmetic House";
 const botName = process.env.BOT_NAME || "Sophia";
+const payhereMerchantId = process.env.PAYHERE_MERCHANT_ID || "";
+const payhereMerchantSecret = process.env.PAYHERE_MERCHANT_SECRET || "";
+const payhereMode = normalize(process.env.PAYHERE_MODE || "sandbox") === "live" ? "live" : "sandbox";
+const siteOrigin = process.env.SITE_ORIGIN || "https://cosmetichouse.com.lk";
+const paymentPublicUrl = process.env.PAYMENT_PUBLIC_URL || "";
 
 let catalog = [];
 let automationRules = {};
@@ -417,11 +423,117 @@ function send(response, status, body, contentType = "text/plain") {
   response.end(body);
 }
 
+function parseFormBody(body) {
+  return Object.fromEntries(new URLSearchParams(body));
+}
+
+function verifyPayhereNotification(fields) {
+  if (!payhereMerchantSecret) return false;
+  const expected = md5(
+    `${fields.merchant_id}${fields.order_id}${fields.payhere_amount}${fields.payhere_currency}${fields.status_code}${md5(payhereMerchantSecret)}`,
+  );
+  return expected === String(fields.md5sig || "").toUpperCase();
+}
+
+function sendJson(response, status, payload, origin = "") {
+  response.writeHead(status, {
+    "Content-Type": "application/json",
+    "Access-Control-Allow-Origin": origin || siteOrigin,
+    "Access-Control-Allow-Methods": "POST, OPTIONS",
+    "Access-Control-Allow-Headers": "Content-Type",
+  });
+  response.end(JSON.stringify(payload));
+}
+
+function md5(value) {
+  return crypto.createHash("md5").update(String(value)).digest("hex").toUpperCase();
+}
+
+function moneyAmount(value) {
+  return Number(value || 0).toFixed(2);
+}
+
+function payhereHash({ merchantId, orderId, amount, currency }) {
+  return md5(`${merchantId}${orderId}${amount}${currency}${md5(payhereMerchantSecret)}`);
+}
+
+function parseOrderItems(items) {
+  if (!Array.isArray(items)) return [];
+  return items
+    .map((item) => ({
+      name: String(item?.name || "").slice(0, 160),
+      price: Number(item?.price || 0),
+      quantity: Number(item?.quantity || 1),
+    }))
+    .filter((item) => item.name && item.price > 0);
+}
+
+function payhereCheckoutUrl() {
+  return payhereMode === "live" ? "https://www.payhere.lk/pay/checkout" : "https://sandbox.payhere.lk/pay/checkout";
+}
+
+function publicPaymentBase(request) {
+  if (paymentPublicUrl) return paymentPublicUrl.replace(/\/$/, "");
+  return `${request.headers["x-forwarded-proto"] || "https"}://${request.headers.host}`;
+}
+
+function buildPayhereFields(payload, request) {
+  if (!payhereMerchantId || !payhereMerchantSecret) {
+    throw new Error("PayHere merchant credentials are not configured on the private server.");
+  }
+
+  const items = parseOrderItems(payload.items);
+  if (!items.length) throw new Error("Cart is empty.");
+
+  const orderId = String(payload.orderId || "").trim();
+  if (!orderId) throw new Error("Order ID is required.");
+
+  const amount = moneyAmount(payload.amount);
+  if (Number(amount) <= 0) throw new Error("Order amount is invalid.");
+
+  const currency = "LKR";
+  const customer = payload.customer || {};
+  const fullName = String(customer.name || "Cosmetic House Customer").trim();
+  const [firstName, ...lastNameParts] = fullName.split(/\s+/);
+  const baseUrl = publicPaymentBase(request);
+
+  return {
+    sandbox: payhereMode !== "live",
+    action: payhereCheckoutUrl(),
+    fields: {
+      merchant_id: payhereMerchantId,
+      return_url: `${siteOrigin}/#payment-success`,
+      cancel_url: `${siteOrigin}/#payment-cancelled`,
+      notify_url: `${baseUrl}/payhere/notify`,
+      order_id: orderId,
+      items: items.map((item) => item.name).join(", ").slice(0, 255),
+      currency,
+      amount,
+      first_name: firstName || "Customer",
+      last_name: lastNameParts.join(" ") || "-",
+      email: String(customer.email || "cosmetichouse.lk@gmail.com").trim(),
+      phone: String(customer.phone || "").trim(),
+      address: String(customer.address || "").trim(),
+      city: String(customer.city || "").trim(),
+      country: "Sri Lanka",
+      custom_1: JSON.stringify(items).slice(0, 255),
+      custom_2: businessName,
+      hash: payhereHash({ merchantId: payhereMerchantId, orderId, amount, currency }),
+    },
+  };
+}
+
 await loadData();
 
 http
   .createServer(async (request, response) => {
     const url = new URL(request.url, `http://${request.headers.host}`);
+    const origin = request.headers.origin || siteOrigin;
+
+    if (request.method === "OPTIONS" && url.pathname.startsWith("/api/payhere")) {
+      sendJson(response, 200, { ok: true }, origin);
+      return;
+    }
 
     if (request.method === "GET" && url.pathname === "/health") {
       send(
@@ -433,12 +545,39 @@ http
             catalogProducts: catalog.length,
             apiConfigured: Boolean(accessToken && phoneNumberId),
             ownerNumberConfigured: Boolean(ownerNumber),
+            payhereConfigured: Boolean(payhereMerchantId && payhereMerchantSecret),
+            payhereMode,
           },
           null,
           2,
         ),
         "application/json",
       );
+      return;
+    }
+
+    if (request.method === "POST" && url.pathname === "/api/payhere/checkout") {
+      try {
+        const payload = JSON.parse((await readBody(request)) || "{}");
+        sendJson(response, 200, buildPayhereFields(payload, request), origin);
+      } catch (error) {
+        sendJson(response, 400, { ok: false, message: error.message }, origin);
+      }
+      return;
+    }
+
+    if (request.method === "POST" && url.pathname === "/payhere/notify") {
+      const fields = parseFormBody(await readBody(request));
+      const verified = verifyPayhereNotification(fields);
+      const paid = verified && String(fields.status_code) === "2";
+      console.log("PayHere notification", { verified, paid, orderId: fields.order_id, amount: fields.payhere_amount });
+      if (paid && ownerNumber) {
+        await sendWhatsAppMessage(
+          ownerNumber,
+          [`Paid ${businessName} order`, `Order ID: ${fields.order_id}`, `Amount: ${fields.payhere_amount} ${fields.payhere_currency}`].join("\n"),
+        );
+      }
+      send(response, 200, "OK");
       return;
     }
 

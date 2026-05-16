@@ -25,6 +25,16 @@ services:
         value: Cosmetic House
       - key: BOT_NAME
         value: Sophia
+      - key: SITE_ORIGIN
+        value: https://cosmetichouse.com.lk
+      - key: PAYMENT_PUBLIC_URL
+        sync: false
+      - key: PAYHERE_MODE
+        value: sandbox
+      - key: PAYHERE_MERCHANT_ID
+        sync: false
+      - key: PAYHERE_MERCHANT_SECRET
+        sync: false
 
   - type: web
     name: cosmetic-house-social-bot
