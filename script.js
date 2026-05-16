@@ -358,7 +358,17 @@ const cartRecommendations = document.querySelector("[data-cart-recommendations]"
 const cartCount = document.querySelector("[data-cart-count]");
 const subtotalEl = document.querySelector("[data-subtotal]");
 const totalEl = document.querySelector("[data-total]");
-const checkoutLink = document.querySelector("[data-checkout]");
+const checkoutButton = document.querySelector("[data-checkout]");
+const whatsAppCheckoutLink = document.querySelector("[data-whatsapp-checkout]");
+const orderForm = document.querySelector("[data-order-form]");
+const orderIdPreview = document.querySelector("[data-order-id]");
+const orderIdField = document.querySelector("[data-order-id-field]");
+const orderSubjectField = document.querySelector("[data-order-subject]");
+const orderItemsField = document.querySelector("[data-order-items-field]");
+const orderSubtotalField = document.querySelector("[data-order-subtotal-field]");
+const orderTotalField = document.querySelector("[data-order-total-field]");
+const orderPaymentField = document.querySelector("[data-order-payment-field]");
+const orderWhatsAppField = document.querySelector("[data-order-whatsapp-field]");
 const whatsAppQuickLinks = document.querySelectorAll("[data-whatsapp-quick]");
 const whatsAppTemplateLinks = document.querySelectorAll("[data-whatsapp-template]");
 const productPage = document.querySelector("[data-product-page]");
@@ -402,6 +412,13 @@ function whatsAppUrl(message) {
 
 function ownerConfirmationNote() {
   return "Please confirm my order details and next steps.";
+}
+
+function createOrderId() {
+  const now = new Date();
+  const datePart = now.toISOString().slice(0, 10).replace(/-/g, "");
+  const randomPart = Math.random().toString(36).slice(2, 6).toUpperCase();
+  return `CHLK-${datePart}-${randomPart}`;
 }
 
 function normalizeText(value) {
@@ -834,6 +851,8 @@ function selectedPaymentMethod() {
 function renderCart() {
   const subtotal = state.cart.reduce((sum, product) => sum + product.price, 0);
   const total = subtotal ? subtotal + deliveryCharge : 0;
+  const orderId = state.currentOrderId || createOrderId();
+  state.currentOrderId = orderId;
 
   cartCount.textContent = state.cart.length;
   subtotalEl.textContent = money(subtotal);
@@ -858,8 +877,18 @@ function renderCart() {
   renderCartRecommendations();
 
   const payment = selectedPaymentMethod();
-  const message = `Hi Cosmetic House.lk, I want to order:\n${state.cart.map((product) => `- ${product.name}: ${money(product.price)}`).join("\n") || "- Product name"}\n\nDelivery: ${money(deliveryCharge)}\nTotal: ${money(total)}\nPayment method: ${payment}\n${ownerConfirmationNote()}`;
-  checkoutLink.href = whatsAppUrl(message);
+  const orderItems = state.cart.map((product) => `- ${product.name}: ${money(product.price)}`).join("\n") || "- Product name";
+  const message = `Hi Cosmetic House.lk, I want to order.\nOrder ID: ${orderId}\n${orderItems}\n\nDelivery: ${money(deliveryCharge)}\nTotal: ${money(total)}\nPayment method: ${payment}\n${ownerConfirmationNote()}`;
+  if (whatsAppCheckoutLink) whatsAppCheckoutLink.href = whatsAppUrl(message);
+  if (orderIdPreview) orderIdPreview.textContent = orderId;
+  if (orderIdField) orderIdField.value = orderId;
+  if (orderSubjectField) orderSubjectField.value = `New Cosmetic House order ${orderId}`;
+  if (orderItemsField) orderItemsField.value = orderItems;
+  if (orderSubtotalField) orderSubtotalField.value = money(subtotal);
+  if (orderTotalField) orderTotalField.value = money(total);
+  if (orderPaymentField) orderPaymentField.value = payment;
+  if (orderWhatsAppField) orderWhatsAppField.value = message;
+  if (checkoutButton) checkoutButton.disabled = !state.cart.length;
   cardForm.hidden = selectedPaymentMethod() !== "Online card payment";
 }
 
@@ -1190,6 +1219,33 @@ function setupWhatsAppLinks() {
 
 document.querySelectorAll('input[name="payment"]').forEach((input) => {
   input.addEventListener("change", renderCart);
+});
+
+orderForm?.addEventListener("submit", (event) => {
+  if (!state.cart.length) {
+    event.preventDefault();
+    alert("Please add at least one product before placing an order.");
+    return;
+  }
+  renderCart();
+  const order = {
+    id: state.currentOrderId,
+    createdAt: new Date().toISOString(),
+    payment: selectedPaymentMethod(),
+    items: state.cart.map((product) => ({
+      name: product.name,
+      price: product.price,
+      slug: product.slug,
+    })),
+    total: totalEl.textContent,
+  };
+  try {
+    const savedOrders = JSON.parse(localStorage.getItem("cosmetic-house-orders")) || [];
+    savedOrders.unshift(order);
+    localStorage.setItem("cosmetic-house-orders", JSON.stringify(savedOrders.slice(0, 20)));
+  } catch {
+    // Email notification still submits even if local browser storage is unavailable.
+  }
 });
 
 searchInput.addEventListener("input", (event) => {

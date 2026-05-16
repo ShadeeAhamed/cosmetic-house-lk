@@ -378,22 +378,12 @@
         </div>
 
         <div class="card-payment-form" data-card-form>
-          <strong>Secure card checkout</strong>
-          <label>
-            <span>Card number</span>
-            <input inputmode="numeric" autocomplete="cc-number" placeholder="Visa / Mastercard / Amex" maxlength="19" />
-          </label>
-          <div class="card-row">
-            <label>
-              <span>Expiry</span>
-              <input inputmode="numeric" autocomplete="cc-exp" placeholder="MM/YY" maxlength="5" />
-            </label>
-            <label>
-              <span>CVV</span>
-              <input inputmode="numeric" autocomplete="cc-csc" placeholder="123" maxlength="4" />
-            </label>
-          </div>
-          <small>Secure gateway processing will be used for live card payments.</small>
+          <strong>Online card payment</strong>
+          <p>
+            Card payments are handled through a secure payment gateway. We will never ask customers to
+            type card numbers directly into this website.
+          </p>
+          <small>PayHere gateway connection is ready to activate after merchant approval.</small>
         </div>
 
         <div class="cart-summary">
@@ -401,8 +391,44 @@
           <div><span>Delivery</span><strong>LKR 450</strong></div>
           <div class="total"><span>Total</span><strong data-total>LKR 450</strong></div>
         </div>
-        <a class="button primary full" data-checkout href="#" target="_blank" rel="noreferrer">Send order request</a>
-        <p class="cart-note">We will confirm your order details before dispatch.</p>
+        <form
+          class="order-form"
+          data-order-form
+          action="https://formsubmit.co/cosmetichouse@gmail.com"
+          method="POST"
+        >
+          <input type="hidden" name="_subject" data-order-subject />
+          <input type="hidden" name="_template" value="table" />
+          <input type="hidden" name="_captcha" value="false" />
+          <input type="hidden" name="order_id" data-order-id-field />
+          <input type="hidden" name="items" data-order-items-field />
+          <input type="hidden" name="subtotal" data-order-subtotal-field />
+          <input type="hidden" name="delivery" value="LKR 450" />
+          <input type="hidden" name="total" data-order-total-field />
+          <input type="hidden" name="payment_method" data-order-payment-field />
+          <input type="hidden" name="whatsapp_message" data-order-whatsapp-field />
+          <strong>Order details</strong>
+          <span class="order-id-preview">Order ID: <b data-order-id>CHLK</b></span>
+          <label>
+            <span>Your name</span>
+            <input name="customer_name" autocomplete="name" required />
+          </label>
+          <label>
+            <span>Phone / WhatsApp</span>
+            <input name="customer_phone" autocomplete="tel" required />
+          </label>
+          <label>
+            <span>Delivery city</span>
+            <input name="delivery_city" autocomplete="address-level2" required />
+          </label>
+          <label>
+            <span>Delivery address</span>
+            <textarea name="delivery_address" rows="3" required></textarea>
+          </label>
+          <button class="button primary full" data-checkout type="submit">Place order</button>
+        </form>
+        <a class="button secondary full" data-whatsapp-checkout href="#" target="_blank" rel="noreferrer">Send on WhatsApp instead</a>
+        <p class="cart-note">You will receive an order ID. We will confirm details before dispatch.</p>
       </div>
     </aside>
 
