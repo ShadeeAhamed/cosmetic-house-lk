@@ -1,6 +1,7 @@
 import { existsSync } from "node:fs";
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
+import { assertSocialImageQuality, cleanPublicCaption, publicImageUrl } from "./social-posting-utils.mjs";
 
 const graphVersion = process.env.GRAPH_API_VERSION || "v25.0";
 const historyFile = "social-automation-data/publish-history.json";
@@ -42,36 +43,6 @@ function minutesOf(time) {
   return hour * 60 + minute;
 }
 
-function cleanCaption(caption) {
-  return String(caption || "")
-    .split(/\r?\n/)
-    .filter((line) => !/sophia|supplier|availability|internal/i.test(line))
-    .join("\n")
-    .replace(/\n{3,}/g, "\n\n")
-    .trim();
-}
-
-function absolutize(url, base) {
-  if (!url) return null;
-  const clean = url.replaceAll("&amp;", "&").trim();
-  if (clean.startsWith("//")) return `https:${clean}`;
-  return new URL(clean, base).toString();
-}
-
-function pickOgImage(html, pageUrl) {
-  const patterns = [
-    /<meta\s+property=["']og:image:secure_url["']\s+content=["']([^"']+)["']/i,
-    /<meta\s+content=["']([^"']+)["']\s+property=["']og:image:secure_url["']/i,
-    /<meta\s+property=["']og:image["']\s+content=["']([^"']+)["']/i,
-    /<meta\s+content=["']([^"']+)["']\s+property=["']og:image["']/i,
-  ];
-  for (const pattern of patterns) {
-    const match = html.match(pattern);
-    if (match?.[1]) return absolutize(match[1], pageUrl);
-  }
-  return null;
-}
-
 async function readJson(file, fallback) {
   try {
     return JSON.parse(await readFile(file, "utf8"));
@@ -96,6 +67,7 @@ async function graphPost(endpoint, body) {
 }
 
 async function publishFacebookPhoto({ pageId, accessToken, imagePath, caption }) {
+  await assertSocialImageQuality(imagePath);
   const file = await readFile(imagePath);
   const form = new FormData();
   form.set("caption", caption);
@@ -123,7 +95,6 @@ await loadEnv(".env");
 
 const now = sriLankaNowParts();
 const calendar = await readJson("business-suite-calendar/meta-business-suite-30-day-calendar.json", []);
-const catalog = await readJson("catalog-data.json", []);
 const history = await readJson(historyFile, {});
 const pageId = process.env.FACEBOOK_PAGE_ID;
 const pageAccessToken = process.env.META_PAGE_ACCESS_TOKEN;
@@ -131,7 +102,7 @@ const instagramAccessToken = process.env.INSTAGRAM_ACCESS_TOKEN || pageAccessTok
 const igBusinessId = process.env.INSTAGRAM_BUSINESS_ACCOUNT_ID;
 
 const due = calendar
-  .filter((entry) => entry.date >= now.date && entry.date <= "2026-06-16")
+  .filter((entry) => entry.date >= now.date)
   .filter((entry) => entry.date < now.date || (entry.date === now.date && minutesOf(entry.time) <= now.minutes))
   .filter((entry) => entry.status !== "posted_manually")
   .find((entry) => !(history[entry.date]?.facebook?.posted && history[entry.date]?.instagram?.posted));
@@ -141,8 +112,7 @@ if (!due) {
   process.exit(0);
 }
 
-const product = catalog.find((entry) => entry.image === due.imagePath || entry.name === due.productName);
-const caption = cleanCaption(due.feedCaption);
+const caption = cleanPublicCaption(due.feedCaption);
 const record = history[due.date] || { date: due.date, productName: due.productName, imagePath: due.imagePath, facebook: {}, instagram: {} };
 
 if (!record.facebook?.posted) {
@@ -160,10 +130,8 @@ if (!record.facebook?.posted) {
 if (!record.instagram?.posted) {
   try {
     if (!igBusinessId) throw new Error("INSTAGRAM_BUSINESS_ACCOUNT_ID is missing.");
-    if (!product?.sourceUrl) throw new Error("No public image URL source is available for Instagram publishing.");
-    const html = await (await fetch(product.sourceUrl)).text();
-    const imageUrl = pickOgImage(html, product.sourceUrl);
-    if (!imageUrl) throw new Error("No public product image URL found for Instagram.");
+    await assertSocialImageQuality(due.imagePath);
+    const imageUrl = publicImageUrl(due.imagePath);
     record.instagram = {
       attemptedAt: new Date().toISOString(),
       imageUrl,

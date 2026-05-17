@@ -1,5 +1,7 @@
 import { mkdir, readFile, writeFile } from "node:fs/promises";
+import { existsSync, readFileSync } from "node:fs";
 import { resolve } from "node:path";
+import { readImageInfo } from "./social-posting-utils.mjs";
 
 const outDir = "business-suite-calendar";
 const days = Number(process.argv[2] || 30);
@@ -8,6 +10,17 @@ const scheduleTimes = ["20:30", "12:30", "21:15", "19:45", "13:15", "20:00", "18
 
 function normalize(value) {
   return String(value || "").toLowerCase();
+}
+
+function productNameForCaption(name) {
+  return String(name || "").replace(/\s*\|\s*/g, " | ").replace(/\s{2,}/g, " ").trim();
+}
+
+function hasPublishQualityImage(product) {
+  if (!product?.image || !existsSync(product.image)) return false;
+  const info = readImageInfo(readFileSync(product.image));
+  if (!info) return false;
+  return Math.min(info.width, info.height) >= 600 && Math.max(info.width, info.height) >= 600 && info.bytes >= 50000;
 }
 
 function cleanBrand(product) {
@@ -114,6 +127,7 @@ function categoryLabel(category) {
 function caption(product, brand, theme) {
   const brandTag = brand !== "Beauty Edit" ? `#${brand.replace(/[^A-Za-z0-9]/g, "")}` : "";
   const productKind = categoryLabel(product.category);
+  const productName = productNameForCaption(product.name);
   const hooks = {
     "SPF reminder": "Your glow routine is not complete without SPF.",
     "Clean routine starter": "Fresh skin starts with a cleanser that fits your routine.",
@@ -128,7 +142,7 @@ function caption(product, brand, theme) {
   return [
     opener,
     "",
-    `${product.name}`,
+    productName,
     "",
     `For anyone building a simple ${productKind} routine with products that feel easy to use and easy to love.`,
     "",
@@ -144,6 +158,9 @@ function caption(product, brand, theme) {
       "#GlowRoutine",
       "#OnlineShoppingSriLanka",
       "#ColomboBeauty",
+      "#SriLankaOnlineShopping",
+      "#BeautyProductsSriLanka",
+      "#KoreanSkincareSriLanka",
       brandTag,
     ].filter(Boolean).join(" "),
   ]
@@ -175,7 +192,10 @@ function csvEscape(value) {
   return `"${String(value ?? "").replace(/"/g, '""')}"`;
 }
 
-const catalog = JSON.parse(await readFile("catalog-data.json", "utf8")).filter((product) => product.name && product.image);
+const catalog = JSON.parse(await readFile("catalog-data.json", "utf8"))
+  .filter((product) => product.name && product.image)
+  .filter(hasPublishQualityImage);
+if (!catalog.length) throw new Error("No publish-quality product images found.");
 const calendar = [];
 
 for (let index = 0; index < days; index += 1) {
