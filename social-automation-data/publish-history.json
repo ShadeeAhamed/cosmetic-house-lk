@@ -1,0 +1,17 @@
+{
+  "2026-05-17": {
+    "date": "2026-05-17",
+    "productName": "CLEAN & CLEAR Daily pore cleanser|Deep action cleanser|acne cleanser",
+    "imagePath": "assets/products/clean-clear-daily-pore-cleanser-deep-action-cleanser-acne-cleanser.jpg",
+    "facebook": {
+      "posted": false,
+      "error": "(#200) The permission(s) publish_actions are not available. It has been deprecated. If you want to provide a way for your app users to share content to Facebook, we encourage you to use our Sharing products instead."
+    },
+    "instagram": {
+      "posted": true,
+      "result": {
+        "id": "17937981867219775"
+      }
+    }
+  }
+}

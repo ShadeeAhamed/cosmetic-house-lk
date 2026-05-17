@@ -7,6 +7,7 @@
     "start:whatsapp": "node whatsapp-bot-server.mjs",
     "start:social": "node social-bot-server.mjs",
     "schedule:social": "node social-automation-runner.mjs",
+    "publish:due-social": "node publish-due-social.mjs",
     "check:whatsapp": "node check-whatsapp-status.mjs",
     "check:social": "node check-social-status.mjs"
   },
