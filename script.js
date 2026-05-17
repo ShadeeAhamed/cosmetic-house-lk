@@ -339,6 +339,7 @@ const products = [
 
 const state = {
   category: "All",
+  brand: "",
   search: "",
   cart: [],
   visibleCount: 48,
@@ -551,10 +552,10 @@ function renderFilters() {
 
 function renderHeroMix() {
   const mixSlots = [
-    { brand: "The Ordinary", file: "assets/products/hero-the-ordinary.jpg" },
-    { brand: "CeraVe", file: "assets/products/hero-cerave.jpg" },
-    { brand: "Rhode", file: "assets/products/hero-rhode.jpg" },
-    { brand: "Anua", file: "assets/products/hero-anua.jpg" },
+    { brand: "The Ordinary", file: "assets/products/hero-the-ordinary-cutout.png" },
+    { brand: "CeraVe", file: "assets/products/hero-cerave-cutout.png" },
+    { brand: "Rhode", file: "assets/products/hero-rhode-cutout.png" },
+    { brand: "Anua", file: "assets/products/hero-anua-cutout.png" },
   ];
   const mix = mixSlots.map((slot) => {
     const match = products.find((product) => product.brand.toLowerCase().includes(slot.brand.toLowerCase()));
@@ -582,6 +583,7 @@ function filteredProducts() {
   return products.filter((product) => {
     const searchable = productText(product);
     const activeCategory = normalizeText(state.category);
+    const activeBrand = normalizeText(state.brand);
     const matchesCategory =
       state.category === "All" ||
       normalizeText(product.category) === activeCategory ||
@@ -590,8 +592,9 @@ function filteredProducts() {
       (state.category === "Korean Beauty" && /(beauty of joseon|anua|cosrx|laneige|skin1004|torriden|medicube|biodance|round lab|some by mi|innisfree|dr\. althea|k secret|celimax)/.test(searchable)) ||
       (state.category === "Luxury Brands" && /(rhode|sol de janeiro|k18|la roche|laneige|supergoop|rare|dior|cerave)/.test(searchable)) ||
       (state.category === "Fragrance" && /(mist|fragrance|perfume|scent|body spray)/.test(searchable));
+    const matchesBrand = !activeBrand || normalizeText(product.brand).includes(activeBrand) || normalizeText(product.name).includes(activeBrand);
     const matchesSearch = !query || searchable.includes(query);
-    return matchesCategory && matchesSearch;
+    return matchesCategory && matchesBrand && matchesSearch;
   });
 }
 
@@ -1213,6 +1216,7 @@ filterRow.addEventListener("click", (event) => {
   const button = event.target.closest("[data-category]");
   if (!button) return;
   state.category = button.dataset.category;
+  state.brand = "";
   state.visibleCount = 48;
   renderFilters();
   renderProducts();
@@ -1316,6 +1320,7 @@ orderForm?.addEventListener("submit", async (event) => {
 
 searchInput.addEventListener("input", (event) => {
   state.search = event.target.value;
+  state.brand = "";
   state.visibleCount = 48;
   renderProducts();
 });
@@ -1323,9 +1328,23 @@ searchInput.addEventListener("input", (event) => {
 document.querySelectorAll("[data-category-jump]").forEach((link) => {
   link.addEventListener("click", () => {
     state.category = link.dataset.categoryJump;
+    state.brand = "";
     state.visibleCount = 48;
     renderFilters();
     renderProducts();
+  });
+});
+
+document.querySelectorAll("[data-brand-jump]").forEach((button) => {
+  button.addEventListener("click", () => {
+    state.category = "All";
+    state.brand = button.dataset.brandJump;
+    state.search = "";
+    searchInput.value = "";
+    state.visibleCount = 48;
+    renderFilters();
+    renderProducts();
+    document.querySelector("#shop")?.scrollIntoView({ behavior: "smooth", block: "start" });
   });
 });
 

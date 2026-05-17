@@ -2064,3 +2064,109 @@ footer {
     width: 100%;
   }
 }
+
+/* Final storefront fixes */
+.trust-strip {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  align-items: stretch;
+  padding-top: clamp(1rem, 3vw, 2rem);
+  padding-bottom: clamp(1rem, 3vw, 2rem);
+}
+
+.trust-strip article {
+  display: grid;
+  min-width: 0;
+  gap: 0.35rem;
+  border: 1px solid var(--line);
+  border-radius: 0.95rem;
+  padding: 1rem;
+  background: color-mix(in srgb, var(--panel) 90%, transparent);
+  box-shadow: 0 1rem 2.5rem rgba(12, 5, 9, 0.05);
+}
+
+.trust-strip article strong,
+.trust-strip article span {
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+
+.trust-strip article span {
+  color: var(--muted);
+  line-height: 1.45;
+}
+
+.brand-carousel button {
+  min-height: 4.2rem;
+  border: 1px solid var(--line);
+  border-radius: 0.85rem;
+  color: var(--muted);
+  background: color-mix(in srgb, var(--panel) 88%, transparent);
+  box-shadow: 0 1rem 2.5rem rgba(12, 5, 9, 0.05);
+  cursor: pointer;
+  font: inherit;
+  font-weight: 900;
+  transition: 180ms ease;
+}
+
+.brand-carousel button:hover,
+.brand-carousel button:focus-visible {
+  color: var(--ink);
+  border-color: color-mix(in srgb, var(--rose) 45%, var(--line));
+  box-shadow: 0 1.2rem 3rem color-mix(in srgb, var(--rose) 16%, transparent);
+  transform: translateY(-3px);
+}
+
+.hero-product-mix {
+  align-items: end;
+  gap: 0.9rem;
+}
+
+.hero-mix-card {
+  min-height: 10rem;
+  overflow: visible;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.hero-mix-card::after {
+  align-self: end;
+  width: 76%;
+  height: 1rem;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.28);
+  content: "";
+  filter: blur(12px);
+  transform: translateY(-0.25rem);
+}
+
+.hero-mix-card img {
+  grid-area: 1 / 1;
+  width: 100%;
+  height: 11rem;
+  padding: 0;
+  object-fit: contain;
+  filter: drop-shadow(0 1.4rem 1rem rgba(0, 0, 0, 0.35));
+  mix-blend-mode: normal;
+}
+
+.hero-mix-card.has-image .missing-photo {
+  display: none;
+}
+
+@media (max-width: 1080px) {
+  .trust-strip {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 760px) {
+  .trust-strip {
+    grid-template-columns: 1fr;
+  }
+
+  .hero-product-mix {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
