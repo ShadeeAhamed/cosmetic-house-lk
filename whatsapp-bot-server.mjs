@@ -212,7 +212,7 @@ function greetingLine() {
 }
 
 function confirmationLine() {
-  return "Before payment, I will confirm today's supplier price and availability for you.";
+  return "Before payment, I will confirm today's final price and availability for you.";
 }
 
 function humanClose() {

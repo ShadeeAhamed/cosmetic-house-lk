@@ -1,7 +1,7 @@
 import http from "node:http";
 import { existsSync } from "node:fs";
 import { readFile } from "node:fs/promises";
-import { buildSocialReply, recordMessage } from "./social-automation-engine.mjs";
+import { buildPublicCommentReply, buildSocialReply, recordMessage } from "./social-automation-engine.mjs";
 
 async function loadEnv(file) {
   if (!existsSync(file)) return;
@@ -28,6 +28,10 @@ function replyFor(message) {
   return buildSocialReply(message, { businessName, botName });
 }
 
+function commentReplyFor(message) {
+  return buildPublicCommentReply(message, { businessName, botName });
+}
+
 async function sendSocialMessage(recipientId, text) {
   if (!pageAccessToken) {
     console.log("Social reply preview:", { recipientId, text });
@@ -47,6 +51,32 @@ async function sendSocialMessage(recipientId, text) {
   if (!response.ok) {
     console.error("Social send failed:", await response.text());
   }
+}
+
+async function graphPost(endpoint, payload) {
+  if (!pageAccessToken) {
+    console.log("Social graph preview:", { endpoint, payload });
+    return { preview: true };
+  }
+
+  const body = new URLSearchParams({ access_token: pageAccessToken, ...payload });
+  const response = await fetch(`https://graph.facebook.com/${graphApiVersion}/${endpoint}`, {
+    method: "POST",
+    body,
+  });
+  const json = await response.json().catch(() => ({}));
+  if (!response.ok || json.error) {
+    throw new Error(json.error?.message || `HTTP ${response.status}`);
+  }
+  return json;
+}
+
+async function replyToFacebookComment(commentId, text) {
+  return graphPost(`${commentId}/comments`, { message: text });
+}
+
+async function replyToInstagramComment(commentId, text) {
+  return graphPost(`${commentId}/replies`, { message: text });
 }
 
 function readBody(request) {
@@ -94,6 +124,28 @@ http
             const reply = replyFor(text);
             await sendSocialMessage(senderId, reply);
             await recordMessage({ channel: payload.object || "meta", customerId: senderId, text: reply, direction: "outbound" });
+          }
+        }
+
+        for (const change of entry.changes || []) {
+          const value = change.value || {};
+          const text = value.message || value.text || value.comment?.text || value.comment_text || "";
+          const commentId = value.comment_id || value.id || value.comment?.id;
+          const fromId = value.from?.id || value.sender_id || value.user_id || "public-comment";
+          if (!commentId || !text || value.verb === "remove") continue;
+
+          const reply = commentReplyFor(text);
+          await recordMessage({ channel: payload.object || "meta-comment", customerId: fromId, text });
+
+          try {
+            if (payload.object === "instagram") {
+              await replyToInstagramComment(commentId, reply);
+            } else {
+              await replyToFacebookComment(commentId, reply);
+            }
+            await recordMessage({ channel: payload.object || "meta-comment", customerId: fromId, text: reply, direction: "outbound" });
+          } catch (error) {
+            console.error("Comment reply failed:", error.message);
           }
         }
       }

@@ -50,7 +50,7 @@ export function buildSocialReply(message, context = {}) {
   const businessName = context.businessName || "Cosmetic House";
   const botName = context.botName || "Sophia";
   const intro = `Hi, this is ${botName} from ${businessName}.`;
-  const confirm = "Before payment, I will confirm today's supplier price and availability for you.";
+  const confirm = "Before payment, I will confirm today's final price and availability for you.";
 
   if (intent === "handoff") {
     return `${intro} Thank you for telling me. I'll pass this to the owner for a careful human reply.\n\nIf this is irritation, allergy, swelling, infection, or pregnancy-related, please speak with a dermatologist or doctor.\n\nPlease send your order name/number, product name, and a clear photo if this is about an order issue.`;
@@ -61,6 +61,21 @@ export function buildSocialReply(message, context = {}) {
   if (intent === "payment") return `${intro} Payment options are cash on delivery, bank transfer, and online card payment after the secure gateway is connected.\n\nSend product name, quantity, city, and preferred payment method.\n\n${confirm}`;
   if (intent === "order") return `${intro} Sure, I can help place the order.\n\nPlease send:\n1. Product name\n2. Quantity\n3. Delivery city\n4. Payment method\n\n${confirm}`;
   return `${intro} Nice to hear from you.\n\nTell me what you're looking for: product name, skin type, concern, or budget. I can suggest products, build a simple routine, or help you place an order.\n\n${confirm}`;
+}
+
+export function buildPublicCommentReply(message, context = {}) {
+  const intent = detectIntent(message);
+  const businessName = context.businessName || "Cosmetic House";
+
+  if (intent === "handoff") {
+    return "Thank you for telling us. Please DM us with the order/product details and a clear photo so we can check this carefully.";
+  }
+  if (intent === "budget") return "Yes love, DM us your budget + skin type and we will suggest the best simple options from our available products.";
+  if (intent === "routine") return "DM us your skin type, main concern, and budget. We will help you build a simple routine step by step.";
+  if (intent === "delivery") return "Yes, islandwide delivery is available. DM us your product name and city to confirm the final order total.";
+  if (intent === "payment") return "COD, bank transfer, and online card payment options are available. DM us the product name to confirm your order.";
+  if (intent === "order") return "Sure, please DM us the product name, quantity, and delivery city. We will confirm availability before payment.";
+  return `Thank you for reaching out to ${businessName}. Please DM us your skin type, concern, or product name and we will help you choose.`;
 }
 
 export async function recordMessage({ channel, customerId, text, direction = "inbound", timestamp = new Date().toISOString() }) {
