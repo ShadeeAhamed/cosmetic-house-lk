@@ -1,0 +1,16 @@
+[Unit]
+Description=Cosmetic House Facebook and Instagram bot
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=/opt/cosmetic-house-lk
+Environment=NODE_ENV=production
+Environment=SOCIAL_BOT_PORT=8788
+ExecStart=/usr/bin/npm run start:social
+Restart=always
+RestartSec=5
+User=ubuntu
+
+[Install]
+WantedBy=multi-user.target

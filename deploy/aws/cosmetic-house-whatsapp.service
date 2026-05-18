@@ -1,0 +1,16 @@
+[Unit]
+Description=Cosmetic House WhatsApp and payment bot
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=/opt/cosmetic-house-lk
+Environment=NODE_ENV=production
+Environment=PORT=8787
+ExecStart=/usr/bin/npm run start:whatsapp
+Restart=always
+RestartSec=5
+User=ubuntu
+
+[Install]
+WantedBy=multi-user.target
