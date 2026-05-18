@@ -53,8 +53,17 @@ async function graphPost(endpoint, body) {
     method: "POST",
     body,
   });
-  const json = await response.json();
-  if (!response.ok || json.error) throw new Error(json.error?.message || `HTTP ${response.status}`);
+  const text = await response.text();
+  let json = {};
+  try {
+    json = JSON.parse(text);
+  } catch {
+    json = {};
+  }
+  if (!response.ok || json.error) {
+    const detail = json.error?.message || text || `HTTP ${response.status}`;
+    throw new Error(detail);
+  }
   return json;
 }
 

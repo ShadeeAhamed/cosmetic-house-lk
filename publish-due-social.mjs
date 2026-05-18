@@ -61,8 +61,17 @@ async function graphPost(endpoint, body) {
     method: "POST",
     body,
   });
-  const json = await response.json();
-  if (!response.ok || json.error) throw new Error(json.error?.message || `HTTP ${response.status}`);
+  const text = await response.text();
+  let json = {};
+  try {
+    json = JSON.parse(text);
+  } catch {
+    json = {};
+  }
+  if (!response.ok || json.error) {
+    const detail = json.error?.message || text || `HTTP ${response.status}`;
+    throw new Error(detail);
+  }
   return json;
 }
 
@@ -103,7 +112,7 @@ const igBusinessId = process.env.INSTAGRAM_BUSINESS_ACCOUNT_ID;
 const facebookDirectApiEnabled = process.env.FACEBOOK_DIRECT_API_ENABLED === "true";
 
 const due = calendar
-  .filter((entry) => entry.date >= now.date)
+  .filter((entry) => entry.date <= now.date)
   .filter((entry) => entry.date < now.date || (entry.date === now.date && minutesOf(entry.time) <= now.minutes))
   .filter((entry) => entry.status !== "posted_manually")
   .find((entry) => !(history[entry.date]?.facebook?.posted && history[entry.date]?.instagram?.posted));
