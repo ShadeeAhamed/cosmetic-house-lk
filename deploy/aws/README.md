@@ -89,9 +89,12 @@ From the project folder on EC2:
 cd /opt/cosmetic-house-lk
 sudo cp deploy/aws/cosmetic-house-whatsapp.service /etc/systemd/system/
 sudo cp deploy/aws/cosmetic-house-social.service /etc/systemd/system/
+sudo cp deploy/aws/cosmetic-house-social-publisher.service /etc/systemd/system/
+sudo cp deploy/aws/cosmetic-house-social-publisher.timer /etc/systemd/system/
 sudo systemctl daemon-reload
 sudo systemctl enable cosmetic-house-whatsapp cosmetic-house-social
 sudo systemctl start cosmetic-house-whatsapp cosmetic-house-social
+sudo systemctl enable --now cosmetic-house-social-publisher.timer
 ```
 
 Check status:
@@ -99,6 +102,7 @@ Check status:
 ```bash
 sudo systemctl status cosmetic-house-whatsapp
 sudo systemctl status cosmetic-house-social
+sudo systemctl status cosmetic-house-social-publisher.timer
 ```
 
 ## Configure HTTPS

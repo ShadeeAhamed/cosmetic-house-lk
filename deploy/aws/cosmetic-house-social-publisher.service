@@ -1,0 +1,10 @@
+[Unit]
+Description=Cosmetic House due social publisher
+After=network-online.target
+
+[Service]
+Type=oneshot
+WorkingDirectory=/opt/cosmetic-house-lk
+Environment=NODE_ENV=production
+ExecStart=/usr/bin/npm run publish:due-social
+User=ubuntu

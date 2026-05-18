@@ -1,0 +1,11 @@
+[Unit]
+Description=Run Cosmetic House due social publisher every 15 minutes
+
+[Timer]
+OnBootSec=3min
+OnCalendar=*:0/15
+Persistent=true
+Unit=cosmetic-house-social-publisher.service
+
+[Install]
+WantedBy=timers.target
