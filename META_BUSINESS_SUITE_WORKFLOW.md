@@ -2,6 +2,8 @@
 
 Use Meta Business Suite as the publishing control room while API permissions are still being completed.
 
+Do not use Instagram's phone setting called "Sharing across profiles" while it points to a personal Facebook profile. That setting can publish to the owner's personal profile. Use Meta Business Suite instead, because it lets you explicitly select the Cosmetic House Facebook Page and the Cosmetic House Instagram account together.
+
 ## Why this is the best current path
 
 - Your Facebook Page is connected.
@@ -38,13 +40,22 @@ Facebook Page: Cosmetic House.lk
 Instagram: @cosmetic_house.lk
 ```
 
-5. Paste Sophia's daily caption.
+5. Make sure the selected accounts show only:
 
-6. Upload the approved product image/video.
+```text
+Cosmetic House.lk
+cosmetic_house.lk
+```
 
-7. Schedule at Sophia's suggested posting time.
+If you see a personal profile name, remove it before publishing.
 
-8. Owner confirms product price and availability before accepting payments from responses.
+6. Paste Sophia's daily caption.
+
+7. Upload the approved product image/video.
+
+8. Schedule at Sophia's suggested posting time.
+
+9. Owner confirms product price and availability before accepting payments from responses.
 
 ## Recommended posting rhythm
 
@@ -88,3 +99,13 @@ Meta Business Suite scheduling is still owner-approved. Fully automatic posting 
 - webhook hosting
 
 Until those are complete, Business Suite is the safest publishing method.
+
+## Current automation safety rule
+
+The local scheduler will not directly post to Facebook unless this private environment value is deliberately enabled:
+
+```text
+FACEBOOK_DIRECT_API_ENABLED=true
+```
+
+Keep it disabled while Meta blocks the Facebook publishing permission. This prevents repeated Facebook API failures and keeps publishing away from any personal-profile cross-posting path.

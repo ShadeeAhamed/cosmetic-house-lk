@@ -100,6 +100,7 @@ const pageId = process.env.FACEBOOK_PAGE_ID;
 const pageAccessToken = process.env.META_PAGE_ACCESS_TOKEN;
 const instagramAccessToken = process.env.INSTAGRAM_ACCESS_TOKEN || pageAccessToken;
 const igBusinessId = process.env.INSTAGRAM_BUSINESS_ACCOUNT_ID;
+const facebookDirectApiEnabled = process.env.FACEBOOK_DIRECT_API_ENABLED === "true";
 
 const due = calendar
   .filter((entry) => entry.date >= now.date)
@@ -115,7 +116,17 @@ if (!due) {
 const caption = cleanPublicCaption(due.feedCaption);
 const record = history[due.date] || { date: due.date, productName: due.productName, imagePath: due.imagePath, facebook: {}, instagram: {} };
 
-if (!record.facebook?.posted) {
+if (!facebookDirectApiEnabled && !record.facebook?.posted) {
+  record.facebook = {
+    attemptedAt: new Date().toISOString(),
+    posted: true,
+    skipped: true,
+    method: "Meta Business Suite",
+    note: "Facebook Page posting is handled through Meta Business Suite to avoid personal-profile cross-posting and blocked API permissions.",
+  };
+}
+
+if (facebookDirectApiEnabled && !record.facebook?.posted) {
   try {
     record.facebook = {
       attemptedAt: new Date().toISOString(),

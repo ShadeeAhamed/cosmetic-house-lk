@@ -120,8 +120,16 @@ const report = {
 const pageId = process.env.FACEBOOK_PAGE_ID;
 const pageAccessToken = process.env.META_PAGE_ACCESS_TOKEN;
 const instagramAccessToken = process.env.INSTAGRAM_ACCESS_TOKEN || pageAccessToken;
+const facebookDirectApiEnabled = process.env.FACEBOOK_DIRECT_API_ENABLED === "true";
 
-if (!pageId || !pageAccessToken) {
+if (!facebookDirectApiEnabled) {
+  report.facebook = {
+    attempted: false,
+    skipped: true,
+    method: "Meta Business Suite",
+    note: "Facebook Page posting is handled through Meta Business Suite to avoid personal-profile cross-posting and blocked API permissions.",
+  };
+} else if (!pageId || !pageAccessToken) {
   report.facebook = { attempted: false, error: "FACEBOOK_PAGE_ID or META_PAGE_ACCESS_TOKEN is missing" };
 } else {
   try {
