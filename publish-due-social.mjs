@@ -111,9 +111,28 @@ const instagramAccessToken = process.env.INSTAGRAM_ACCESS_TOKEN || pageAccessTok
 const igBusinessId = process.env.INSTAGRAM_BUSINESS_ACCOUNT_ID;
 const facebookDirectApiEnabled = process.env.FACEBOOK_DIRECT_API_ENABLED === "true";
 
+let changedHistory = false;
+for (const entry of calendar.filter((item) => item.date < now.date && item.status !== "posted_manually")) {
+  const oldRecord = history[entry.date];
+  if (!oldRecord || oldRecord.instagram?.posted || oldRecord.instagram?.missed) continue;
+  history[entry.date] = {
+    ...oldRecord,
+    instagram: {
+      ...(oldRecord.instagram || {}),
+      posted: false,
+      missed: true,
+      missedAt: new Date().toISOString(),
+      note: "Skipped because the scheduled day passed before Instagram could publish. Future posts should not be blocked by old failures.",
+    },
+  };
+  changedHistory = true;
+}
+
+if (changedHistory) await writeJson(historyFile, history);
+
 const due = calendar
-  .filter((entry) => entry.date <= now.date)
-  .filter((entry) => entry.date < now.date || (entry.date === now.date && minutesOf(entry.time) <= now.minutes))
+  .filter((entry) => entry.date === now.date)
+  .filter((entry) => minutesOf(entry.time) <= now.minutes)
   .filter((entry) => entry.status !== "posted_manually")
   .find((entry) => !(history[entry.date]?.facebook?.posted && history[entry.date]?.instagram?.posted));
 

@@ -13,5 +13,25 @@
         "id": "17937981867219775"
       }
     }
+  },
+  "2026-05-18": {
+    "date": "2026-05-18",
+    "productName": "Beauty of Joseon Ground Rice and Honey Glow Mask 150ml",
+    "imagePath": "assets/products/beauty-of-joseon-ground-rice-and-honey-glow-mask-150ml.jpg",
+    "facebook": {
+      "attemptedAt": "2026-05-18T18:46:09.113Z",
+      "posted": true,
+      "skipped": true,
+      "method": "Meta Business Suite",
+      "note": "Facebook Page posting is handled through Meta Business Suite to avoid personal-profile cross-posting and blocked API permissions."
+    },
+    "instagram": {
+      "attemptedAt": "2026-05-18T18:46:09.859Z",
+      "posted": false,
+      "error": "Error validating access token: Session has expired on Sunday, 17-May-26 05:00:00 PDT. The current time is Monday, 18-May-26 11:46:09 PDT.",
+      "missed": true,
+      "missedAt": "2026-05-18T18:50:56.078Z",
+      "note": "Skipped because the scheduled day passed before Instagram could publish. Future posts should not be blocked by old failures."
+    }
   }
 }
