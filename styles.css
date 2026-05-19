@@ -5,6 +5,7 @@
   --panel: rgba(255, 255, 255, 0.78);
   --line: rgba(7, 5, 8, 0.12);
   --rose: #ff1493;
+  --pink: #ff1493;
   --rose-soft: #ffd5ec;
   --plum: #8f0b62;
   --smoke: #ebe5ea;
@@ -21,6 +22,7 @@
   --panel: rgba(20, 14, 19, 0.86);
   --line: rgba(255, 250, 253, 0.14);
   --rose: #ff4db1;
+  --pink: #ff4db1;
   --rose-soft: #5b123d;
   --plum: #ff94cd;
   --smoke: #171116;
@@ -1893,14 +1895,28 @@ footer {
   color: var(--pink);
   background: var(--panel);
   cursor: pointer;
-  font-size: 1.1rem;
+  font-size: 0;
   font-weight: 900;
+}
+
+.wishlist-button::before {
+  content: "\2665";
+  font-size: 1.1rem;
 }
 
 .rating-row span,
 .review-stars-clean {
   color: #c79a38;
   letter-spacing: 0;
+}
+
+.rating-row span {
+  font-size: 0;
+}
+
+.rating-row span::before {
+  content: "\2605\2605\2605\2605\2605";
+  font-size: 0.9rem;
 }
 
 .rating-row small {
