@@ -371,6 +371,8 @@ const orderSubtotalField = document.querySelector("[data-order-subtotal-field]")
 const orderTotalField = document.querySelector("[data-order-total-field]");
 const orderPaymentField = document.querySelector("[data-order-payment-field]");
 const orderWhatsAppField = document.querySelector("[data-order-whatsapp-field]");
+const onlinePaymentInput = document.querySelector('input[name="payment"][value="Online card payment"]');
+const codPaymentInput = document.querySelector('input[name="payment"][value="Cash on delivery"]');
 const whatsAppQuickLinks = document.querySelectorAll("[data-whatsapp-quick]");
 const whatsAppTemplateLinks = document.querySelectorAll("[data-whatsapp-template]");
 const productPage = document.querySelector("[data-product-page]");
@@ -384,6 +386,7 @@ const loginForm = document.querySelector("[data-login-form]");
 const galleryUploadInput = document.querySelector("[data-gallery-upload]");
 const uploadName = document.querySelector("[data-upload-name]");
 const cardForm = document.querySelector("[data-card-form]");
+const paymentStatus = document.querySelector("[data-payment-status]");
 const reviewForm = document.querySelector("[data-review-form]");
 const reviewList = document.querySelector("[data-review-list]");
 const assetDialog = document.querySelector("[data-asset-dialog]");
@@ -397,6 +400,11 @@ const cameraCanvas = document.querySelector("[data-camera-canvas]");
 const cameraStatus = document.querySelector("[data-camera-status]");
 let cameraStream = null;
 let capturedImageName = "";
+const paymentGateway = {
+  checked: false,
+  ready: false,
+  message: "Secure card payment will activate after merchant approval.",
+};
 
 const formatter = new Intl.NumberFormat("en-LK", {
   style: "currency",
@@ -849,7 +857,9 @@ function renderProductPage(index) {
 }
 
 function selectedPaymentMethod() {
-  return document.querySelector('input[name="payment"]:checked')?.value || "Online card payment";
+  const selected = document.querySelector('input[name="payment"]:checked');
+  if (selected?.disabled) return "Cash on delivery";
+  return selected?.value || "Cash on delivery";
 }
 
 function renderCart() {
@@ -893,8 +903,9 @@ function renderCart() {
   if (orderPaymentField) orderPaymentField.value = payment;
   if (orderWhatsAppField) orderWhatsAppField.value = message;
   if (checkoutButton) checkoutButton.disabled = !state.cart.length;
-  if (checkoutButton) checkoutButton.textContent = payment === "Online card payment" ? "Pay securely" : "Place order";
+  if (checkoutButton) checkoutButton.textContent = payment === "Online card payment" && paymentGateway.ready ? "Pay securely" : "Place order";
   cardForm.hidden = selectedPaymentMethod() !== "Online card payment";
+  if (paymentStatus) paymentStatus.textContent = paymentGateway.message;
 }
 
 function cartSuggestionProducts() {
@@ -1112,7 +1123,7 @@ function submitPayherePayment(fields, action) {
 }
 
 async function startPayhereCheckout(form) {
-  if (!paymentApiBase) {
+  if (!paymentApiBase || !paymentGateway.ready) {
     throw new Error("Online card payment is being activated. Please choose cash on delivery or bank transfer for now.");
   }
 
@@ -1144,6 +1155,35 @@ async function startPayhereCheckout(form) {
     throw new Error(payload.message || "Payment gateway could not start.");
   }
   submitPayherePayment(payload.fields, payload.action);
+}
+
+async function checkPaymentGateway() {
+  if (!paymentApiBase) {
+    paymentGateway.checked = true;
+    paymentGateway.ready = false;
+    paymentGateway.message = "Online card payment is being activated. Please choose cash on delivery or bank transfer for now.";
+  } else {
+    try {
+      const response = await fetch(`${paymentApiBase}/health`, { cache: "no-store" });
+      const payload = await response.json();
+      paymentGateway.checked = true;
+      paymentGateway.ready = Boolean(payload.payhereConfigured);
+      paymentGateway.message = paymentGateway.ready
+        ? "Secure card payment is available through the approved payment gateway."
+        : "Online card payment is being activated. Please choose cash on delivery or bank transfer for now.";
+    } catch {
+      paymentGateway.checked = true;
+      paymentGateway.ready = false;
+      paymentGateway.message = "Payment gateway check is temporarily unavailable. Please choose cash on delivery or bank transfer.";
+    }
+  }
+
+  if (onlinePaymentInput) onlinePaymentInput.disabled = !paymentGateway.ready;
+  if (!paymentGateway.ready && onlinePaymentInput?.checked) {
+    onlinePaymentInput.checked = false;
+    if (codPaymentInput) codPaymentInput.checked = true;
+  }
+  renderCart();
 }
 
 function setTheme(theme) {
@@ -1498,6 +1538,7 @@ async function initStorefront() {
   renderReviews();
   renderCart();
   setupWhatsAppLinks();
+  checkPaymentGateway();
   await loadCatalogProducts();
   if (!catalogLoaded) {
     renderFilters();

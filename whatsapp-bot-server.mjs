@@ -540,22 +540,18 @@ http
     }
 
     if (request.method === "GET" && url.pathname === "/health") {
-      send(
+      sendJson(
         response,
         200,
-        JSON.stringify(
-          {
-            ok: true,
-            catalogProducts: catalog.length,
-            apiConfigured: Boolean(accessToken && phoneNumberId),
-            ownerNumberConfigured: Boolean(ownerNumber),
-            payhereConfigured: Boolean(payhereMerchantId && payhereMerchantSecret),
-            payhereMode,
-          },
-          null,
-          2,
-        ),
-        "application/json",
+        {
+          ok: true,
+          catalogProducts: catalog.length,
+          apiConfigured: Boolean(accessToken && phoneNumberId),
+          ownerNumberConfigured: Boolean(ownerNumber),
+          payhereConfigured: Boolean(payhereMerchantId && payhereMerchantSecret),
+          payhereMode,
+        },
+        origin,
       );
       return;
     }

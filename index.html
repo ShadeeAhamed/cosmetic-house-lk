@@ -25,7 +25,7 @@
     <meta name="twitter:card" content="summary_large_image" />
     <link rel="manifest" href="site.webmanifest" />
     <link rel="preload" href="cosmetic-house-logo.jpeg" as="image" />
-    <link rel="stylesheet" href="styles.css?v=20260519-public-launch" />
+    <link rel="stylesheet" href="styles.css?v=20260519-mobile-payment" />
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
@@ -383,7 +383,7 @@
             Card payments are handled through a secure payment gateway. We will never ask customers to
             type card numbers directly into this website.
           </p>
-          <small>PayHere gateway connection is ready to activate after merchant approval.</small>
+          <small data-payment-status>Checking secure payment gateway...</small>
         </div>
 
         <div class="cart-summary">
@@ -484,9 +484,9 @@
     </section>
 
     <script>
-      window.COSMETIC_HOUSE_PAYMENT_API = "";
+      window.COSMETIC_HOUSE_PAYMENT_API = "https://52-74-89-82.nip.io";
     </script>
     <script src="catalog-data.js?v=20260511-full-catalog"></script>
-    <script src="script.js?v=20260519-public-launch"></script>
+    <script src="script.js?v=20260519-mobile-payment"></script>
   </body>
 </html>
