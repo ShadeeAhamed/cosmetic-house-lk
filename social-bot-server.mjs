@@ -18,7 +18,7 @@ await loadEnv(".env.whatsapp");
 await loadEnv(".env");
 
 const port = Number(process.env.SOCIAL_BOT_PORT || 8788);
-const verifyToken = process.env.META_VERIFY_TOKEN || process.env.WHATSAPP_VERIFY_TOKEN || "cosmetic-house-sophia-2026";
+const verifyToken = String(process.env.META_VERIFY_TOKEN || process.env.WHATSAPP_VERIFY_TOKEN || "cosmetic-house-sophia-2026").trim();
 const pageAccessToken = process.env.META_PAGE_ACCESS_TOKEN || "";
 const graphApiVersion = process.env.GRAPH_API_VERSION || "v20.0";
 const businessName = process.env.BUSINESS_NAME || "Cosmetic House";
@@ -95,14 +95,25 @@ function send(response, status, body, contentType = "text/plain") {
   response.end(body);
 }
 
+function cleanPath(pathname) {
+  return String(pathname || "").replace(/\/+$/, "") || "/";
+}
+
 http
   .createServer(async (request, response) => {
     const url = new URL(request.url, `http://${request.headers.host}`);
 
-    if (request.method === "GET" && url.pathname === "/meta-webhook") {
-      const mode = url.searchParams.get("hub.mode");
-      const token = url.searchParams.get("hub.verify_token");
+    if (request.method === "GET" && cleanPath(url.pathname) === "/meta-webhook") {
+      const mode = String(url.searchParams.get("hub.mode") || "").trim();
+      const token = String(url.searchParams.get("hub.verify_token") || "").trim();
       const challenge = url.searchParams.get("hub.challenge");
+      console.log("Meta webhook verification", {
+        mode,
+        tokenMatched: token === verifyToken,
+        hasChallenge: Boolean(challenge),
+        host: request.headers.host,
+        userAgent: request.headers["user-agent"],
+      });
       if (mode === "subscribe" && token === verifyToken) {
         send(response, 200, challenge || "");
       } else {
@@ -111,7 +122,7 @@ http
       return;
     }
 
-    if (request.method === "POST" && url.pathname === "/meta-webhook") {
+    if (request.method === "POST" && cleanPath(url.pathname) === "/meta-webhook") {
       const payload = JSON.parse((await readBody(request)) || "{}");
       const entries = payload.entry || [];
 

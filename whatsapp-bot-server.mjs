@@ -30,7 +30,7 @@ loadEnvFile(".env.whatsapp");
 loadEnvFile(".env");
 
 const port = Number(process.env.PORT || 8787);
-const verifyToken = process.env.WHATSAPP_VERIFY_TOKEN || "cosmetic-house-verify-token";
+const verifyToken = String(process.env.WHATSAPP_VERIFY_TOKEN || "cosmetic-house-verify-token").trim();
 const accessToken = process.env.WHATSAPP_ACCESS_TOKEN || "";
 const phoneNumberId = process.env.WHATSAPP_PHONE_NUMBER_ID || "";
 const ownerNumber = process.env.OWNER_WHATSAPP_NUMBER || "94762245570";
@@ -423,6 +423,10 @@ function send(response, status, body, contentType = "text/plain") {
   response.end(body);
 }
 
+function cleanPath(pathname) {
+  return String(pathname || "").replace(/\/+$/, "") || "/";
+}
+
 function parseFormBody(body) {
   return Object.fromEntries(new URLSearchParams(body));
 }
@@ -581,10 +585,17 @@ http
       return;
     }
 
-    if (request.method === "GET" && url.pathname === "/webhook") {
-      const mode = url.searchParams.get("hub.mode");
-      const token = url.searchParams.get("hub.verify_token");
+    if (request.method === "GET" && cleanPath(url.pathname) === "/webhook") {
+      const mode = String(url.searchParams.get("hub.mode") || "").trim();
+      const token = String(url.searchParams.get("hub.verify_token") || "").trim();
       const challenge = url.searchParams.get("hub.challenge");
+      console.log("WhatsApp webhook verification", {
+        mode,
+        tokenMatched: token === verifyToken,
+        hasChallenge: Boolean(challenge),
+        host: request.headers.host,
+        userAgent: request.headers["user-agent"],
+      });
       if (mode === "subscribe" && token === verifyToken) {
         send(response, 200, challenge || "");
       } else {
@@ -593,7 +604,7 @@ http
       return;
     }
 
-    if (request.method === "POST" && url.pathname === "/webhook") {
+    if (request.method === "POST" && cleanPath(url.pathname) === "/webhook") {
       const payload = JSON.parse((await readBody(request)) || "{}");
       const messages = payload.entry?.flatMap((entry) => entry.changes || [])?.flatMap((change) => change.value?.messages || []) || [];
 
