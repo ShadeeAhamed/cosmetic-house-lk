@@ -573,14 +573,14 @@
           <span>Password</span>
           <input name="password" type="password" required placeholder="Password" />
         </label>
-        <label data-signup-only hidden>
+        <label data-verification-step hidden>
           <span>2-step verification</span>
           <div class="verify-row">
             <input data-verification-code name="verification_code" inputmode="numeric" placeholder="Enter code" />
-            <button class="button secondary" data-send-code type="button">Send code</button>
+            <button class="button secondary" data-send-code type="button">Resend</button>
           </div>
         </label>
-        <button class="button primary full" type="submit">Continue</button>
+        <button class="button primary full" data-auth-submit type="submit">Continue</button>
         <small data-auth-status>Email or phone is required. For launch, this connects to email/SMS verification service.</small>
       </form>
     </dialog>

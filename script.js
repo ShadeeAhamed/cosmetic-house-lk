@@ -2,6 +2,7 @@ const deliveryCharge = 450;
 const whatsappNumber = "94762245570";
 const paymentApiBase = (window.COSMETIC_HOUSE_PAYMENT_API || "").replace(/\/$/, "");
 const orderApiBase = paymentApiBase;
+const authApiBase = paymentApiBase;
 
 const products = [
   {
@@ -355,7 +356,7 @@ const state = {
 let catalogLoaded = false;
 let isLoggedIn = false;
 let authMode = "login";
-let verificationCode = "";
+let authStep = "identity";
 
 const productGrid = document.querySelector("[data-products]");
 const loadMoreButton = document.querySelector("[data-load-more-products]");
@@ -402,9 +403,11 @@ const loginForm = document.querySelector("[data-login-form]");
 const loginTitle = document.querySelector("[data-login-title]");
 const authModeButtons = document.querySelectorAll("[data-auth-mode]");
 const signupOnlyFields = document.querySelectorAll("[data-signup-only]");
+const verificationStep = document.querySelector("[data-verification-step]");
 const verifyCodeButton = document.querySelector("[data-send-code]");
 const verificationCodeInput = document.querySelector("[data-verification-code]");
 const authStatus = document.querySelector("[data-auth-status]");
+const authSubmitButton = document.querySelector("[data-auth-submit]");
 const galleryUploadInput = document.querySelector("[data-gallery-upload]");
 const uploadName = document.querySelector("[data-upload-name]");
 const cardForm = document.querySelector("[data-card-form]");
@@ -1742,9 +1745,14 @@ document.querySelector("[data-back-shop]").addEventListener("click", () => {
   window.scrollTo({ top: 0, behavior: "smooth" });
 });
 document.querySelector("[data-open-login]").addEventListener("click", () => loginDialog.showModal());
-document.querySelector("[data-close-login]").addEventListener("click", () => loginDialog.close());
+document.querySelector("[data-close-login]").addEventListener("click", () => {
+  sessionStorage.setItem("cosmetic-house-login-dismissed", "true");
+  loginDialog.close();
+});
+
 function updateAuthMode(mode) {
   authMode = mode;
+  authStep = "identity";
   authModeButtons.forEach((button) => button.classList.toggle("active", button.dataset.authMode === mode));
   signupOnlyFields.forEach((field) => {
     field.hidden = mode !== "signup";
@@ -1752,22 +1760,76 @@ function updateAuthMode(mode) {
       input.required = mode === "signup" && ["full_name", "address"].includes(input.name);
     });
   });
+  if (verificationStep) verificationStep.hidden = true;
+  if (verificationCodeInput) {
+    verificationCodeInput.required = false;
+    verificationCodeInput.value = "";
+  }
+  if (authSubmitButton) authSubmitButton.textContent = "Continue";
   if (loginTitle) loginTitle.textContent = mode === "signup" ? "Create your beauty account" : "Login to Cosmetic House.lk";
-  if (authStatus) authStatus.textContent = mode === "signup" ? "Use email or phone, then confirm the 2-step code." : "Login with your email or phone number.";
+  if (authStatus) authStatus.textContent = mode === "signup" ? "Enter your details first. The verification code comes after Continue." : "Login with your email or phone number.";
 }
 
 authModeButtons.forEach((button) => button.addEventListener("click", () => updateAuthMode(button.dataset.authMode)));
-verifyCodeButton?.addEventListener("click", () => {
-  const contact = loginForm.elements.contact?.value.trim();
+function authProfileFromForm(formData) {
+  return {
+    name: String(formData.get("full_name") || "").trim(),
+    address: String(formData.get("address") || "").trim(),
+    gender: String(formData.get("gender") || "").trim(),
+  };
+}
+
+async function requestVerificationCode() {
+  const formData = new FormData(loginForm);
+  const contact = String(formData.get("contact") || "").trim();
   if (!contact) {
     authStatus.textContent = "Enter your email or phone first.";
     loginForm.elements.contact?.focus();
-    return;
+    return false;
   }
-  verificationCode = String(Math.floor(100000 + Math.random() * 900000));
-  authStatus.textContent = `Verification code sent. Demo code: ${verificationCode}`;
+  authStatus.textContent = "Sending verification code...";
+  try {
+    if (!authApiBase) throw new Error("Verification server is not connected yet.");
+    const response = await fetch(`${authApiBase}/api/auth/request-otp`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ contact, profile: authProfileFromForm(formData) }),
+    });
+    const payload = await response.json();
+    if (!response.ok || !payload.ok) throw new Error(payload.message || "Could not send verification code.");
+    authStatus.textContent = "Verification code sent. Check your email or WhatsApp.";
+  } catch (error) {
+    authStatus.textContent = error.message || "Live verification is being connected. Please try again shortly.";
+    return false;
+  }
+  authStep = "verify";
+  if (verificationStep) verificationStep.hidden = false;
+  if (verificationCodeInput) verificationCodeInput.required = true;
+  if (authSubmitButton) authSubmitButton.textContent = "Verify & continue";
   verificationCodeInput?.focus();
-});
+  return true;
+}
+
+async function verifyCodeAndSaveAccount(formData) {
+  const contact = String(formData.get("contact") || "").trim();
+  const code = String(formData.get("verification_code") || "").trim();
+  const profile = authProfileFromForm(formData);
+  if (!code) {
+    authStatus.textContent = "Enter the verification code.";
+    verificationCodeInput?.focus();
+    return null;
+  }
+  const response = await fetch(`${authApiBase}/api/auth/verify-otp`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ contact, code, profile }),
+  });
+  const payload = await response.json();
+  if (!response.ok || !payload.ok) throw new Error(payload.message || "Verification failed.");
+  return payload.user;
+}
+
+verifyCodeButton?.addEventListener("click", requestVerificationCode);
 document.querySelector("[data-open-asset]")?.addEventListener("click", () => assetDialog?.showModal());
 document.querySelector("[data-close-asset]")?.addEventListener("click", () => assetDialog?.close());
 
@@ -1861,30 +1923,47 @@ galleryUploadInput.addEventListener("change", () => handleUploadChange(galleryUp
 
 loginForm.addEventListener("submit", (event) => {
   event.preventDefault();
+  handleAuthSubmit();
+});
+
+async function handleAuthSubmit() {
   const formData = new FormData(loginForm);
   const contact = String(formData.get("contact") || "").trim();
   if (!contact) {
     authStatus.textContent = "Email or phone number is required.";
     return;
   }
-  if (authMode === "signup" && verificationCodeInput?.value.trim() !== verificationCode) {
-    authStatus.textContent = "Enter the correct 2-step verification code.";
-    verificationCodeInput?.focus();
+  if (authMode === "signup" && authStep === "identity") {
+    await requestVerificationCode();
     return;
   }
-  state.account = {
-    name: formData.get("full_name") || "",
-    address: formData.get("address") || "",
-    gender: formData.get("gender") || "",
-    contact,
-    createdAt: new Date().toISOString(),
-  };
+  if (authMode === "signup") {
+    try {
+      authSubmitButton.disabled = true;
+      authSubmitButton.textContent = "Verifying...";
+      const verifiedUser = await verifyCodeAndSaveAccount(formData);
+      if (!verifiedUser) return;
+      state.account = verifiedUser;
+    } catch (error) {
+      authStatus.textContent = error.message || "Verification failed.";
+      return;
+    } finally {
+      authSubmitButton.disabled = false;
+      authSubmitButton.textContent = "Verify & continue";
+    }
+  } else {
+    state.account = {
+      contact,
+      createdAt: new Date().toISOString(),
+    };
+  }
   localStorage.setItem("cosmetic-house-account", JSON.stringify(state.account));
+  sessionStorage.setItem("cosmetic-house-login-dismissed", "true");
   isLoggedIn = true;
   loginDialog.close();
   showToast(authMode === "signup" ? "Beauty account created" : "Logged in successfully");
   aiLog.insertAdjacentHTML("beforeend", "<p>Welcome back. Your beauty profile is ready for browsing, reviews, and routine guidance.</p>");
-});
+}
 
 reviewForm.addEventListener("submit", (event) => {
   event.preventDefault();
@@ -1920,6 +1999,7 @@ assetFile?.addEventListener("change", () => {
 
 async function initStorefront() {
   setTheme(localStorage.getItem("cosmetic-house-theme") || "light");
+  trackWebsiteVisit();
   try {
     state.recentlyViewed = JSON.parse(localStorage.getItem("cosmetic-house-recently-viewed")) || [];
   } catch {
@@ -1949,6 +2029,38 @@ async function initStorefront() {
     renderAssetProducts();
   }
   openInitialProductFromHash();
+  maybeOpenLoginPrompt();
 }
 
 initStorefront();
+
+function trackWebsiteVisit() {
+  const visitId = sessionStorage.getItem("cosmetic-house-visit-id") || `${Date.now()}-${Math.random().toString(16).slice(2)}`;
+  sessionStorage.setItem("cosmetic-house-visit-id", visitId);
+  let localVisits = [];
+  try {
+    localVisits = JSON.parse(localStorage.getItem("cosmetic-house-visits") || "[]");
+  } catch {
+    localVisits = [];
+  }
+  if (!localVisits.some((visit) => visit.id === visitId)) {
+    localVisits.push({ id: visitId, page: location.pathname || "/", createdAt: new Date().toISOString() });
+    localStorage.setItem("cosmetic-house-visits", JSON.stringify(localVisits.slice(-250)));
+  }
+  if (!authApiBase || sessionStorage.getItem("cosmetic-house-visit-synced") === "true") return;
+  fetch(`${authApiBase}/api/visits`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ id: visitId, page: location.pathname || "/", referrer: document.referrer }),
+    keepalive: true,
+  })
+    .then(() => sessionStorage.setItem("cosmetic-house-visit-synced", "true"))
+    .catch(() => {});
+}
+
+function maybeOpenLoginPrompt() {
+  if (isLoggedIn || sessionStorage.getItem("cosmetic-house-login-dismissed") === "true") return;
+  window.setTimeout(() => {
+    if (!loginDialog.open) loginDialog.showModal();
+  }, 800);
+}

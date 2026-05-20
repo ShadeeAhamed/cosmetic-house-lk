@@ -4,6 +4,8 @@ const orderStatuses = ["New Order", "Pending", "Confirmed", "Packed", "Dispatche
 const state = {
   pin: localStorage.getItem("cosmetic-house-admin-pin") || "",
   orders: [],
+  users: [],
+  visits: [],
   search: "",
   status: "",
 };
@@ -33,19 +35,48 @@ function localOrders() {
   }
 }
 
+function localUsers() {
+  try {
+    const account = JSON.parse(localStorage.getItem("cosmetic-house-account")) || null;
+    return account ? [account] : [];
+  } catch {
+    return [];
+  }
+}
+
+function localVisits() {
+  try {
+    return JSON.parse(localStorage.getItem("cosmetic-house-visits")) || [];
+  } catch {
+    return [];
+  }
+}
+
 async function fetchOrders() {
   if (!apiBase) {
     state.orders = localOrders();
+    state.users = localUsers();
+    state.visits = localVisits();
     render();
     return;
   }
   try {
-    const response = await fetch(`${apiBase}/api/orders`, { headers: headers(), cache: "no-store" });
-    const payload = await response.json();
-    if (!response.ok) throw new Error(payload.message || "Could not load orders.");
-    state.orders = payload.orders || [];
+    const [ordersResponse, usersResponse, visitsResponse] = await Promise.all([
+      fetch(`${apiBase}/api/orders`, { headers: headers(), cache: "no-store" }),
+      fetch(`${apiBase}/api/users`, { headers: headers(), cache: "no-store" }),
+      fetch(`${apiBase}/api/visits`, { headers: headers(), cache: "no-store" }),
+    ]);
+    const ordersPayload = await ordersResponse.json();
+    const usersPayload = await usersResponse.json();
+    const visitsPayload = await visitsResponse.json();
+    if (!ordersResponse.ok) throw new Error(ordersPayload.message || "Could not load orders.");
+    state.orders = ordersPayload.orders || [];
+    state.users = usersResponse.ok ? usersPayload.users || [] : localUsers();
+    state.visits = visitsResponse.ok ? visitsPayload.visits || [] : localVisits();
   } catch {
     state.orders = localOrders();
+    state.users = localUsers();
+    state.visits = localVisits();
   }
   render();
 }
@@ -64,10 +95,14 @@ function renderStats() {
   const today = new Date().toISOString().slice(0, 10);
   const todayOrders = orders.filter((order) => String(order.createdAt || "").startsWith(today)).length;
   const pending = orders.filter((order) => !["Delivered", "Cancelled"].includes(order.status)).length;
+  const todayUsers = state.users.filter((user) => String(user.createdAt || "").startsWith(today)).length;
+  const todayVisits = state.visits.filter((visit) => String(visit.createdAt || "").startsWith(today)).length;
   statsEl.innerHTML = `
     <article><span>Total orders</span><strong>${orders.length}</strong></article>
-    <article><span>Today</span><strong>${todayOrders}</strong></article>
+    <article><span>Today orders</span><strong>${todayOrders}</strong></article>
     <article><span>Open orders</span><strong>${pending}</strong></article>
+    <article><span>User accounts</span><strong>${state.users.length}</strong><small>${todayUsers} today</small></article>
+    <article><span>Website visits</span><strong>${state.visits.length}</strong><small>${todayVisits} today</small></article>
     <article><span>Total sales</span><strong>${money(total)}</strong></article>
   `;
 }

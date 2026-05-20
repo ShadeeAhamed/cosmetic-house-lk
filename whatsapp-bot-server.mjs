@@ -44,11 +44,18 @@ const siteOrigin = process.env.SITE_ORIGIN || "https://cosmetichouse.com.lk";
 const paymentPublicUrl = process.env.PAYMENT_PUBLIC_URL || "";
 const adminPin = process.env.ADMIN_PIN || "";
 const ordersFile = process.env.ORDERS_FILE || "data/orders.json";
+const usersFile = process.env.USERS_FILE || "data/users.json";
+const visitsFile = process.env.VISITS_FILE || "data/visits.json";
+const resendApiKey = process.env.RESEND_API_KEY || "";
+const otpFromEmail = process.env.OTP_FROM_EMAIL || "Cosmetic House <onboarding@resend.dev>";
 
 let catalog = [];
 let automationRules = {};
 const customerSessions = new Map();
 let orders = [];
+let users = [];
+let visits = [];
+const otpSessions = new Map();
 
 function normalize(value) {
   return String(value || "").toLowerCase();
@@ -73,6 +80,16 @@ async function readJson(file, fallback) {
 async function saveOrders() {
   await mkdir(ordersFile.split("/").slice(0, -1).join("/") || ".", { recursive: true });
   await writeFile(ordersFile, JSON.stringify(orders.slice(0, 1000), null, 2));
+}
+
+async function saveUsers() {
+  await mkdir(usersFile.split("/").slice(0, -1).join("/") || ".", { recursive: true });
+  await writeFile(usersFile, JSON.stringify(users.slice(0, 5000), null, 2));
+}
+
+async function saveVisits() {
+  await mkdir(visitsFile.split("/").slice(0, -1).join("/") || ".", { recursive: true });
+  await writeFile(visitsFile, JSON.stringify(visits.slice(-10000), null, 2));
 }
 
 function authorizeAdmin(request) {
@@ -196,6 +213,8 @@ async function loadData() {
   catalog = rawCatalog.filter((product) => product.name && product.price).map(sanitizeProduct);
   automationRules = await readJson("whatsapp-automation-rules.json", {});
   orders = await readJson(ordersFile, []);
+  users = await readJson(usersFile, []);
+  visits = await readJson(visitsFile, []);
 }
 
 function productText(product) {
@@ -438,7 +457,7 @@ function buildReply(message, customerNumber = "") {
 async function sendWhatsAppMessage(to, text) {
   if (!accessToken || !phoneNumberId) {
     console.log("Reply preview:", { to, text });
-    return;
+    return false;
   }
 
   const response = await fetch(`https://graph.facebook.com/${graphApiVersion}/${phoneNumberId}/messages`, {
@@ -457,7 +476,9 @@ async function sendWhatsAppMessage(to, text) {
 
   if (!response.ok) {
     console.error("WhatsApp send failed:", await response.text());
+    return false;
   }
+  return true;
 }
 
 async function notifyOwner(customerNumber, incomingText, intent) {
@@ -480,6 +501,79 @@ function readBody(request) {
     request.on("end", () => resolve(body));
     request.on("error", reject);
   });
+}
+
+function normalizeContact(contact) {
+  return String(contact || "").trim().toLowerCase();
+}
+
+function isEmail(contact) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(contact);
+}
+
+function phoneDigits(contact) {
+  const digits = String(contact || "").replace(/\D/g, "");
+  if (!digits) return "";
+  if (digits.startsWith("0")) return `94${digits.slice(1)}`;
+  return digits;
+}
+
+function publicUser(user) {
+  return {
+    id: user.id,
+    name: user.name,
+    address: user.address,
+    gender: user.gender,
+    contact: user.contact,
+    createdAt: user.createdAt,
+    updatedAt: user.updatedAt,
+  };
+}
+
+function upsertUser(payload) {
+  const now = new Date().toISOString();
+  const contact = normalizeContact(payload.contact);
+  if (!contact) throw new Error("Email or phone is required.");
+  const existingIndex = users.findIndex((user) => normalizeContact(user.contact) === contact);
+  const user = {
+    id: existingIndex >= 0 ? users[existingIndex].id : `CHLK-USER-${Date.now()}`,
+    name: String(payload.name || "").slice(0, 120),
+    address: String(payload.address || "").slice(0, 220),
+    gender: String(payload.gender || "").slice(0, 40),
+    contact,
+    createdAt: existingIndex >= 0 ? users[existingIndex].createdAt : now,
+    updatedAt: now,
+  };
+  if (existingIndex >= 0) users[existingIndex] = { ...users[existingIndex], ...user };
+  else users.unshift(user);
+  return user;
+}
+
+async function sendOtpEmail(contact, code) {
+  if (!resendApiKey) return { ok: false, message: "Email sending is not configured yet." };
+  const response = await fetch("https://api.resend.com/emails", {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${resendApiKey}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      from: otpFromEmail,
+      to: [contact],
+      subject: "Your Cosmetic House verification code",
+      text: `Your Cosmetic House verification code is ${code}. It expires in 10 minutes.`,
+    }),
+  });
+  if (!response.ok) return { ok: false, message: await response.text() };
+  return { ok: true };
+}
+
+async function sendOtp(contact, code) {
+  if (isEmail(contact)) return sendOtpEmail(contact, code);
+  const phone = phoneDigits(contact);
+  if (!phone) return { ok: false, message: "Enter a valid email or phone number." };
+  const sent = await sendWhatsAppMessage(phone, `Your Cosmetic House verification code is ${code}. It expires in 10 minutes.`);
+  return sent ? { ok: true } : { ok: false, message: "WhatsApp OTP could not be sent. Use email or try again." };
 }
 
 function send(response, status, body, contentType = "text/plain") {
@@ -617,6 +711,86 @@ http
         },
         origin,
       );
+      return;
+    }
+
+    if (request.method === "POST" && url.pathname === "/api/visits") {
+      try {
+        const payload = JSON.parse((await readBody(request)) || "{}");
+        const visit = {
+          id: String(payload.id || crypto.randomUUID()),
+          page: String(payload.page || "/").slice(0, 180),
+          referrer: String(payload.referrer || "").slice(0, 220),
+          userAgent: String(request.headers["user-agent"] || "").slice(0, 240),
+          createdAt: new Date().toISOString(),
+        };
+        visits.push(visit);
+        await saveVisits();
+        sendJson(response, 200, { ok: true }, origin);
+      } catch (error) {
+        sendJson(response, 400, { ok: false, message: error.message }, origin);
+      }
+      return;
+    }
+
+    if (request.method === "GET" && url.pathname === "/api/visits") {
+      if (!authorizeAdmin(request)) {
+        sendJson(response, 401, { ok: false, message: "Admin PIN required." }, origin);
+        return;
+      }
+      sendJson(response, 200, { ok: true, visits }, origin);
+      return;
+    }
+
+    if (request.method === "GET" && url.pathname === "/api/users") {
+      if (!authorizeAdmin(request)) {
+        sendJson(response, 401, { ok: false, message: "Admin PIN required." }, origin);
+        return;
+      }
+      sendJson(response, 200, { ok: true, users: users.map(publicUser) }, origin);
+      return;
+    }
+
+    if (request.method === "POST" && url.pathname === "/api/auth/request-otp") {
+      try {
+        const payload = JSON.parse((await readBody(request)) || "{}");
+        const contact = normalizeContact(payload.contact);
+        if (!contact) throw new Error("Email or phone is required.");
+        const code = String(crypto.randomInt(100000, 999999));
+        const expiresAt = Date.now() + 10 * 60 * 1000;
+        const delivery = await sendOtp(contact, code);
+        if (!delivery.ok) throw new Error(delivery.message || "Verification code could not be sent.");
+        otpSessions.set(contact, { code, expiresAt, attempts: 0, profile: payload.profile || {} });
+        sendJson(response, 200, { ok: true, message: "Verification code sent." }, origin);
+      } catch (error) {
+        sendJson(response, 400, { ok: false, message: error.message }, origin);
+      }
+      return;
+    }
+
+    if (request.method === "POST" && url.pathname === "/api/auth/verify-otp") {
+      try {
+        const payload = JSON.parse((await readBody(request)) || "{}");
+        const contact = normalizeContact(payload.contact);
+        const session = otpSessions.get(contact);
+        if (!session) throw new Error("Request a fresh verification code.");
+        session.attempts += 1;
+        if (session.attempts > 5) {
+          otpSessions.delete(contact);
+          throw new Error("Too many attempts. Request a new code.");
+        }
+        if (Date.now() > session.expiresAt) {
+          otpSessions.delete(contact);
+          throw new Error("Verification code expired.");
+        }
+        if (String(payload.code || "").trim() !== session.code) throw new Error("Incorrect verification code.");
+        const user = upsertUser({ ...session.profile, ...payload.profile, contact });
+        await saveUsers();
+        otpSessions.delete(contact);
+        sendJson(response, 200, { ok: true, user: publicUser(user) }, origin);
+      } catch (error) {
+        sendJson(response, 400, { ok: false, message: error.message }, origin);
+      }
       return;
     }
 
