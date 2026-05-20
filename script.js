@@ -345,13 +345,17 @@ const state = {
   sort: "featured",
   cart: [],
   wishlist: [],
-  visibleCount: 48,
+  visibleCount: 10,
   recentlyViewed: [],
   currentProductIndex: null,
+  currentOrderId: null,
+  account: null,
 };
 
 let catalogLoaded = false;
 let isLoggedIn = false;
+let authMode = "login";
+let verificationCode = "";
 
 const productGrid = document.querySelector("[data-products]");
 const loadMoreButton = document.querySelector("[data-load-more-products]");
@@ -378,6 +382,11 @@ const orderSubtotalField = document.querySelector("[data-order-subtotal-field]")
 const orderTotalField = document.querySelector("[data-order-total-field]");
 const orderPaymentField = document.querySelector("[data-order-payment-field]");
 const orderWhatsAppField = document.querySelector("[data-order-whatsapp-field]");
+const orderStatusPanel = document.querySelector("[data-order-status]");
+const cancelOrderButton = document.querySelector("[data-cancel-order]");
+const cancelReasonBox = document.querySelector("[data-cancel-reason-box]");
+const cancelReasonField = document.querySelector("[data-cancel-reason]");
+const confirmCancelButton = document.querySelector("[data-confirm-cancel]");
 const onlinePaymentInput = document.querySelector('input[name="payment"][value="Online card payment"]');
 const codPaymentInput = document.querySelector('input[name="payment"][value="Cash on delivery"]');
 const whatsAppQuickLinks = document.querySelectorAll("[data-whatsapp-quick]");
@@ -390,6 +399,12 @@ const aiInput = document.querySelector("[data-ai-input]");
 const aiLog = document.querySelector("[data-ai-log]");
 const loginDialog = document.querySelector("[data-login-dialog]");
 const loginForm = document.querySelector("[data-login-form]");
+const loginTitle = document.querySelector("[data-login-title]");
+const authModeButtons = document.querySelectorAll("[data-auth-mode]");
+const signupOnlyFields = document.querySelectorAll("[data-signup-only]");
+const verifyCodeButton = document.querySelector("[data-send-code]");
+const verificationCodeInput = document.querySelector("[data-verification-code]");
+const authStatus = document.querySelector("[data-auth-status]");
 const galleryUploadInput = document.querySelector("[data-gallery-upload]");
 const uploadName = document.querySelector("[data-upload-name]");
 const cardForm = document.querySelector("[data-card-form]");
@@ -623,7 +638,11 @@ function filteredProducts() {
       (state.category === "Skincare" && /(serum|cream|cleanser|spf|sunscreen|moistur|toner|ampoule|mask|retinol|niacinamide)/.test(searchable)) ||
       (state.category === "Korean Beauty" && /(beauty of joseon|anua|cosrx|laneige|skin1004|torriden|medicube|biodance|round lab|some by mi|innisfree|dr\. althea|k secret|celimax)/.test(searchable)) ||
       (state.category === "Luxury Brands" && /(rhode|sol de janeiro|k18|la roche|laneige|supergoop|rare|dior|cerave)/.test(searchable)) ||
-      (state.category === "Fragrance" && /(mist|fragrance|perfume|scent|body spray)/.test(searchable));
+      (state.category === "Fragrance" && /(mist|fragrance|perfume|scent|body spray)/.test(searchable)) ||
+      (state.category === "Cleansers" && /(cleanser|cleansing|face wash|gel wash|micellar|foam|wash)/.test(searchable)) ||
+      (state.category === "Serums" && /(serum|ampoule|niacinamide|retinol|retinal|vitamin c|hyaluronic|peptide|alpha arbutin|bha|aha)/.test(searchable)) ||
+      (state.category === "Body Care" && /(body|lotion|scrub|polish|wash|shower|vaseline|dove|salt bath)/.test(searchable)) ||
+      (state.category === "SPF & Sun Care" && /(spf|sun|sunscreen|uv|anthelios)/.test(searchable));
     const matchesBrand = !activeBrand || normalizeText(product.brand).includes(activeBrand) || normalizeText(product.name).includes(activeBrand);
     const matchesSearch = !query || searchable.includes(query);
     return matchesCategory && matchesBrand && matchesSearch;
@@ -961,6 +980,8 @@ function renderCart() {
   cartCount.textContent = state.cart.length;
   subtotalEl.textContent = money(subtotal);
   totalEl.textContent = money(total);
+  if (orderStatusPanel && !orderStatusPanel.dataset.persist) orderStatusPanel.hidden = true;
+  if (cancelReasonBox) cancelReasonBox.hidden = true;
 
   cartItems.innerHTML = state.cart.length
     ? state.cart
@@ -993,6 +1014,7 @@ function renderCart() {
   if (orderPaymentField) orderPaymentField.value = payment;
   if (orderWhatsAppField) orderWhatsAppField.value = message;
   if (checkoutButton) checkoutButton.disabled = !state.cart.length;
+  if (cancelOrderButton) cancelOrderButton.disabled = !state.cart.length;
   if (checkoutButton) checkoutButton.textContent = payment === "Online card payment" && paymentGateway.ready ? "Pay securely" : "Place order";
   cardForm.hidden = selectedPaymentMethod() !== "Online card payment";
   if (paymentStatus) paymentStatus.textContent = paymentGateway.message;
@@ -1254,17 +1276,21 @@ function removeFromCart(index) {
 function orderPayloadFromForm(form) {
   const formData = new FormData(form);
   const subtotal = state.cart.reduce((sum, product) => sum + product.price, 0);
+  const email = String(formData.get("customer_email") || "").trim();
+  const phone = String(formData.get("customer_phone") || "").trim();
   return {
     id: state.currentOrderId,
     source: "website",
+    status: "New Order",
     payment: selectedPaymentMethod(),
     paymentStatus: selectedPaymentMethod() === "Online card payment" ? "Pending" : "Pending",
     customer: {
       name: formData.get("customer_name"),
-      email: formData.get("customer_email"),
-      phone: formData.get("customer_phone"),
+      email,
+      phone,
       city: formData.get("delivery_city"),
       address: formData.get("delivery_address"),
+      gender: state.account?.gender || "",
     },
     items: state.cart.map((product) => ({
       name: product.name,
@@ -1279,9 +1305,16 @@ function orderPayloadFromForm(form) {
 }
 
 async function recordOrder(payload) {
+  const now = new Date().toISOString();
+  const finalPayload = {
+    ...payload,
+    createdAt: payload.createdAt || now,
+    updatedAt: now,
+    activity: payload.activity || [{ at: now, text: `${payload.source || "website"} order created` }],
+  };
   try {
     const savedOrders = JSON.parse(localStorage.getItem("cosmetic-house-orders")) || [];
-    savedOrders.unshift({ ...payload, createdAt: new Date().toISOString() });
+    savedOrders.unshift(finalPayload);
     localStorage.setItem("cosmetic-house-orders", JSON.stringify(savedOrders.slice(0, 50)));
   } catch {
     // The server/email flow still continues if browser storage is unavailable.
@@ -1291,12 +1324,74 @@ async function recordOrder(payload) {
     await fetch(`${orderApiBase}/api/orders`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
+      body: JSON.stringify(finalPayload),
       keepalive: true,
     });
   } catch {
     // FormSubmit and WhatsApp backup remain available if the admin API is temporarily unavailable.
   }
+}
+
+function validateOrderContact(form) {
+  const formData = new FormData(form);
+  const email = String(formData.get("customer_email") || "").trim();
+  const phone = String(formData.get("customer_phone") || "").trim();
+  if (email || phone) return true;
+  showToast("Add an email or phone number to submit the order", "info");
+  form.querySelector('[name="customer_phone"]')?.focus();
+  return false;
+}
+
+function showOrderSuccess(orderId) {
+  if (!orderStatusPanel) return;
+  orderStatusPanel.dataset.persist = "true";
+  orderStatusPanel.hidden = false;
+  orderStatusPanel.innerHTML = `
+    <strong>Order submitted</strong>
+    <p>Your order ID is <b>${orderId}</b>. It is now saved for admin review.</p>
+  `;
+}
+
+function showCancellationSaved(orderId, reason) {
+  if (!orderStatusPanel) return;
+  orderStatusPanel.dataset.persist = "true";
+  orderStatusPanel.hidden = false;
+  orderStatusPanel.innerHTML = `
+    <strong>Cancellation saved</strong>
+    <p>Order reference <b>${orderId}</b> was cancelled. Reason: ${reason}</p>
+  `;
+}
+
+async function cancelCurrentOrder() {
+  const reason = cancelReasonField?.value.trim();
+  if (!reason) {
+    showToast("Add a cancellation reason first", "info");
+    cancelReasonField?.focus();
+    return;
+  }
+  const subtotal = state.cart.reduce((sum, product) => sum + product.price, 0);
+  const orderId = state.currentOrderId || createOrderId();
+  await recordOrder({
+    id: orderId,
+    source: "website",
+    status: "Cancelled",
+    payment: selectedPaymentMethod(),
+    paymentStatus: "Cancelled",
+    customer: { name: "Customer", email: "", phone: "", city: "", address: "" },
+    items: state.cart.map((product) => ({ name: product.name, price: product.price, slug: product.slug, quantity: 1 })),
+    subtotal,
+    delivery: deliveryCharge,
+    total: subtotal ? subtotal + deliveryCharge : 0,
+    tracking: `Cancellation reason: ${reason}`,
+    activity: [{ at: new Date().toISOString(), text: `Customer cancelled: ${reason}` }],
+  });
+  state.cart = [];
+  state.currentOrderId = null;
+  cancelReasonField.value = "";
+  if (orderStatusPanel) delete orderStatusPanel.dataset.persist;
+  renderCart();
+  showCancellationSaved(orderId, reason);
+  showToast("Cancellation reason saved", "info");
 }
 
 function submitPayherePayment(fields, action) {
@@ -1450,7 +1545,7 @@ filterRow.addEventListener("click", (event) => {
   if (!button) return;
   state.category = button.dataset.category;
   state.brand = "";
-  state.visibleCount = 48;
+  state.visibleCount = 10;
   renderFilters();
   renderProducts();
 });
@@ -1529,15 +1624,15 @@ document.querySelectorAll('input[name="payment"]').forEach((input) => {
 });
 
 orderForm?.addEventListener("submit", async (event) => {
+  event.preventDefault();
   if (!state.cart.length) {
-    event.preventDefault();
-    alert("Please add at least one product before placing an order.");
+    showToast("Please add at least one product before placing an order", "info");
     return;
   }
+  if (!validateOrderContact(orderForm)) return;
   renderCart();
   const payload = orderPayloadFromForm(orderForm);
   if (selectedPaymentMethod() === "Online card payment") {
-    event.preventDefault();
     checkoutButton.disabled = true;
     checkoutButton.textContent = "Opening secure payment...";
     try {
@@ -1550,13 +1645,21 @@ orderForm?.addEventListener("submit", async (event) => {
     }
     return;
   }
-  recordOrder(payload);
+  checkoutButton.disabled = true;
+  checkoutButton.textContent = "Submitting order...";
+  await recordOrder(payload);
+  showOrderSuccess(payload.id);
+  state.cart = [];
+  state.currentOrderId = null;
+  orderForm.reset();
+  renderCart();
+  showToast("Order submitted successfully");
 });
 
 searchInput.addEventListener("input", (event) => {
   state.search = event.target.value;
   state.brand = "";
-  state.visibleCount = 48;
+  state.visibleCount = 10;
   renderProducts();
   renderSearchSuggestions();
 });
@@ -1570,18 +1673,21 @@ searchSuggestionsPanel?.addEventListener("click", (event) => {
 
 sortSelect?.addEventListener("change", (event) => {
   state.sort = event.target.value;
-  state.visibleCount = 48;
+  state.visibleCount = 10;
   renderProducts();
   showToast("Product list sorted", "info");
 });
 
 document.querySelectorAll("[data-category-jump]").forEach((link) => {
-  link.addEventListener("click", () => {
+  link.addEventListener("click", (event) => {
+    event.preventDefault();
     state.category = link.dataset.categoryJump;
     state.brand = "";
-    state.visibleCount = 48;
+    state.visibleCount = 10;
     renderFilters();
     renderProducts();
+    megaMenu.hidden = true;
+    document.querySelector("#shop")?.scrollIntoView({ behavior: "smooth", block: "start" });
   });
 });
 
@@ -1591,7 +1697,7 @@ document.querySelectorAll("[data-brand-jump]").forEach((button) => {
     state.brand = button.dataset.brandJump;
     state.search = "";
     searchInput.value = "";
-    state.visibleCount = 48;
+    state.visibleCount = 10;
     renderFilters();
     renderProducts();
     document.querySelector("#shop")?.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -1599,9 +1705,16 @@ document.querySelectorAll("[data-brand-jump]").forEach((button) => {
 });
 
 loadMoreButton.addEventListener("click", () => {
-  state.visibleCount += 48;
+  state.visibleCount += 10;
   renderProducts();
 });
+
+cancelOrderButton?.addEventListener("click", () => {
+  if (!state.cart.length) return;
+  cancelReasonBox.hidden = !cancelReasonBox.hidden;
+});
+
+confirmCancelButton?.addEventListener("click", cancelCurrentOrder);
 
 document.querySelectorAll("[data-open-cart]").forEach((button) => button.addEventListener("click", openCart));
 document.querySelector("[data-close-cart]").addEventListener("click", closeCart);
@@ -1630,6 +1743,31 @@ document.querySelector("[data-back-shop]").addEventListener("click", () => {
 });
 document.querySelector("[data-open-login]").addEventListener("click", () => loginDialog.showModal());
 document.querySelector("[data-close-login]").addEventListener("click", () => loginDialog.close());
+function updateAuthMode(mode) {
+  authMode = mode;
+  authModeButtons.forEach((button) => button.classList.toggle("active", button.dataset.authMode === mode));
+  signupOnlyFields.forEach((field) => {
+    field.hidden = mode !== "signup";
+    field.querySelectorAll("input, select, textarea").forEach((input) => {
+      input.required = mode === "signup" && ["full_name", "address"].includes(input.name);
+    });
+  });
+  if (loginTitle) loginTitle.textContent = mode === "signup" ? "Create your beauty account" : "Login to Cosmetic House.lk";
+  if (authStatus) authStatus.textContent = mode === "signup" ? "Use email or phone, then confirm the 2-step code." : "Login with your email or phone number.";
+}
+
+authModeButtons.forEach((button) => button.addEventListener("click", () => updateAuthMode(button.dataset.authMode)));
+verifyCodeButton?.addEventListener("click", () => {
+  const contact = loginForm.elements.contact?.value.trim();
+  if (!contact) {
+    authStatus.textContent = "Enter your email or phone first.";
+    loginForm.elements.contact?.focus();
+    return;
+  }
+  verificationCode = String(Math.floor(100000 + Math.random() * 900000));
+  authStatus.textContent = `Verification code sent. Demo code: ${verificationCode}`;
+  verificationCodeInput?.focus();
+});
 document.querySelector("[data-open-asset]")?.addEventListener("click", () => assetDialog?.showModal());
 document.querySelector("[data-close-asset]")?.addEventListener("click", () => assetDialog?.close());
 
@@ -1723,8 +1861,28 @@ galleryUploadInput.addEventListener("change", () => handleUploadChange(galleryUp
 
 loginForm.addEventListener("submit", (event) => {
   event.preventDefault();
+  const formData = new FormData(loginForm);
+  const contact = String(formData.get("contact") || "").trim();
+  if (!contact) {
+    authStatus.textContent = "Email or phone number is required.";
+    return;
+  }
+  if (authMode === "signup" && verificationCodeInput?.value.trim() !== verificationCode) {
+    authStatus.textContent = "Enter the correct 2-step verification code.";
+    verificationCodeInput?.focus();
+    return;
+  }
+  state.account = {
+    name: formData.get("full_name") || "",
+    address: formData.get("address") || "",
+    gender: formData.get("gender") || "",
+    contact,
+    createdAt: new Date().toISOString(),
+  };
+  localStorage.setItem("cosmetic-house-account", JSON.stringify(state.account));
   isLoggedIn = true;
   loginDialog.close();
+  showToast(authMode === "signup" ? "Beauty account created" : "Logged in successfully");
   aiLog.insertAdjacentHTML("beforeend", "<p>Welcome back. Your beauty profile is ready for browsing, reviews, and routine guidance.</p>");
 });
 
@@ -1771,6 +1929,12 @@ async function initStorefront() {
     state.wishlist = JSON.parse(localStorage.getItem("cosmetic-house-wishlist")) || [];
   } catch {
     state.wishlist = [];
+  }
+  try {
+    state.account = JSON.parse(localStorage.getItem("cosmetic-house-account")) || null;
+    isLoggedIn = Boolean(state.account);
+  } catch {
+    state.account = null;
   }
   renderReviews();
   renderCart();

@@ -84,11 +84,26 @@
       </div>
       <div class="mega-menu" data-mega-menu hidden>
         <div>
-          <p class="eyebrow">Shop by routine</p>
+          <p class="eyebrow">Skincare</p>
           <a href="#shop" data-category-jump="Skincare">Skincare</a>
-          <a href="#shop" data-category-jump="Sunscreen">SPF & Sun Care</a>
+          <a href="#shop" data-category-jump="Cleansers">Cleansers</a>
           <a href="#shop" data-category-jump="Serums">Serums</a>
           <a href="#shop" data-category-jump="Moisturizers">Moisturizers</a>
+          <a href="#shop" data-category-jump="SPF & Sun Care">SPF & Sun Care</a>
+        </div>
+        <div>
+          <p class="eyebrow">Beauty floor</p>
+          <a href="#shop" data-category-jump="Best Moving">Best sellers</a>
+          <a href="#shop" data-category-jump="Makeup">Makeup</a>
+          <a href="#shop" data-category-jump="Body Care">Body care</a>
+          <a href="#shop" data-category-jump="Shampoos & Hair">Hair care</a>
+        </div>
+        <div>
+          <p class="eyebrow">Concerns</p>
+          <a href="#shop" data-category-jump="Serums">Dark spots</a>
+          <a href="#shop" data-category-jump="Moisturizers">Dryness</a>
+          <a href="#shop" data-category-jump="Cleansers">Acne & pores</a>
+          <a href="#shop" data-category-jump="Serums">Serums</a>
         </div>
         <div>
           <p class="eyebrow">Trending edits</p>
@@ -488,12 +503,12 @@
             <input name="customer_name" autocomplete="name" required />
           </label>
           <label>
-            <span>Email</span>
-            <input name="customer_email" type="email" autocomplete="email" required />
+            <span>Email (email or phone is required)</span>
+            <input name="customer_email" type="email" autocomplete="email" />
           </label>
           <label>
             <span>Phone / WhatsApp</span>
-            <input name="customer_phone" autocomplete="tel" required />
+            <input name="customer_phone" autocomplete="tel" />
           </label>
           <label>
             <span>Delivery city</span>
@@ -508,7 +523,16 @@
             <input name="payment_proof" type="file" accept="image/*,.pdf" />
           </label>
           <button class="button primary full" data-checkout type="submit">Place order</button>
+          <button class="button secondary full" data-cancel-order type="button">Cancel order</button>
+          <div class="cancel-reason-box" data-cancel-reason-box hidden>
+            <label>
+              <span>Cancellation reason</span>
+              <textarea data-cancel-reason rows="2" placeholder="Tell us why you cancelled this basket"></textarea>
+            </label>
+            <button class="button secondary full" data-confirm-cancel type="button">Submit cancellation</button>
+          </div>
         </form>
+        <div class="order-status-panel" data-order-status hidden></div>
         <a class="button secondary full" data-whatsapp-checkout href="#" target="_blank" rel="noreferrer">Send on WhatsApp instead</a>
         <p class="cart-note">You will receive an order ID. We will confirm details before dispatch.</p>
       </div>
@@ -518,18 +542,46 @@
       <button class="icon-button dialog-close" type="button" data-close-login aria-label="Close login">x</button>
       <form class="login-panel" data-login-form>
         <p class="eyebrow">Beauty account</p>
-        <h2>Login to Cosmetic House.lk</h2>
+        <h2 data-login-title>Login to Cosmetic House.lk</h2>
         <p>Save favorites, routine notes, rewards, and delivery preferences.</p>
+        <div class="auth-tabs" role="tablist" aria-label="Account mode">
+          <button class="active" type="button" data-auth-mode="login">Login</button>
+          <button type="button" data-auth-mode="signup">Sign up</button>
+        </div>
+        <label data-signup-only hidden>
+          <span>Full name</span>
+          <input name="full_name" autocomplete="name" placeholder="Your name" />
+        </label>
+        <label data-signup-only hidden>
+          <span>Address</span>
+          <input name="address" autocomplete="street-address" placeholder="Delivery address" />
+        </label>
+        <label data-signup-only hidden>
+          <span>Gender</span>
+          <select name="gender">
+            <option value="">Prefer not to say</option>
+            <option>Female</option>
+            <option>Male</option>
+            <option>Other</option>
+          </select>
+        </label>
         <label>
           <span>Email or phone</span>
-          <input type="text" required placeholder="you@example.com" />
+          <input name="contact" type="text" required placeholder="Email or phone number" />
         </label>
         <label>
           <span>Password</span>
-          <input type="password" required placeholder="Password" />
+          <input name="password" type="password" required placeholder="Password" />
+        </label>
+        <label data-signup-only hidden>
+          <span>2-step verification</span>
+          <div class="verify-row">
+            <input data-verification-code name="verification_code" inputmode="numeric" placeholder="Enter code" />
+            <button class="button secondary" data-send-code type="button">Send code</button>
+          </div>
         </label>
         <button class="button primary full" type="submit">Continue</button>
-        <small>Your beauty account experience is being prepared for launch.</small>
+        <small data-auth-status>Email or phone is required. For launch, this connects to email/SMS verification service.</small>
       </form>
     </dialog>
 

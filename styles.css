@@ -215,7 +215,7 @@ footer span {
   left: clamp(1rem, 4vw, 4.5rem);
   z-index: 40;
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(5, minmax(0, 1fr));
   gap: 1rem;
   padding: 1.2rem;
   border: 1px solid var(--line);
@@ -271,11 +271,11 @@ footer span {
 .hero {
   position: relative;
   display: grid;
-  min-height: calc(100vh - 5rem);
+  min-height: min(44rem, calc(100vh - 5rem));
   grid-template-columns: minmax(0, 0.95fr) minmax(20rem, 0.8fr);
   gap: clamp(2rem, 5vw, 5rem);
   align-items: center;
-  padding: clamp(3rem, 7vw, 7rem) clamp(1rem, 5vw, 5rem) 4rem;
+  padding: clamp(2rem, 4.5vw, 4.75rem) clamp(1rem, 5vw, 5rem) 3rem;
 }
 
 .hero::before {
@@ -305,8 +305,8 @@ p {
 h1 {
   max-width: 10ch;
   margin-bottom: 1.2rem;
-  font-size: clamp(3.7rem, 8.8vw, 7.6rem);
-  line-height: 0.88;
+  font-size: clamp(3rem, 6.7vw, 6.2rem);
+  line-height: 0.92;
 }
 
 h2 {
@@ -460,7 +460,7 @@ p {
 }
 
 section:not(.hero) {
-  padding: clamp(3rem, 7vw, 6rem) clamp(1rem, 5vw, 5rem);
+  padding: clamp(2rem, 4vw, 4rem) clamp(1rem, 5vw, 5rem);
 }
 
 body.product-mode main > section:not(.product-page) {
@@ -1206,7 +1206,7 @@ body.product-mode .product-page {
   right: clamp(1rem, 3vw, 2rem);
   bottom: clamp(1rem, 3vw, 2rem);
   z-index: 45;
-  display: grid;
+  display: none;
   min-width: 8.8rem;
   gap: 0.1rem;
   padding: 0.75rem 1rem;
@@ -1407,8 +1407,10 @@ body.product-mode .product-page {
   position: relative;
   display: grid;
   width: min(100%, 29rem);
-  grid-template-rows: auto 1fr auto auto auto auto;
+  max-height: 100dvh;
+  grid-template-rows: auto auto auto auto auto;
   gap: 1rem;
+  overflow: auto;
   padding: 1rem;
   background: var(--paper);
   box-shadow: var(--shadow);
@@ -1445,6 +1447,7 @@ body.product-mode .product-page {
   display: grid;
   align-content: start;
   gap: 0.75rem;
+  max-height: 15rem;
   overflow: auto;
 }
 
@@ -1484,6 +1487,35 @@ body.product-mode .product-page {
 
 .cart-recommendations:empty {
   display: none;
+}
+
+.order-status-panel {
+  display: grid;
+  gap: 0.35rem;
+  padding: 0.9rem;
+  border: 1px solid color-mix(in srgb, #159947 45%, var(--line));
+  border-radius: 0.75rem;
+  background: color-mix(in srgb, #1fc46c 10%, var(--panel));
+}
+
+.order-status-panel[hidden],
+.cancel-reason-box[hidden] {
+  display: none;
+}
+
+.order-status-panel p {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+.cancel-reason-box {
+  display: grid;
+  gap: 0.75rem;
+  padding: 0.85rem;
+  border: 1px dashed color-mix(in srgb, var(--rose) 45%, var(--line));
+  border-radius: 0.75rem;
+  background: color-mix(in srgb, var(--rose) 7%, transparent);
 }
 
 .mini-products {
@@ -1986,6 +2018,37 @@ body.product-mode .product-page {
   padding: 2rem;
 }
 
+.auth-tabs {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.35rem;
+  padding: 0.25rem;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--panel);
+}
+
+.auth-tabs button {
+  min-height: 2.45rem;
+  border: 0;
+  border-radius: 999px;
+  color: var(--muted);
+  background: transparent;
+  cursor: pointer;
+  font-weight: 900;
+}
+
+.auth-tabs button.active {
+  color: white;
+  background: var(--ink);
+}
+
+.verify-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 0.55rem;
+}
+
 .login-panel h2 {
   font-size: 2rem;
 }
@@ -1997,7 +2060,8 @@ body.product-mode .product-page {
   font-weight: 800;
 }
 
-.login-panel input {
+.login-panel input,
+.login-panel select {
   min-height: 3rem;
   padding: 0 1rem;
   border: 1px solid var(--line);
@@ -3118,6 +3182,57 @@ footer a:hover {
 @media (max-width: 760px) {
   .trust-strip {
     grid-template-columns: 1fr;
+  }
+
+  .hero {
+    gap: 1rem;
+    padding-top: 1rem;
+    padding-bottom: 1.4rem;
+  }
+
+  .hero-copy h1 {
+    font-size: clamp(2.35rem, 11.5vw, 3.35rem);
+    line-height: 0.98;
+  }
+
+  .hero-copy p:not(.eyebrow) {
+    display: -webkit-box;
+    overflow: hidden;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+  }
+
+  .hero-actions {
+    gap: 0.55rem;
+    margin-top: 1rem;
+  }
+
+  .hero-actions .button {
+    width: auto;
+    flex: 1 1 8.25rem;
+    min-height: 2.65rem;
+    padding: 0.65rem 0.75rem;
+    font-size: 0.88rem;
+  }
+
+  .hero-stats {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.55rem;
+    margin-top: 1rem;
+  }
+
+  .hero-stats span {
+    min-width: 0;
+    padding: 0.7rem;
+  }
+
+  .hero-stats strong {
+    font-size: 1.1rem;
+  }
+
+  .hero-panel {
+    display: none;
   }
 
   .hero-product-mix {
