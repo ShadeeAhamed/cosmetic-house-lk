@@ -275,11 +275,11 @@ footer span {
 .hero {
   position: relative;
   display: grid;
-  min-height: min(44rem, calc(100vh - 5rem));
-  grid-template-columns: minmax(0, 0.95fr) minmax(20rem, 0.8fr);
-  gap: clamp(2rem, 5vw, 5rem);
+  min-height: auto;
+  grid-template-columns: minmax(0, 1.12fr) minmax(21rem, 0.88fr);
+  gap: clamp(1.5rem, 4vw, 4rem);
   align-items: center;
-  padding: clamp(2rem, 4.5vw, 4.75rem) clamp(1rem, 5vw, 5rem) 3rem;
+  padding: clamp(2rem, 4.5vw, 4rem) clamp(1rem, 5vw, 5rem) clamp(1.5rem, 4vw, 3rem);
 }
 
 .hero::before {
@@ -307,10 +307,10 @@ p {
 }
 
 h1 {
-  max-width: 10ch;
+  max-width: 16ch;
   margin-bottom: 1.2rem;
-  font-size: clamp(3rem, 6.7vw, 6.2rem);
-  line-height: 0.92;
+  font-size: clamp(2.8rem, 5.4vw, 5.8rem);
+  line-height: 0.94;
 }
 
 h2 {
@@ -330,6 +330,12 @@ p {
 .hero-copy p:not(.eyebrow) {
   max-width: 42rem;
   font-size: clamp(1rem, 1.5vw, 1.18rem);
+}
+
+.hero-copy h1 {
+  max-width: none;
+  font-size: clamp(2.45rem, 4vw, 4.45rem);
+  white-space: nowrap;
 }
 
 .hero-actions {
@@ -385,7 +391,7 @@ p {
 
 .hero-panel {
   display: grid;
-  min-height: 28rem;
+  min-height: clamp(22rem, 34vw, 31rem);
   align-content: end;
   gap: 1rem;
   padding: clamp(1.25rem, 4vw, 2rem);
@@ -404,8 +410,8 @@ p {
 }
 
 .hero-panel > strong {
-  max-width: 12ch;
-  font-size: clamp(2.4rem, 5vw, 4.8rem);
+  max-width: 14ch;
+  font-size: clamp(2.45rem, 5vw, 5.15rem);
   line-height: 0.95;
 }
 
@@ -416,20 +422,18 @@ p {
 .hero-product-mix {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 0.65rem;
+  gap: 0.75rem;
 }
 
 .hero-mix-card {
   position: relative;
   display: grid;
-  min-height: 9.5rem;
+  min-height: 8.8rem;
   place-items: center;
   overflow: hidden;
-  border: 1px solid rgba(255, 255, 255, 0.14);
-  border-radius: 0.8rem;
-  background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(255, 250, 253, 0.88)),
-    var(--photo-color);
+  border: 0;
+  border-radius: 0.9rem;
+  background: transparent;
 }
 
 .hero-mix-card .missing-photo {
@@ -2957,6 +2961,14 @@ footer a:hover {
   box-shadow: 0 2rem 5rem rgba(12, 5, 9, 0.18);
 }
 
+.hero-beauty-board {
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 78% 20%, rgba(255, 20, 147, 0.42), transparent 12rem),
+    radial-gradient(circle at 28% 78%, rgba(255, 216, 229, 0.16), transparent 14rem),
+    linear-gradient(145deg, #080407, #2a061c 52%, #070407);
+}
+
 .hero-product-mix {
   align-items: stretch;
 }
@@ -2964,15 +2976,15 @@ footer a:hover {
 .hero-mix-card {
   min-height: 10rem;
   border-radius: 1.2rem;
-  background: linear-gradient(145deg, color-mix(in srgb, var(--photo-color) 36%, var(--panel)), var(--panel));
+  background: transparent;
 }
 
 .hero-mix-card img {
   width: 100%;
   height: 100%;
   object-fit: contain;
-  padding: 0.75rem;
-  filter: drop-shadow(0 1rem 1.4rem rgba(0, 0, 0, 0.22));
+  padding: 0.15rem;
+  filter: drop-shadow(0 1.3rem 1.2rem rgba(0, 0, 0, 0.34));
 }
 
 .trust-strip,
@@ -3426,19 +3438,21 @@ footer a:hover {
   .hero {
     gap: 1rem;
     padding-top: 1rem;
-    padding-bottom: 1.4rem;
+    padding-bottom: 1rem;
   }
 
   .hero-copy h1 {
     font-size: clamp(2.35rem, 11.5vw, 3.35rem);
     line-height: 0.98;
+    max-width: 12ch;
+    white-space: normal;
   }
 
   .hero-copy p:not(.eyebrow) {
     display: -webkit-box;
     overflow: hidden;
     -webkit-box-orient: vertical;
-    -webkit-line-clamp: 3;
+    -webkit-line-clamp: 2;
   }
 
   .hero-actions {
@@ -3454,27 +3468,27 @@ footer a:hover {
     font-size: 0.88rem;
   }
 
-  .hero-stats {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 0.55rem;
-    margin-top: 1rem;
-  }
-
-  .hero-stats span {
-    min-width: 0;
-    padding: 0.7rem;
-  }
-
-  .hero-stats strong {
-    font-size: 1.1rem;
-  }
-
   .hero-panel {
+    min-height: 13.5rem;
+    gap: 0.45rem;
+    padding: 0.9rem;
+  }
+
+  .hero-panel > strong {
+    max-width: none;
+    font-size: clamp(1.75rem, 8vw, 2.35rem);
+  }
+
+  .hero-panel > p {
     display: none;
   }
 
   .hero-product-mix {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 0.3rem;
+  }
+
+  .hero-mix-card {
+    min-height: 3.9rem;
   }
 }
