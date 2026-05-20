@@ -342,7 +342,9 @@ const state = {
   category: "All",
   brand: "",
   search: "",
+  sort: "featured",
   cart: [],
+  wishlist: [],
   visibleCount: 48,
   recentlyViewed: [],
   currentProductIndex: null,
@@ -357,6 +359,8 @@ const photoList = document.querySelector("[data-photo-list]");
 const heroMix = document.querySelector("[data-hero-mix]");
 const filterRow = document.querySelector("[data-filters]");
 const searchInput = document.querySelector("[data-search]");
+const searchSuggestionsPanel = document.querySelector("[data-search-suggestions]");
+const sortSelect = document.querySelector("[data-sort]");
 const cartDrawer = document.querySelector("[data-cart]");
 const cartItems = document.querySelector("[data-cart-items]");
 const cartRecommendations = document.querySelector("[data-cart-recommendations]");
@@ -401,6 +405,10 @@ const cameraDialog = document.querySelector("[data-camera-dialog]");
 const cameraVideo = document.querySelector("[data-camera-video]");
 const cameraCanvas = document.querySelector("[data-camera-canvas]");
 const cameraStatus = document.querySelector("[data-camera-status]");
+const toastStack = document.querySelector("[data-toast-stack]");
+const megaMenu = document.querySelector("[data-mega-menu]");
+const quickViewDialog = document.querySelector("[data-quick-view-dialog]");
+const quickViewContent = document.querySelector("[data-quick-view-content]");
 let cameraStream = null;
 let capturedImageName = "";
 const paymentGateway = {
@@ -425,6 +433,19 @@ function whatsAppUrl(message) {
 
 function ownerConfirmationNote() {
   return "Please confirm my order details and next steps.";
+}
+
+function showToast(message, type = "success") {
+  if (!toastStack) return;
+  const toast = document.createElement("p");
+  toast.className = `toast ${type}`;
+  toast.textContent = message;
+  toastStack.appendChild(toast);
+  requestAnimationFrame(() => toast.classList.add("show"));
+  setTimeout(() => {
+    toast.classList.remove("show");
+    setTimeout(() => toast.remove(), 220);
+  }, 3200);
 }
 
 function createOrderId() {
@@ -591,7 +612,7 @@ function renderHeroMix() {
 
 function filteredProducts() {
   const query = state.search.trim().toLowerCase();
-  return products.filter((product) => {
+  const filtered = products.filter((product) => {
     const searchable = productText(product);
     const activeCategory = normalizeText(state.category);
     const activeBrand = normalizeText(state.brand);
@@ -606,6 +627,12 @@ function filteredProducts() {
     const matchesBrand = !activeBrand || normalizeText(product.brand).includes(activeBrand) || normalizeText(product.name).includes(activeBrand);
     const matchesSearch = !query || searchable.includes(query);
     return matchesCategory && matchesBrand && matchesSearch;
+  });
+  return filtered.sort((a, b) => {
+    if (state.sort === "price-low") return a.price - b.price;
+    if (state.sort === "price-high") return b.price - a.price;
+    if (state.sort === "rating") return Number(productRating(b).rating) - Number(productRating(a).rating);
+    return products.indexOf(a) - products.indexOf(b);
   });
 }
 
@@ -681,6 +708,7 @@ function mergeCatalogProducts(catalogProducts) {
 }
 
 function renderProducts() {
+  productGrid.classList.add("is-filtering");
   const items = filteredProducts();
   const visibleItems = items.slice(0, state.visibleCount);
   productGrid.innerHTML = visibleItems
@@ -696,7 +724,9 @@ function renderProducts() {
           <div class="body">
             <div class="card-meta-row">
               <span class="badge">${product.brand} / ${product.category}</span>
-              <button class="wishlist-button" type="button" aria-label="Add ${product.name} to wishlist">Love</button>
+              <button class="wishlist-button${state.wishlist.includes(product.slug) ? " saved" : ""}" type="button" aria-label="Save ${product.name} to wishlist">
+                ${state.wishlist.includes(product.slug) ? "Saved" : "Love"}
+              </button>
             </div>
             <button class="product-title" type="button" data-view="${index}">${product.name}</button>
             <div class="rating-row"><span>5 stars</span><small>${rating.rating} (${rating.count})</small></div>
@@ -709,6 +739,7 @@ function renderProducts() {
           </div>
           <div class="card-actions">
             <button class="button primary" type="button" data-add="${index}">Quick add</button>
+            <button class="button secondary" type="button" data-quick-view="${index}">Quick view</button>
           </div>
         </article>
       `;
@@ -718,6 +749,7 @@ function renderProducts() {
   loadMoreButton.hidden = !canLoadMore;
   loadMoreButton.disabled = !canLoadMore;
   loadMoreButton.textContent = canLoadMore ? `Show more products (${items.length - state.visibleCount} left)` : "All products shown";
+  setTimeout(() => productGrid.classList.remove("is-filtering"), 160);
 }
 
 function renderPhotoList() {
@@ -1136,6 +1168,60 @@ function renderCartRecommendations() {
   `;
 }
 
+function renderSearchSuggestions() {
+  if (!searchSuggestionsPanel) return;
+  const query = state.search.trim().toLowerCase();
+  if (!query) {
+    searchSuggestionsPanel.hidden = true;
+    searchSuggestionsPanel.innerHTML = "";
+    return;
+  }
+  const matches = filteredProducts().slice(0, 5);
+  searchSuggestionsPanel.hidden = !matches.length;
+  searchSuggestionsPanel.innerHTML = matches
+    .map(
+      (product) => `
+        <button type="button" data-view="${products.indexOf(product)}">
+          <img src="${product.image}" alt="" loading="lazy" />
+          <span><strong>${product.name}</strong><small>${product.brand} - ${money(product.price)}</small></span>
+        </button>
+      `,
+    )
+    .join("");
+}
+
+function toggleWishlist(index) {
+  const product = products[index];
+  if (!product) return;
+  const exists = state.wishlist.includes(product.slug);
+  state.wishlist = exists ? state.wishlist.filter((slug) => slug !== product.slug) : [product.slug, ...state.wishlist].slice(0, 80);
+  localStorage.setItem("cosmetic-house-wishlist", JSON.stringify(state.wishlist));
+  showToast(exists ? "Removed from wishlist" : "Saved to wishlist");
+  renderProducts();
+}
+
+function renderQuickView(index) {
+  const product = products[index];
+  const rating = productRating(product);
+  quickViewContent.innerHTML = `
+    <div class="quick-view-grid">
+      ${productImageMarkup(product, "detail")}
+      <div>
+        <p class="eyebrow">${product.brand} / ${product.category}</p>
+        <h2>${product.name}</h2>
+        <div class="rating-row"><span>5 stars</span><small>${rating.rating} (${rating.count})</small></div>
+        <p>${product.note}</p>
+        <strong class="quick-price">${money(product.price)}</strong>
+        <div class="quick-actions">
+          <button class="button primary" type="button" data-add="${index}">Add to cart</button>
+          <button class="button secondary" type="button" data-view="${index}">Full details</button>
+        </div>
+      </div>
+    </div>
+  `;
+  quickViewDialog.showModal();
+}
+
 function openInitialProductFromHash() {
   const slug = window.location.hash.replace("#product/", "");
   if (!slug) return;
@@ -1156,6 +1242,7 @@ function closeCart() {
 
 function addToCart(index) {
   state.cart.push(products[index]);
+  showToast(`${products[index].name} added to cart`);
   openCart();
 }
 
@@ -1371,8 +1458,15 @@ filterRow.addEventListener("click", (event) => {
 productGrid.addEventListener("click", (event) => {
   const addButton = event.target.closest("[data-add]");
   const viewButton = event.target.closest("[data-view]");
+  const quickButton = event.target.closest("[data-quick-view]");
+  const wishlistButton = event.target.closest(".wishlist-button");
   if (addButton) addToCart(Number(addButton.dataset.add));
-  if (viewButton) renderProductPage(Number(viewButton.dataset.view));
+  if (quickButton) renderQuickView(Number(quickButton.dataset.quickView));
+  if (wishlistButton) {
+    const wishlistIndex = Number(wishlistButton.closest(".product-card")?.querySelector("[data-view]")?.dataset.view);
+    if (Number.isFinite(wishlistIndex)) toggleWishlist(wishlistIndex);
+  }
+  if (viewButton && !wishlistButton) renderProductPage(Number(viewButton.dataset.view));
 });
 
 productPageContent.addEventListener("click", (event) => {
@@ -1380,6 +1474,16 @@ productPageContent.addEventListener("click", (event) => {
   const relatedButton = event.target.closest("[data-view-related]");
   if (addButton) addToCart(Number(addButton.dataset.add));
   if (relatedButton) renderProductPage(Number(relatedButton.dataset.viewRelated));
+});
+
+quickViewContent?.addEventListener("click", (event) => {
+  const addButton = event.target.closest("[data-add]");
+  const viewButton = event.target.closest("[data-view]");
+  if (addButton) addToCart(Number(addButton.dataset.add));
+  if (viewButton) {
+    quickViewDialog.close();
+    renderProductPage(Number(viewButton.dataset.view));
+  }
 });
 
 photoList.addEventListener("click", (event) => {
@@ -1454,6 +1558,21 @@ searchInput.addEventListener("input", (event) => {
   state.brand = "";
   state.visibleCount = 48;
   renderProducts();
+  renderSearchSuggestions();
+});
+
+searchSuggestionsPanel?.addEventListener("click", (event) => {
+  const button = event.target.closest("[data-view]");
+  if (!button) return;
+  searchSuggestionsPanel.hidden = true;
+  renderProductPage(Number(button.dataset.view));
+});
+
+sortSelect?.addEventListener("change", (event) => {
+  state.sort = event.target.value;
+  state.visibleCount = 48;
+  renderProducts();
+  showToast("Product list sorted", "info");
 });
 
 document.querySelectorAll("[data-category-jump]").forEach((link) => {
@@ -1484,8 +1603,25 @@ loadMoreButton.addEventListener("click", () => {
   renderProducts();
 });
 
-document.querySelector("[data-open-cart]").addEventListener("click", openCart);
+document.querySelectorAll("[data-open-cart]").forEach((button) => button.addEventListener("click", openCart));
 document.querySelector("[data-close-cart]").addEventListener("click", closeCart);
+document.querySelectorAll("[data-focus-search]").forEach((button) => {
+  button.addEventListener("click", () => {
+    document.querySelector("#shop")?.scrollIntoView({ behavior: "smooth", block: "start" });
+    setTimeout(() => searchInput?.focus(), 450);
+  });
+});
+document.querySelectorAll("[data-mega-trigger]").forEach((button) => {
+  button.addEventListener("click", () => {
+    megaMenu.hidden = !megaMenu.hidden;
+  });
+});
+document.addEventListener("click", (event) => {
+  if (!megaMenu?.hidden && !event.target.closest("[data-mega-menu]") && !event.target.closest("[data-mega-trigger]")) {
+    megaMenu.hidden = true;
+  }
+});
+document.querySelector("[data-close-quick-view]")?.addEventListener("click", () => quickViewDialog.close());
 document.querySelector("[data-back-shop]").addEventListener("click", () => {
   productPage.hidden = true;
   document.body.classList.remove("product-mode");
@@ -1630,6 +1766,11 @@ async function initStorefront() {
     state.recentlyViewed = JSON.parse(localStorage.getItem("cosmetic-house-recently-viewed")) || [];
   } catch {
     state.recentlyViewed = [];
+  }
+  try {
+    state.wishlist = JSON.parse(localStorage.getItem("cosmetic-house-wishlist")) || [];
+  } catch {
+    state.wishlist = [];
   }
   renderReviews();
   renderCart();

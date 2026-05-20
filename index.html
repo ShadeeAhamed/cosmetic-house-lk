@@ -25,7 +25,7 @@
     <meta name="twitter:card" content="summary_large_image" />
     <link rel="manifest" href="site.webmanifest" />
     <link rel="preload" href="cosmetic-house-logo.jpeg" as="image" />
-    <link rel="stylesheet" href="styles.css?v=20260520-premium-admin" />
+    <link rel="stylesheet" href="styles.css?v=20260520-sephora-inspired" />
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
@@ -60,18 +60,19 @@
         </span>
       </a>
 
-      <nav class="main-nav" aria-label="Primary navigation">
+      <nav class="main-nav" aria-label="Primary navigation" data-mega-nav>
         <a href="#top">Home</a>
-        <a href="#shop">Shop</a>
-        <a href="#categories">Categories</a>
+        <button type="button" data-mega-trigger="shop">Shop</button>
+        <button type="button" data-mega-trigger="beauty">Beauty</button>
         <a href="#brands">Brands</a>
         <a href="#ai">Beauty AI</a>
-        <a href="#rewards">Rewards</a>
-        <a href="#reviews">Reviews</a>
+        <a href="blog.html">Tips</a>
         <a href="#contact">Contact</a>
       </nav>
 
       <div class="header-actions">
+        <button class="icon-pill" type="button" data-focus-search aria-label="Search products">Search</button>
+        <a class="icon-pill" href="wishlist.html" aria-label="Wishlist">Wishlist</a>
         <button class="theme-toggle" type="button" data-theme-toggle aria-label="Switch theme">
           <span data-theme-label>Dark</span>
         </button>
@@ -80,6 +81,29 @@
           <span>Cart</span>
           <strong data-cart-count>0</strong>
         </button>
+      </div>
+      <div class="mega-menu" data-mega-menu hidden>
+        <div>
+          <p class="eyebrow">Shop by routine</p>
+          <a href="#shop" data-category-jump="Skincare">Skincare</a>
+          <a href="#shop" data-category-jump="Sunscreen">SPF & Sun Care</a>
+          <a href="#shop" data-category-jump="Serums">Serums</a>
+          <a href="#shop" data-category-jump="Moisturizers">Moisturizers</a>
+        </div>
+        <div>
+          <p class="eyebrow">Trending edits</p>
+          <a href="#shop" data-brand-jump="The Ordinary">The Ordinary</a>
+          <a href="#shop" data-brand-jump="Beauty of Joseon">Beauty of Joseon</a>
+          <a href="#shop" data-brand-jump="Anua">Anua</a>
+          <a href="#shop" data-brand-jump="CeraVe">CeraVe</a>
+        </div>
+        <div>
+          <p class="eyebrow">Customer care</p>
+          <a href="track-order.html">Track order</a>
+          <a href="delivery-policy.html">Delivery & returns</a>
+          <a href="faq.html">FAQ</a>
+          <a href="contact.html">Contact us</a>
+        </div>
       </div>
     </header>
 
@@ -173,6 +197,16 @@
               <option value="Anua serum"></option>
               <option value="Korean skincare"></option>
             </datalist>
+            <div class="search-suggestions-panel" data-search-suggestions hidden></div>
+          </label>
+          <label class="sort-box">
+            <span>Sort</span>
+            <select data-sort>
+              <option value="featured">Featured</option>
+              <option value="price-low">Price: low to high</option>
+              <option value="price-high">Price: high to low</option>
+              <option value="rating">Top rated</option>
+            </select>
           </label>
           <div class="filter-row" role="list" aria-label="Product categories" data-filters></div>
         </div>
@@ -387,6 +421,16 @@
       <strong>Chat now</strong>
     </a>
 
+    <nav class="mobile-bottom-nav" aria-label="Mobile quick navigation">
+      <a href="#top">Home</a>
+      <a href="#shop">Shop</a>
+      <button type="button" data-focus-search>Search</button>
+      <a href="wishlist.html">Wishlist</a>
+      <button type="button" data-open-cart>Bag</button>
+    </nav>
+
+    <div class="toast-stack" data-toast-stack aria-live="polite"></div>
+
     <aside class="cart-drawer" data-cart aria-hidden="true">
       <div class="cart-panel">
         <div class="cart-head">
@@ -489,6 +533,11 @@
       </form>
     </dialog>
 
+    <dialog class="quick-view-dialog" data-quick-view-dialog>
+      <button class="icon-button dialog-close" type="button" data-close-quick-view aria-label="Close quick view">x</button>
+      <div class="quick-view-panel" data-quick-view-content></div>
+    </dialog>
+
     <dialog class="camera-dialog" data-camera-dialog>
       <button class="icon-button dialog-close" type="button" data-close-camera aria-label="Close camera">x</button>
       <div class="camera-panel">
@@ -525,6 +574,6 @@
       window.COSMETIC_HOUSE_PAYMENT_API = "https://52-74-89-82.nip.io";
     </script>
     <script src="catalog-data.js?v=20260511-full-catalog"></script>
-    <script src="script.js?v=20260520-premium-admin"></script>
+    <script src="script.js?v=20260520-sephora-inspired"></script>
   </body>
 </html>
