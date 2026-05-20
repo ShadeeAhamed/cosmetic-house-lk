@@ -3,9 +3,10 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Search Beauty Products | Cosmetic House.lk</title>
-  <meta name="description" content="Search skincare, cosmetics, Korean beauty, SPF, cleansers, serums, and hair care products at Cosmetic House.lk." />
-  <link rel="stylesheet" href="styles.css?v=20260520-sephora-inspired" />
+  <title>Search Cosmetics, Skincare and Beauty Products | Cosmetic House.lk</title>
+  <meta name="description" content="Search cosmetics, skincare, Korean beauty, SPF, cleansers, serums, The Ordinary, CeraVe, Beauty of Joseon, Anua, COSRX, and hair care products at Cosmetic House.lk Sri Lanka." />
+  <link rel="canonical" href="https://cosmetichouse.com.lk/search.html" />
+  <link rel="stylesheet" href="styles.css?v=20260521-seo-products" />
 </head>
 <body>
   <header class="site-header">
@@ -13,7 +14,14 @@
     <nav class="main-nav"><a href="index.html#shop">Search products</a><a href="index.html#categories">Categories</a><a href="index.html#brands">Brands</a></nav>
   </header>
   <main class="policy-page">
-    <section class="policy-hero"><p class="eyebrow">Smart Search</p><h1>Find your next beauty step</h1><p>Use the live storefront search for instant product suggestions, brands, categories, and routine matches.</p><div class="hero-actions"><a class="button primary" href="index.html#shop">Open live search</a></div></section>
+    <section class="policy-hero"><p class="eyebrow">Smart Search</p><h1>Find your next beauty step</h1><p>Search Cosmetic House.lk products by name, brand, category, or routine concern.</p><div class="hero-actions"><a class="button primary" data-search-link href="index.html#shop">Open live search</a><a class="button secondary" href="products.html">Browse all products</a></div></section>
   </main>
+  <script>
+    const query = new URLSearchParams(location.search).get("q");
+    if (query) {
+      document.querySelector("h1").textContent = `Search Cosmetic House for ${query}`;
+      document.querySelector("[data-search-link]").href = `index.html#shop`;
+    }
+  </script>
 </body>
 </html>
