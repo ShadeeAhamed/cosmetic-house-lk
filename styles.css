@@ -1568,6 +1568,67 @@ footer {
   border-top: 1px solid var(--line);
 }
 
+footer a {
+  font-weight: 800;
+  color: var(--muted);
+}
+
+footer a:hover {
+  color: var(--rose);
+}
+
+.policy-page {
+  padding: clamp(2rem, 5vw, 5rem) clamp(1rem, 5vw, 5rem);
+}
+
+.policy-hero {
+  max-width: 58rem;
+  margin: 0 auto 2rem;
+  text-align: center;
+}
+
+.policy-hero h1 {
+  margin: 0.5rem 0 1rem;
+  font-size: clamp(2.6rem, 7vw, 5.8rem);
+  letter-spacing: 0;
+}
+
+.policy-hero p {
+  color: var(--muted);
+  font-size: 1.08rem;
+  line-height: 1.8;
+}
+
+.policy-content {
+  max-width: 58rem;
+  margin: 0 auto;
+  padding: clamp(1.25rem, 4vw, 3rem);
+  border: 1px solid var(--line);
+  border-radius: 1.35rem;
+  background: var(--panel);
+  box-shadow: var(--shadow);
+}
+
+.policy-content h2 {
+  margin: 1.5rem 0 0.45rem;
+  font-size: 1.25rem;
+}
+
+.policy-content h2:first-child {
+  margin-top: 0;
+}
+
+.policy-content p {
+  margin: 0 0 1rem;
+  color: var(--muted);
+  line-height: 1.8;
+}
+
+.policy-content a {
+  color: var(--rose);
+  font-weight: 800;
+}
+
 .seo-cloud {
   position: absolute;
   left: -10000px;
