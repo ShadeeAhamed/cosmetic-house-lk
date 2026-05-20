@@ -1,6 +1,7 @@
 const deliveryCharge = 450;
 const whatsappNumber = "94762245570";
 const paymentApiBase = (window.COSMETIC_HOUSE_PAYMENT_API || "").replace(/\/$/, "");
+const orderApiBase = paymentApiBase;
 
 const products = [
   {
@@ -343,6 +344,8 @@ const state = {
   search: "",
   cart: [],
   visibleCount: 48,
+  recentlyViewed: [],
+  currentProductIndex: null,
 };
 
 let catalogLoaded = false;
@@ -614,6 +617,34 @@ function productRating(product) {
   };
 }
 
+function productTag(product) {
+  const text = productText(product);
+  if (product.category === "Best Moving") return "Hot Selling";
+  if (/tiktok|viral|rhode|anua|beauty of joseon|cosrx|skin1004/.test(text)) return "Trending";
+  if (product.price > 9000) return "Luxury Pick";
+  if (/sunscreen|spf/.test(text)) return "Daily Essential";
+  return "Customer Favorite";
+}
+
+function stockLabel(product) {
+  const seed = product.slug.length + product.name.length + product.price;
+  if (seed % 7 === 0) return "Limited Stock";
+  if (seed % 5 === 0) return "Fast Moving";
+  return "Available";
+}
+
+function persistRecentlyViewed(product) {
+  state.recentlyViewed = [product.slug, ...state.recentlyViewed.filter((slug) => slug !== product.slug)].slice(0, 8);
+  localStorage.setItem("cosmetic-house-recently-viewed", JSON.stringify(state.recentlyViewed));
+}
+
+function recentlyViewedProducts(currentProduct) {
+  return state.recentlyViewed
+    .map((slug) => products.find((product) => product.slug === slug))
+    .filter((product) => product && product.slug !== currentProduct.slug)
+    .slice(0, 4);
+}
+
 function ingredientFocus(product) {
   const text = productText(product);
   if (text.includes("niacinamide")) return "Niacinamide support for tone, oil-control, and smoother-looking texture.";
@@ -660,19 +691,20 @@ function renderProducts() {
         <article class="product-card">
           <button class="product-open" type="button" data-view="${index}" aria-label="Open ${product.name}">
             ${productImageMarkup(product)}
+            <span class="product-ribbon">${productTag(product)}</span>
           </button>
           <div class="body">
             <div class="card-meta-row">
               <span class="badge">${product.brand} / ${product.category}</span>
-              <button class="wishlist-button" type="button" aria-label="Add ${product.name} to wishlist">♡</button>
+              <button class="wishlist-button" type="button" aria-label="Add ${product.name} to wishlist">Love</button>
             </div>
             <button class="product-title" type="button" data-view="${index}">${product.name}</button>
-            <div class="rating-row"><span>★★★★★</span><small>${rating.rating} (${rating.count})</small></div>
+            <div class="rating-row"><span>5 stars</span><small>${rating.rating} (${rating.count})</small></div>
             <p>${product.note}</p>
             <div class="best-for-labels"><span>${product.type}</span><span>${product.category}</span></div>
             <div class="price-row">
               <strong>${money(product.price)}</strong>
-              <span>Available</span>
+              <span>${stockLabel(product)}</span>
             </div>
           </div>
           <div class="card-actions">
@@ -802,12 +834,22 @@ function renderProductPage(index) {
   const product = products[index];
   const rating = productRating(product);
   const related = relatedProducts(product);
+  state.currentProductIndex = index;
+  persistRecentlyViewed(product);
+  const recent = recentlyViewedProducts(product);
   productPage.hidden = false;
   document.body.classList.add("product-mode");
   history.replaceState(null, "", `#product/${product.slug}`);
   productPageContent.innerHTML = `
     <div class="product-page-photo">
       ${productImageMarkup(product, "detail")}
+      <div class="detail-gallery" aria-label="Product gallery">
+        <button type="button" class="active"><img src="${product.image}" alt="${product.name}" loading="lazy" /></button>
+        ${related
+          .slice(0, 3)
+          .map((item) => `<button type="button" data-view-related="${products.indexOf(item)}"><img src="${item.image}" alt="${item.name}" loading="lazy" /></button>`)
+          .join("")}
+      </div>
       <div class="routine-wheel" aria-label="Routine placement">
         <span>Cleanse</span>
         <span>Treat</span>
@@ -820,12 +862,17 @@ function renderProductPage(index) {
         <p class="eyebrow">${product.brand} / ${product.category}</p>
         <h2>${product.name}</h2>
         <p>${product.description}</p>
-        <div class="rating-row detail-rating"><span>★★★★★</span><small>${rating.rating} out of 5 • ${rating.count} reviews</small></div>
+        <div class="rating-row detail-rating"><span>5 stars</span><small>${rating.rating} out of 5 - ${rating.count} reviews</small></div>
         <div class="price-row">
           <strong>${money(product.price)}</strong>
-          <span>Available to order</span>
+          <span>${stockLabel(product)}</span>
         </div>
       </div>
+        <div class="detail-trust-row">
+          <span>100% authentic sourcing</span>
+          <span>Islandwide delivery</span>
+          <span>COD / bank / card ready</span>
+        </div>
       <div class="detail-list">
         <article><strong>Why use it</strong><span>${product.benefits.join(", ")}.</span></article>
         <article><strong>Best for</strong><span>${product.bestFor}</span></article>
@@ -833,7 +880,8 @@ function renderProductPage(index) {
         <article><strong>Best to use with</strong><span>${product.useWith}</span></article>
         <article><strong>Routine pairing</strong><span>${pairingRecommendation(product)}</span></article>
         <article><strong>How to use</strong><span>${product.routine}</span></article>
-        <article><strong>Delivery</strong><span>Delivery and payment options are shown clearly in your cart review before confirmation.</span></article>
+        <article><strong>Delivery</strong><span>Estimated delivery is usually 2-5 working days after confirmation, depending on city and courier flow.</span></article>
+        <article><strong>FAQ</strong><span>Patch test first. Avoid using too many actives together. Message us if you need routine matching before ordering.</span></article>
       </div>
       <div class="love-panel">
         <strong>Beauty match idea</strong>
@@ -849,8 +897,18 @@ function renderProductPage(index) {
               .join("")}</div></div>`
           : ""
       }
+      ${
+        recent.length
+          ? `<div class="related-products"><strong>Recently viewed</strong><div>${recent
+              .map((item) => `<button type="button" data-view-related="${products.indexOf(item)}">${item.name}<span>${money(item.price)}</span></button>`)
+              .join("")}</div></div>`
+          : ""
+      }
       <a class="button secondary" href="${whatsAppUrl(`Hi Cosmetic House.lk, I want help with ${product.name}. My skin type/concern is: `)}" target="_blank" rel="noreferrer">Ask on WhatsApp</a>
-      <button class="button primary" type="button" data-add="${index}">Add to cart</button>
+      <div class="product-page-cta">
+        <button class="button primary" type="button" data-add="${index}">Add to cart</button>
+        <a class="button secondary" href="${whatsAppUrl(`Hi Cosmetic House.lk, quick order for ${product.name}. Please confirm availability and final price.`)}" target="_blank" rel="noreferrer">WhatsApp order</a>
+      </div>
     </div>
   `;
   window.scrollTo({ top: 0, behavior: "smooth" });
@@ -1106,6 +1164,54 @@ function removeFromCart(index) {
   renderCart();
 }
 
+function orderPayloadFromForm(form) {
+  const formData = new FormData(form);
+  const subtotal = state.cart.reduce((sum, product) => sum + product.price, 0);
+  return {
+    id: state.currentOrderId,
+    source: "website",
+    payment: selectedPaymentMethod(),
+    paymentStatus: selectedPaymentMethod() === "Online card payment" ? "Pending" : "Pending",
+    customer: {
+      name: formData.get("customer_name"),
+      email: formData.get("customer_email"),
+      phone: formData.get("customer_phone"),
+      city: formData.get("delivery_city"),
+      address: formData.get("delivery_address"),
+    },
+    items: state.cart.map((product) => ({
+      name: product.name,
+      price: product.price,
+      slug: product.slug,
+      quantity: 1,
+    })),
+    subtotal,
+    delivery: deliveryCharge,
+    total: subtotal + deliveryCharge,
+  };
+}
+
+async function recordOrder(payload) {
+  try {
+    const savedOrders = JSON.parse(localStorage.getItem("cosmetic-house-orders")) || [];
+    savedOrders.unshift({ ...payload, createdAt: new Date().toISOString() });
+    localStorage.setItem("cosmetic-house-orders", JSON.stringify(savedOrders.slice(0, 50)));
+  } catch {
+    // The server/email flow still continues if browser storage is unavailable.
+  }
+  if (!orderApiBase) return;
+  try {
+    await fetch(`${orderApiBase}/api/orders`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+      keepalive: true,
+    });
+  } catch {
+    // FormSubmit and WhatsApp backup remain available if the admin API is temporarily unavailable.
+  }
+}
+
 function submitPayherePayment(fields, action) {
   const form = document.createElement("form");
   form.method = "POST";
@@ -1325,11 +1431,13 @@ orderForm?.addEventListener("submit", async (event) => {
     return;
   }
   renderCart();
+  const payload = orderPayloadFromForm(orderForm);
   if (selectedPaymentMethod() === "Online card payment") {
     event.preventDefault();
     checkoutButton.disabled = true;
     checkoutButton.textContent = "Opening secure payment...";
     try {
+      await recordOrder(payload);
       await startPayhereCheckout(orderForm);
     } catch (error) {
       alert(error.message);
@@ -1338,24 +1446,7 @@ orderForm?.addEventListener("submit", async (event) => {
     }
     return;
   }
-  const order = {
-    id: state.currentOrderId,
-    createdAt: new Date().toISOString(),
-    payment: selectedPaymentMethod(),
-    items: state.cart.map((product) => ({
-      name: product.name,
-      price: product.price,
-      slug: product.slug,
-    })),
-    total: totalEl.textContent,
-  };
-  try {
-    const savedOrders = JSON.parse(localStorage.getItem("cosmetic-house-orders")) || [];
-    savedOrders.unshift(order);
-    localStorage.setItem("cosmetic-house-orders", JSON.stringify(savedOrders.slice(0, 20)));
-  } catch {
-    // Email notification still submits even if local browser storage is unavailable.
-  }
+  recordOrder(payload);
 });
 
 searchInput.addEventListener("input", (event) => {
@@ -1535,6 +1626,11 @@ assetFile?.addEventListener("change", () => {
 
 async function initStorefront() {
   setTheme(localStorage.getItem("cosmetic-house-theme") || "light");
+  try {
+    state.recentlyViewed = JSON.parse(localStorage.getItem("cosmetic-house-recently-viewed")) || [];
+  } catch {
+    state.recentlyViewed = [];
+  }
   renderReviews();
   renderCart();
   setupWhatsAppLinks();

@@ -1,6 +1,6 @@
 import http from "node:http";
 import crypto from "node:crypto";
-import { readFile } from "node:fs/promises";
+import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { existsSync } from "node:fs";
 
 function loadEnvFile(file) {
@@ -42,10 +42,13 @@ const payhereMerchantSecret = process.env.PAYHERE_MERCHANT_SECRET || "";
 const payhereMode = normalize(process.env.PAYHERE_MODE || "sandbox") === "live" ? "live" : "sandbox";
 const siteOrigin = process.env.SITE_ORIGIN || "https://cosmetichouse.com.lk";
 const paymentPublicUrl = process.env.PAYMENT_PUBLIC_URL || "";
+const adminPin = process.env.ADMIN_PIN || "";
+const ordersFile = process.env.ORDERS_FILE || "data/orders.json";
 
 let catalog = [];
 let automationRules = {};
 const customerSessions = new Map();
+let orders = [];
 
 function normalize(value) {
   return String(value || "").toLowerCase();
@@ -65,6 +68,66 @@ async function readJson(file, fallback) {
   } catch {
     return fallback;
   }
+}
+
+async function saveOrders() {
+  await mkdir(ordersFile.split("/").slice(0, -1).join("/") || ".", { recursive: true });
+  await writeFile(ordersFile, JSON.stringify(orders.slice(0, 1000), null, 2));
+}
+
+function authorizeAdmin(request) {
+  if (!adminPin) return true;
+  return request.headers["x-admin-pin"] === adminPin;
+}
+
+function cleanOrderItem(item) {
+  return {
+    name: String(item?.name || "").slice(0, 180),
+    slug: String(item?.slug || "").slice(0, 120),
+    price: Number(item?.price || 0),
+    quantity: Math.max(1, Number(item?.quantity || 1)),
+  };
+}
+
+function normalizeOrder(payload, source = "website") {
+  const now = new Date().toISOString();
+  const items = Array.isArray(payload.items) ? payload.items.map(cleanOrderItem).filter((item) => item.name) : [];
+  const subtotal = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  const delivery = Number(payload.delivery || 450);
+  return {
+    id: String(payload.id || payload.orderId || `CHLK-${Date.now()}`).slice(0, 48),
+    createdAt: payload.createdAt || now,
+    updatedAt: now,
+    source,
+    status: String(payload.status || "New Order"),
+    paymentStatus: String(payload.paymentStatus || "Pending"),
+    paymentMethod: String(payload.payment || payload.paymentMethod || "Cash on delivery"),
+    customer: {
+      name: String(payload.customer?.name || payload.customerName || "").slice(0, 120),
+      email: String(payload.customer?.email || payload.customerEmail || "").slice(0, 160),
+      phone: String(payload.customer?.phone || payload.customerPhone || "").slice(0, 80),
+      city: String(payload.customer?.city || payload.deliveryCity || "").slice(0, 120),
+      address: String(payload.customer?.address || payload.deliveryAddress || "").slice(0, 300),
+    },
+    items,
+    subtotal,
+    delivery,
+    discount: Number(payload.discount || 0),
+    total: Number(payload.total || subtotal + delivery - Number(payload.discount || 0)),
+    tracking: String(payload.tracking || "").slice(0, 180),
+    notes: String(payload.notes || "").slice(0, 500),
+    activity: Array.isArray(payload.activity) ? payload.activity : [{ at: now, text: `${source} order created` }],
+  };
+}
+
+function upsertOrder(order) {
+  const index = orders.findIndex((item) => item.id === order.id);
+  if (index >= 0) {
+    orders[index] = { ...orders[index], ...order, updatedAt: new Date().toISOString() };
+    return orders[index];
+  }
+  orders.unshift(order);
+  return order;
 }
 
 function inferBrand(product) {
@@ -132,6 +195,7 @@ async function loadData() {
   const rawCatalog = await readJson("catalog-data.json", []);
   catalog = rawCatalog.filter((product) => product.name && product.price).map(sanitizeProduct);
   automationRules = await readJson("whatsapp-automation-rules.json", {});
+  orders = await readJson(ordersFile, []);
 }
 
 function productText(product) {
@@ -443,8 +507,8 @@ function sendJson(response, status, payload, origin = "") {
   response.writeHead(status, {
     "Content-Type": "application/json",
     "Access-Control-Allow-Origin": origin || siteOrigin,
-    "Access-Control-Allow-Methods": "POST, OPTIONS",
-    "Access-Control-Allow-Headers": "Content-Type",
+    "Access-Control-Allow-Methods": "GET, POST, PUT, OPTIONS",
+    "Access-Control-Allow-Headers": "Content-Type, X-Admin-Pin",
   });
   response.end(JSON.stringify(payload));
 }
@@ -534,7 +598,7 @@ http
     const url = new URL(request.url, `http://${request.headers.host}`);
     const origin = request.headers.origin || siteOrigin;
 
-    if (request.method === "OPTIONS" && url.pathname.startsWith("/api/payhere")) {
+    if (request.method === "OPTIONS" && url.pathname.startsWith("/api/")) {
       sendJson(response, 200, { ok: true }, origin);
       return;
     }
@@ -559,7 +623,63 @@ http
     if (request.method === "POST" && url.pathname === "/api/payhere/checkout") {
       try {
         const payload = JSON.parse((await readBody(request)) || "{}");
+        upsertOrder(normalizeOrder(payload, "card-checkout"));
+        await saveOrders();
         sendJson(response, 200, buildPayhereFields(payload, request), origin);
+      } catch (error) {
+        sendJson(response, 400, { ok: false, message: error.message }, origin);
+      }
+      return;
+    }
+
+    if (request.method === "GET" && url.pathname === "/api/orders") {
+      if (!authorizeAdmin(request)) {
+        sendJson(response, 401, { ok: false, message: "Admin PIN required." }, origin);
+        return;
+      }
+      sendJson(response, 200, { ok: true, orders }, origin);
+      return;
+    }
+
+    if (request.method === "POST" && url.pathname === "/api/orders") {
+      try {
+        const payload = JSON.parse((await readBody(request)) || "{}");
+        const order = normalizeOrder(payload, payload.source || "website");
+        upsertOrder(order);
+        await saveOrders();
+        if (ownerNumber) {
+          await sendWhatsAppMessage(
+            ownerNumber,
+            [
+              `New ${businessName} order`,
+              `Order ID: ${order.id}`,
+              `Customer: ${order.customer.name || "-"} ${order.customer.phone || ""}`,
+              `Total: ${money(order.total)}`,
+              `Payment: ${order.paymentMethod}`,
+            ].join("\n"),
+          );
+        }
+        sendJson(response, 200, { ok: true, order }, origin);
+      } catch (error) {
+        sendJson(response, 400, { ok: false, message: error.message }, origin);
+      }
+      return;
+    }
+
+    if (request.method === "PUT" && url.pathname.startsWith("/api/orders/")) {
+      if (!authorizeAdmin(request)) {
+        sendJson(response, 401, { ok: false, message: "Admin PIN required." }, origin);
+        return;
+      }
+      try {
+        const id = decodeURIComponent(url.pathname.split("/").pop() || "");
+        const payload = JSON.parse((await readBody(request)) || "{}");
+        const index = orders.findIndex((order) => order.id === id);
+        if (index < 0) throw new Error("Order not found.");
+        const activity = [...(orders[index].activity || []), { at: new Date().toISOString(), text: payload.activityText || "Order updated" }];
+        orders[index] = { ...orders[index], ...payload, id, updatedAt: new Date().toISOString(), activity };
+        await saveOrders();
+        sendJson(response, 200, { ok: true, order: orders[index] }, origin);
       } catch (error) {
         sendJson(response, 400, { ok: false, message: error.message }, origin);
       }
@@ -571,6 +691,17 @@ http
       const verified = verifyPayhereNotification(fields);
       const paid = verified && String(fields.status_code) === "2";
       console.log("PayHere notification", { verified, paid, orderId: fields.order_id, amount: fields.payhere_amount });
+      const orderIndex = orders.findIndex((order) => order.id === fields.order_id);
+      if (orderIndex >= 0) {
+        orders[orderIndex].paymentStatus = paid ? "Paid" : "Payment Failed";
+        orders[orderIndex].status = paid ? "Confirmed" : orders[orderIndex].status;
+        orders[orderIndex].updatedAt = new Date().toISOString();
+        orders[orderIndex].activity = [
+          ...(orders[orderIndex].activity || []),
+          { at: new Date().toISOString(), text: paid ? "PayHere payment confirmed" : "PayHere payment notification failed verification" },
+        ];
+        await saveOrders();
+      }
       if (paid && ownerNumber) {
         await sendWhatsAppMessage(
           ownerNumber,

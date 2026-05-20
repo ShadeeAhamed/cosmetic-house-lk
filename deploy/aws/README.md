@@ -76,6 +76,8 @@ FACEBOOK_DIRECT_API_ENABLED=false
 PAYHERE_MODE=sandbox
 PAYHERE_MERCHANT_ID=
 PAYHERE_MERCHANT_SECRET=
+ADMIN_PIN=change-this-before-using-admin
+ORDERS_FILE=data/orders.json
 PAYMENT_PUBLIC_URL=https://bot.cosmetichouse.com.lk
 ```
 

@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Cosmetic House Admin | Orders</title>
+    <meta name="robots" content="noindex, nofollow" />
+    <link rel="stylesheet" href="styles.css?v=20260520-admin" />
+  </head>
+  <body class="admin-body">
+    <main class="admin-shell">
+      <section class="admin-hero">
+        <div>
+          <p class="eyebrow">Internal order desk</p>
+          <h1>Cosmetic House Admin</h1>
+          <p>Track website, WhatsApp, Instagram, and phone orders from one clean workflow.</p>
+        </div>
+        <form class="admin-login" data-admin-login>
+          <label>
+            <span>Admin PIN</span>
+            <input type="password" data-admin-pin autocomplete="current-password" placeholder="Enter admin PIN" />
+          </label>
+          <button class="button primary" type="submit">Connect</button>
+        </form>
+      </section>
+
+      <section class="admin-stats" data-admin-stats></section>
+
+      <section class="admin-board">
+        <div class="admin-toolbar">
+          <label>
+            <span>Search orders</span>
+            <input type="search" data-admin-search placeholder="Customer, order ID, phone, product..." />
+          </label>
+          <label>
+            <span>Status</span>
+            <select data-admin-status-filter>
+              <option value="">All statuses</option>
+              <option>New Order</option>
+              <option>Pending</option>
+              <option>Confirmed</option>
+              <option>Packed</option>
+              <option>Dispatched</option>
+              <option>Delivered</option>
+              <option>Cancelled</option>
+            </select>
+          </label>
+          <button class="button secondary" type="button" data-admin-refresh>Refresh</button>
+        </div>
+
+        <div class="admin-layout">
+          <div class="admin-orders" data-admin-orders></div>
+          <aside class="manual-order">
+            <h2>Create manual order</h2>
+            <p>Use this for WhatsApp, Instagram, or phone orders. It will appear in the same order list.</p>
+            <form data-manual-order>
+              <input name="customerName" placeholder="Customer name" required />
+              <input name="customerPhone" placeholder="Phone / WhatsApp" required />
+              <input name="deliveryCity" placeholder="City" required />
+              <textarea name="deliveryAddress" rows="3" placeholder="Delivery address"></textarea>
+              <input name="productName" placeholder="Product name" required />
+              <input name="price" type="number" min="0" placeholder="Product price" required />
+              <input name="delivery" type="number" min="0" value="450" placeholder="Delivery charge" />
+              <select name="payment">
+                <option>Cash on delivery</option>
+                <option>Bank transfer</option>
+                <option>Online card payment</option>
+              </select>
+              <textarea name="notes" rows="3" placeholder="Internal notes"></textarea>
+              <button class="button primary full" type="submit">Create order</button>
+            </form>
+          </aside>
+        </div>
+      </section>
+    </main>
+
+    <script>
+      window.COSMETIC_HOUSE_PAYMENT_API = "https://52-74-89-82.nip.io";
+    </script>
+    <script src="admin.js?v=20260520-admin"></script>
+  </body>
+</html>
