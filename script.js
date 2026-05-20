@@ -388,6 +388,8 @@ const cancelOrderButton = document.querySelector("[data-cancel-order]");
 const cancelReasonBox = document.querySelector("[data-cancel-reason-box]");
 const cancelReasonField = document.querySelector("[data-cancel-reason]");
 const confirmCancelButton = document.querySelector("[data-confirm-cancel]");
+const mapPinButton = document.querySelector("[data-map-pin]");
+const locationStatus = document.querySelector("[data-location-status]");
 const onlinePaymentInput = document.querySelector('input[name="payment"][value="Online card payment"]');
 const codPaymentInput = document.querySelector('input[name="payment"][value="Cash on delivery"]');
 const whatsAppQuickLinks = document.querySelectorAll("[data-whatsapp-quick]");
@@ -401,6 +403,7 @@ const aiLog = document.querySelector("[data-ai-log]");
 const loginDialog = document.querySelector("[data-login-dialog]");
 const loginForm = document.querySelector("[data-login-form]");
 const loginTitle = document.querySelector("[data-login-title]");
+const loginButton = document.querySelector("[data-open-login]");
 const authModeButtons = document.querySelectorAll("[data-auth-mode]");
 const signupOnlyFields = document.querySelectorAll("[data-signup-only]");
 const verificationStep = document.querySelector("[data-verification-step]");
@@ -408,12 +411,20 @@ const verifyCodeButton = document.querySelector("[data-send-code]");
 const verificationCodeInput = document.querySelector("[data-verification-code]");
 const authStatus = document.querySelector("[data-auth-status]");
 const authSubmitButton = document.querySelector("[data-auth-submit]");
+const profileDialog = document.querySelector("[data-profile-dialog]");
+const profileForm = document.querySelector("[data-profile-form]");
+const profileTitle = document.querySelector("[data-profile-title]");
+const profileStatus = document.querySelector("[data-profile-status]");
+const ordersDialog = document.querySelector("[data-orders-dialog]");
+const ordersButton = document.querySelector("[data-open-orders]");
+const customerOrdersList = document.querySelector("[data-customer-orders]");
 const galleryUploadInput = document.querySelector("[data-gallery-upload]");
 const uploadName = document.querySelector("[data-upload-name]");
 const cardForm = document.querySelector("[data-card-form]");
 const paymentStatus = document.querySelector("[data-payment-status]");
 const reviewForm = document.querySelector("[data-review-form]");
 const reviewList = document.querySelector("[data-review-list]");
+let visibleReviewCount = 9;
 const assetDialog = document.querySelector("[data-asset-dialog]");
 const assetProduct = document.querySelector("[data-asset-product]");
 const assetFile = document.querySelector("[data-asset-file]");
@@ -645,7 +656,7 @@ function filteredProducts() {
       (state.category === "Cleansers" && /(cleanser|cleansing|face wash|gel wash|micellar|foam|wash)/.test(searchable)) ||
       (state.category === "Serums" && /(serum|ampoule|niacinamide|retinol|retinal|vitamin c|hyaluronic|peptide|alpha arbutin|bha|aha)/.test(searchable)) ||
       (state.category === "Body Care" && /(body|lotion|scrub|polish|wash|shower|vaseline|dove|salt bath)/.test(searchable)) ||
-      (state.category === "SPF & Sun Care" && /(spf|sun|sunscreen|uv|anthelios)/.test(searchable));
+      ((state.category === "SPF & Sun Care" || state.category === "Sunscreen") && /(spf|sun|sunscreen|uv|anthelios)/.test(searchable));
     const matchesBrand = !activeBrand || normalizeText(product.brand).includes(activeBrand) || normalizeText(product.name).includes(activeBrand);
     const matchesSearch = !query || searchable.includes(query);
     return matchesCategory && matchesBrand && matchesSearch;
@@ -834,7 +845,10 @@ function getReviews() {
 }
 
 function renderReviews() {
-  reviewList.innerHTML = getReviews()
+  const reviews = getReviews();
+  const visible = reviews.slice(0, visibleReviewCount);
+  reviewList.innerHTML =
+    visible
     .map(
       (review) => `
         <article class="review-card">
@@ -845,7 +859,10 @@ function renderReviews() {
         </article>
       `,
     )
-    .join("");
+      .join("") +
+    (reviews.length > visibleReviewCount
+      ? `<button class="button secondary full review-more-button" type="button" data-show-more-reviews>Show more reviews</button>`
+      : "");
 }
 
 function renderAssetProducts() {
@@ -1021,6 +1038,7 @@ function renderCart() {
   if (checkoutButton) checkoutButton.textContent = payment === "Online card payment" && paymentGateway.ready ? "Pay securely" : "Place order";
   cardForm.hidden = selectedPaymentMethod() !== "Online card payment";
   if (paymentStatus) paymentStatus.textContent = paymentGateway.message;
+  autofillOrderForm();
 }
 
 function cartSuggestionProducts() {
@@ -1292,7 +1310,9 @@ function orderPayloadFromForm(form) {
       email,
       phone,
       city: formData.get("delivery_city"),
+      district: formData.get("delivery_district"),
       address: formData.get("delivery_address"),
+      locationLink: formData.get("location_link"),
       gender: state.account?.gender || "",
     },
     items: state.cart.map((product) => ({
@@ -1333,6 +1353,49 @@ async function recordOrder(payload) {
   } catch {
     // FormSubmit and WhatsApp backup remain available if the admin API is temporarily unavailable.
   }
+}
+
+function localCustomerOrders() {
+  const contact = normalizeText(state.account?.contact || "");
+  try {
+    return (JSON.parse(localStorage.getItem("cosmetic-house-orders")) || []).filter((order) => {
+      const email = normalizeText(order.customer?.email);
+      const phone = normalizeText(order.customer?.phone);
+      return contact && (email === contact || phone === contact);
+    });
+  } catch {
+    return [];
+  }
+}
+
+async function loadCustomerOrders() {
+  if (!customerOrdersList) return;
+  customerOrdersList.innerHTML = `<p class="cart-note">Loading your orders...</p>`;
+  let customerOrders = localCustomerOrders();
+  const contact = state.account?.contact;
+  if (orderApiBase && contact) {
+    try {
+      const response = await fetch(`${orderApiBase}/api/customer/orders?contact=${encodeURIComponent(contact)}`, { cache: "no-store" });
+      const payload = await response.json();
+      if (response.ok && payload.ok) customerOrders = payload.orders || customerOrders;
+    } catch {
+      // Local order history is shown if the live server is unreachable.
+    }
+  }
+  customerOrdersList.innerHTML = customerOrders.length
+    ? customerOrders
+        .slice(0, 20)
+        .map(
+          (order) => `
+            <article class="customer-order-card">
+              <div><strong>${order.id}</strong><span>${order.status || "New Order"}</span></div>
+              <p>${(order.items || []).map((item) => item.name).join(", ")}</p>
+              <small>${money(Number(order.total || 0))} - ${order.paymentMethod || order.payment || "Payment pending"}</small>
+            </article>
+          `,
+        )
+        .join("")
+    : `<p class="cart-note">No orders found yet. Orders placed while logged in will appear here.</p>`;
 }
 
 function validateOrderContact(form) {
@@ -1633,6 +1696,7 @@ orderForm?.addEventListener("submit", async (event) => {
     return;
   }
   if (!validateOrderContact(orderForm)) return;
+  saveDeliveryDetailsFromForm(orderForm);
   renderCart();
   const payload = orderPayloadFromForm(orderForm);
   if (selectedPaymentMethod() === "Online card payment") {
@@ -1744,10 +1808,51 @@ document.querySelector("[data-back-shop]").addEventListener("click", () => {
   history.replaceState(null, "", "#top");
   window.scrollTo({ top: 0, behavior: "smooth" });
 });
-document.querySelector("[data-open-login]").addEventListener("click", () => loginDialog.showModal());
+loginButton?.addEventListener("click", () => {
+  if (isLoggedIn) {
+    populateProfileForm();
+    profileDialog?.showModal();
+    return;
+  }
+  updateAuthMode("login");
+  loginDialog.showModal();
+});
 document.querySelector("[data-close-login]").addEventListener("click", () => {
   sessionStorage.setItem("cosmetic-house-login-dismissed", "true");
   loginDialog.close();
+});
+document.querySelector("[data-close-profile]")?.addEventListener("click", () => profileDialog?.close());
+document.querySelector("[data-close-orders]")?.addEventListener("click", () => ordersDialog?.close());
+ordersButton?.addEventListener("click", async () => {
+  if (!isLoggedIn) {
+    updateAuthMode("login");
+    loginDialog.showModal();
+    return;
+  }
+  ordersDialog?.showModal();
+  await loadCustomerOrders();
+});
+document.querySelector("[data-logout]")?.addEventListener("click", () => {
+  state.account = null;
+  isLoggedIn = false;
+  localStorage.removeItem("cosmetic-house-account");
+  updateAccountButton();
+  profileDialog?.close();
+  showToast("Logged out");
+});
+
+mapPinButton?.addEventListener("click", () => {
+  const city = orderForm?.elements.delivery_city?.value || "";
+  const district = orderForm?.elements.delivery_district?.value || "";
+  const address = orderForm?.elements.delivery_address?.value || "";
+  const query = [address, city, district, "Sri Lanka"].filter(Boolean).join(", ");
+  if (!query.trim()) {
+    locationStatus.textContent = "Add delivery city or address first, then open Maps.";
+    orderForm?.elements.delivery_city?.focus();
+    return;
+  }
+  window.open(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`, "_blank", "noopener,noreferrer");
+  locationStatus.textContent = "Maps opened. Paste the share link into the location field if you want.";
 });
 
 function updateAuthMode(mode) {
@@ -1771,6 +1876,70 @@ function updateAuthMode(mode) {
 }
 
 authModeButtons.forEach((button) => button.addEventListener("click", () => updateAuthMode(button.dataset.authMode)));
+function displayName(account = state.account) {
+  const rawName = String(account?.name || "").trim();
+  if (rawName) return rawName.split(/\s+/)[0];
+  return String(account?.contact || "Profile").split("@")[0].slice(0, 18);
+}
+
+function updateAccountButton() {
+  if (!loginButton) return;
+  loginButton.textContent = isLoggedIn ? `Hi ${displayName()}` : "Login";
+  loginButton.setAttribute("aria-label", isLoggedIn ? "Open profile" : "Login or sign up");
+  if (ordersButton) ordersButton.hidden = !isLoggedIn;
+}
+
+function populateProfileForm() {
+  if (!profileForm || !state.account) return;
+  profileTitle.textContent = `Hi ${displayName()}`;
+  profileForm.elements.full_name.value = state.account.name || "";
+  profileForm.elements.address.value = state.account.address || "";
+  profileForm.elements.gender.value = state.account.gender || "";
+  profileForm.elements.contact.value = state.account.contact || "";
+  if (profileStatus) profileStatus.textContent = "Edit your profile details and save.";
+}
+
+function savedDeliveryDetails() {
+  try {
+    return JSON.parse(localStorage.getItem("cosmetic-house-delivery-profile") || "null") || {};
+  } catch {
+    return {};
+  }
+}
+
+function saveDeliveryDetailsFromForm(form) {
+  const formData = new FormData(form);
+  const details = {
+    customer_name: String(formData.get("customer_name") || "").trim(),
+    customer_email: String(formData.get("customer_email") || "").trim(),
+    customer_phone: String(formData.get("customer_phone") || "").trim(),
+    delivery_city: String(formData.get("delivery_city") || "").trim(),
+    delivery_district: String(formData.get("delivery_district") || "").trim(),
+    delivery_address: String(formData.get("delivery_address") || "").trim(),
+    location_link: String(formData.get("location_link") || "").trim(),
+  };
+  localStorage.setItem("cosmetic-house-delivery-profile", JSON.stringify(details));
+}
+
+function autofillOrderForm() {
+  if (!orderForm) return;
+  const delivery = savedDeliveryDetails();
+  const account = state.account || {};
+  const values = {
+    customer_name: delivery.customer_name || account.name || "",
+    customer_email: delivery.customer_email || (String(account.contact || "").includes("@") ? account.contact : ""),
+    customer_phone: delivery.customer_phone || (!String(account.contact || "").includes("@") ? account.contact : ""),
+    delivery_city: delivery.delivery_city || "",
+    delivery_district: delivery.delivery_district || "",
+    delivery_address: delivery.delivery_address || account.address || "",
+    location_link: delivery.location_link || "",
+  };
+  Object.entries(values).forEach(([name, value]) => {
+    const field = orderForm.elements[name];
+    if (field && !field.value) field.value = value;
+  });
+}
+
 function authProfileFromForm(formData) {
   return {
     name: String(formData.get("full_name") || "").trim(),
@@ -1782,9 +1951,15 @@ function authProfileFromForm(formData) {
 async function requestVerificationCode() {
   const formData = new FormData(loginForm);
   const contact = String(formData.get("contact") || "").trim();
+  const password = String(formData.get("password") || "").trim();
   if (!contact) {
     authStatus.textContent = "Enter your email or phone first.";
     loginForm.elements.contact?.focus();
+    return false;
+  }
+  if (!password) {
+    authStatus.textContent = "Create a password before requesting your code.";
+    loginForm.elements.password?.focus();
     return false;
   }
   authStatus.textContent = "Sending verification code...";
@@ -1793,7 +1968,11 @@ async function requestVerificationCode() {
     const response = await fetch(`${authApiBase}/api/auth/request-otp`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ contact, profile: authProfileFromForm(formData) }),
+      body: JSON.stringify({
+        contact,
+        password,
+        profile: authProfileFromForm(formData),
+      }),
     });
     const payload = await response.json();
     if (!response.ok || !payload.ok) throw new Error(payload.message || "Could not send verification code.");
@@ -1827,6 +2006,27 @@ async function verifyCodeAndSaveAccount(formData) {
   const payload = await response.json();
   if (!response.ok || !payload.ok) throw new Error(payload.message || "Verification failed.");
   return payload.user;
+}
+
+async function loginWithAccount(formData) {
+  const contact = String(formData.get("contact") || "").trim();
+  const password = String(formData.get("password") || "");
+  if (!password) throw new Error("Password is required.");
+  if (authApiBase) {
+    const response = await fetch(`${authApiBase}/api/auth/login`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ contact, password }),
+    });
+    const payload = await response.json();
+    if (!response.ok || !payload.ok) throw new Error(payload.message || "Login failed.");
+    return payload.user;
+  }
+  const registered = JSON.parse(localStorage.getItem("cosmetic-house-registered-account") || "null");
+  if (!registered || registered.contact !== contact || registered.password !== password) {
+    throw new Error("Create an account first, then login with the same email or phone and password.");
+  }
+  return registered;
 }
 
 verifyCodeButton?.addEventListener("click", requestVerificationCode);
@@ -1944,6 +2144,7 @@ async function handleAuthSubmit() {
       const verifiedUser = await verifyCodeAndSaveAccount(formData);
       if (!verifiedUser) return;
       state.account = verifiedUser;
+      localStorage.setItem("cosmetic-house-registered-account", JSON.stringify({ ...state.account, password: String(formData.get("password") || "") }));
     } catch (error) {
       authStatus.textContent = error.message || "Verification failed.";
       return;
@@ -1952,18 +2153,61 @@ async function handleAuthSubmit() {
       authSubmitButton.textContent = "Verify & continue";
     }
   } else {
-    state.account = {
-      contact,
-      createdAt: new Date().toISOString(),
-    };
+    try {
+      authSubmitButton.disabled = true;
+      authSubmitButton.textContent = "Logging in...";
+      state.account = await loginWithAccount(formData);
+    } catch (error) {
+      authStatus.textContent = error.message || "Create an account first, then login.";
+      return;
+    } finally {
+      authSubmitButton.disabled = false;
+      authSubmitButton.textContent = "Continue";
+    }
   }
   localStorage.setItem("cosmetic-house-account", JSON.stringify(state.account));
   sessionStorage.setItem("cosmetic-house-login-dismissed", "true");
   isLoggedIn = true;
+  updateAccountButton();
+  autofillOrderForm();
   loginDialog.close();
   showToast(authMode === "signup" ? "Beauty account created" : "Logged in successfully");
   aiLog.insertAdjacentHTML("beforeend", "<p>Welcome back. Your beauty profile is ready for browsing, reviews, and routine guidance.</p>");
 }
+
+profileForm?.addEventListener("submit", async (event) => {
+  event.preventDefault();
+  if (!state.account) return;
+  const formData = new FormData(profileForm);
+  const updated = {
+    ...state.account,
+    name: String(formData.get("full_name") || "").trim(),
+    address: String(formData.get("address") || "").trim(),
+    gender: String(formData.get("gender") || "").trim(),
+    updatedAt: new Date().toISOString(),
+  };
+  try {
+    if (authApiBase) {
+      const response = await fetch(`${authApiBase}/api/users/profile`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(updated),
+      });
+      const payload = await response.json();
+      if (!response.ok || !payload.ok) throw new Error(payload.message || "Could not save profile.");
+      state.account = payload.user;
+    } else {
+      state.account = updated;
+    }
+    localStorage.setItem("cosmetic-house-account", JSON.stringify(state.account));
+    updateAccountButton();
+    populateProfileForm();
+    if (profileStatus) profileStatus.textContent = "Profile saved.";
+    showToast("Profile updated");
+  } catch (error) {
+    if (profileStatus) profileStatus.textContent = error.message || "Could not save profile.";
+  }
+});
 
 reviewForm.addEventListener("submit", (event) => {
   event.preventDefault();
@@ -1982,6 +2226,13 @@ reviewForm.addEventListener("submit", (event) => {
   });
   localStorage.setItem("cosmetic-house-reviews", JSON.stringify(reviews.filter((review) => !review.sample).slice(0, 25)));
   reviewForm.reset();
+  renderReviews();
+});
+
+reviewList?.addEventListener("click", (event) => {
+  const button = event.target.closest("[data-show-more-reviews]");
+  if (!button) return;
+  visibleReviewCount += 9;
   renderReviews();
 });
 
@@ -2016,6 +2267,8 @@ async function initStorefront() {
   } catch {
     state.account = null;
   }
+  updateAccountButton();
+  autofillOrderForm();
   renderReviews();
   renderCart();
   setupWhatsAppLinks();
@@ -2061,6 +2314,7 @@ function trackWebsiteVisit() {
 function maybeOpenLoginPrompt() {
   if (isLoggedIn || sessionStorage.getItem("cosmetic-house-login-dismissed") === "true") return;
   window.setTimeout(() => {
+    updateAuthMode("login");
     if (!loginDialog.open) loginDialog.showModal();
   }, 800);
 }

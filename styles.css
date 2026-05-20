@@ -36,6 +36,10 @@
   box-sizing: border-box;
 }
 
+[hidden] {
+  display: none !important;
+}
+
 html {
   scroll-behavior: smooth;
   overflow-x: hidden;
@@ -1597,6 +1601,7 @@ body.product-mode .product-page {
 
 .card-payment-form input,
 .order-form input,
+.order-form select,
 .order-form textarea {
   min-height: 2.75rem;
   padding: 0 0.85rem;
@@ -2012,6 +2017,18 @@ body.product-mode .product-page {
   background: rgba(10, 7, 9, 0.52);
 }
 
+.login-dialog {
+  width: min(34rem, calc(100vw - 1rem));
+  max-height: min(92dvh, 48rem);
+  padding: 0;
+  border: 0;
+  border-radius: 1.25rem;
+  color: var(--ink);
+  background: var(--paper);
+  box-shadow: var(--shadow);
+  overflow: auto;
+}
+
 .login-panel {
   display: grid;
   gap: 1rem;
@@ -2068,6 +2085,42 @@ body.product-mode .product-page {
   border-radius: 0.55rem;
   color: var(--ink);
   background: var(--panel);
+}
+
+.customer-orders-list {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.customer-order-card {
+  display: grid;
+  gap: 0.4rem;
+  padding: 0.85rem;
+  border: 1px solid var(--line);
+  border-radius: 0.8rem;
+  background: var(--panel);
+}
+
+.customer-order-card div {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.customer-order-card span {
+  border-radius: 999px;
+  padding: 0.25rem 0.55rem;
+  color: var(--plum);
+  background: color-mix(in srgb, var(--rose) 12%, transparent);
+  font-size: 0.78rem;
+  font-weight: 900;
+}
+
+.customer-order-card p,
+.customer-order-card small {
+  margin: 0;
+  color: var(--muted);
 }
 
 .login-panel small {
@@ -2546,6 +2599,26 @@ footer a:hover {
     bottom: 0.75rem;
     min-width: 7.5rem;
   }
+
+  .login-dialog {
+    width: calc(100vw - 1rem);
+    max-height: 88dvh;
+    border-radius: 1rem;
+  }
+
+  .login-panel {
+    gap: 0.8rem;
+    padding: 1.2rem;
+  }
+
+  .login-panel h2 {
+    font-size: clamp(1.75rem, 10vw, 2.5rem);
+    line-height: 1;
+  }
+
+  .verify-row {
+    grid-template-columns: 1fr;
+  }
 }
 
 @media (max-width: 900px) {
@@ -2575,13 +2648,14 @@ footer a:hover {
 
   .header-actions {
     display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     width: 100%;
     gap: 0.45rem;
   }
 
   .theme-toggle,
   .login-button,
+  .user-orders-button,
   .cart-pill {
     width: 100%;
     min-height: 2.6rem;

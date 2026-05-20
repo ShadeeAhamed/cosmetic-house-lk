@@ -25,7 +25,7 @@
     <meta name="twitter:card" content="summary_large_image" />
     <link rel="manifest" href="site.webmanifest" />
     <link rel="preload" href="cosmetic-house-logo.jpeg" as="image" />
-    <link rel="stylesheet" href="styles.css?v=20260520-sephora-inspired" />
+    <link rel="stylesheet" href="styles.css?v=20260521-account-orders" />
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
@@ -77,6 +77,7 @@
           <span data-theme-label>Dark</span>
         </button>
         <button class="login-button" type="button" data-open-login>Login</button>
+        <button class="icon-pill user-orders-button" type="button" data-open-orders hidden>My orders</button>
         <button class="cart-pill" type="button" data-open-cart aria-label="Open cart">
           <span>Cart</span>
           <strong data-cart-count>0</strong>
@@ -515,8 +516,30 @@
             <input name="delivery_city" autocomplete="address-level2" required />
           </label>
           <label>
+            <span>District</span>
+            <select name="delivery_district" required>
+              <option value="">Select district</option>
+              <option>Colombo</option>
+              <option>Gampaha</option>
+              <option>Kalutara</option>
+              <option>Kandy</option>
+              <option>Galle</option>
+              <option>Matara</option>
+              <option>Kurunegala</option>
+              <option>Puttalam</option>
+              <option>Jaffna</option>
+              <option>Other</option>
+            </select>
+          </label>
+          <label>
             <span>Delivery address</span>
             <textarea name="delivery_address" rows="3" required></textarea>
+          </label>
+          <button class="button secondary full" type="button" data-map-pin>Open Google Maps pin</button>
+          <small data-location-status>Open Maps, copy the pinned location link, and paste it below if needed.</small>
+          <label>
+            <span>Google Maps location link (optional)</span>
+            <input name="location_link" type="url" placeholder="https://maps.google.com/..." />
           </label>
           <label>
             <span>Bank transfer proof (optional)</span>
@@ -581,8 +604,51 @@
           </div>
         </label>
         <button class="button primary full" data-auth-submit type="submit">Continue</button>
-        <small data-auth-status>Email or phone is required. For launch, this connects to email/SMS verification service.</small>
+        <small data-auth-status>Login with your email or phone number.</small>
       </form>
+    </dialog>
+
+    <dialog class="login-dialog" data-profile-dialog>
+      <button class="icon-button dialog-close" type="button" data-close-profile aria-label="Close profile">x</button>
+      <form class="login-panel" data-profile-form>
+        <p class="eyebrow">Your profile</p>
+        <h2 data-profile-title>Hi there</h2>
+        <p>Keep your delivery details updated for faster checkout and order support.</p>
+        <label>
+          <span>Full name</span>
+          <input name="full_name" autocomplete="name" placeholder="Your name" />
+        </label>
+        <label>
+          <span>Address</span>
+          <input name="address" autocomplete="street-address" placeholder="Delivery address" />
+        </label>
+        <label>
+          <span>Gender</span>
+          <select name="gender">
+            <option value="">Prefer not to say</option>
+            <option>Female</option>
+            <option>Male</option>
+            <option>Other</option>
+          </select>
+        </label>
+        <label>
+          <span>Email or phone</span>
+          <input name="contact" type="text" readonly />
+        </label>
+        <button class="button primary full" type="submit">Save profile</button>
+        <button class="button secondary full" type="button" data-logout>Logout</button>
+        <small data-profile-status>Your profile helps us prepare orders and routine support faster.</small>
+      </form>
+    </dialog>
+
+    <dialog class="login-dialog" data-orders-dialog>
+      <button class="icon-button dialog-close" type="button" data-close-orders aria-label="Close orders">x</button>
+      <div class="login-panel">
+        <p class="eyebrow">My orders</p>
+        <h2>Your order status</h2>
+        <p>Track your Cosmetic House orders from this device and your account contact.</p>
+        <div class="customer-orders-list" data-customer-orders></div>
+      </div>
     </dialog>
 
     <dialog class="quick-view-dialog" data-quick-view-dialog>
@@ -626,6 +692,6 @@
       window.COSMETIC_HOUSE_PAYMENT_API = "https://52-74-89-82.nip.io";
     </script>
     <script src="catalog-data.js?v=20260511-full-catalog"></script>
-    <script src="script.js?v=20260520-sephora-inspired"></script>
+    <script src="script.js?v=20260521-account-orders"></script>
   </body>
 </html>

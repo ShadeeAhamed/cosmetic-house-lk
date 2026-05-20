@@ -124,7 +124,9 @@ function normalizeOrder(payload, source = "website") {
       email: String(payload.customer?.email || payload.customerEmail || "").slice(0, 160),
       phone: String(payload.customer?.phone || payload.customerPhone || "").slice(0, 80),
       city: String(payload.customer?.city || payload.deliveryCity || "").slice(0, 120),
+      district: String(payload.customer?.district || payload.deliveryDistrict || "").slice(0, 120),
       address: String(payload.customer?.address || payload.deliveryAddress || "").slice(0, 300),
+      locationLink: String(payload.customer?.locationLink || payload.locationLink || "").slice(0, 300),
     },
     items,
     subtotal,
@@ -530,17 +532,31 @@ function publicUser(user) {
   };
 }
 
+function hashPassword(password, salt = crypto.randomBytes(16).toString("hex")) {
+  const hash = crypto.pbkdf2Sync(String(password || ""), salt, 120000, 32, "sha256").toString("hex");
+  return { salt, hash };
+}
+
+function verifyPassword(user, password) {
+  if (!user?.passwordHash || !user?.passwordSalt) return false;
+  const { hash } = hashPassword(password, user.passwordSalt);
+  return crypto.timingSafeEqual(Buffer.from(hash), Buffer.from(user.passwordHash));
+}
+
 function upsertUser(payload) {
   const now = new Date().toISOString();
   const contact = normalizeContact(payload.contact);
   if (!contact) throw new Error("Email or phone is required.");
   const existingIndex = users.findIndex((user) => normalizeContact(user.contact) === contact);
+  const passwordFields = payload.password ? hashPassword(payload.password) : {};
   const user = {
     id: existingIndex >= 0 ? users[existingIndex].id : `CHLK-USER-${Date.now()}`,
     name: String(payload.name || "").slice(0, 120),
     address: String(payload.address || "").slice(0, 220),
     gender: String(payload.gender || "").slice(0, 40),
     contact,
+    passwordHash: passwordFields.hash || users[existingIndex]?.passwordHash || "",
+    passwordSalt: passwordFields.salt || users[existingIndex]?.passwordSalt || "",
     createdAt: existingIndex >= 0 ? users[existingIndex].createdAt : now,
     updatedAt: now,
   };
@@ -751,16 +767,38 @@ http
       return;
     }
 
+    if (request.method === "PUT" && url.pathname === "/api/users/profile") {
+      try {
+        const payload = JSON.parse((await readBody(request)) || "{}");
+        const contact = normalizeContact(payload.contact);
+        const existingIndex = users.findIndex((user) => normalizeContact(user.contact) === contact);
+        if (existingIndex < 0) throw new Error("Create an account first.");
+        users[existingIndex] = {
+          ...users[existingIndex],
+          name: String(payload.name || "").slice(0, 120),
+          address: String(payload.address || "").slice(0, 220),
+          gender: String(payload.gender || "").slice(0, 40),
+          updatedAt: new Date().toISOString(),
+        };
+        await saveUsers();
+        sendJson(response, 200, { ok: true, user: publicUser(users[existingIndex]) }, origin);
+      } catch (error) {
+        sendJson(response, 400, { ok: false, message: error.message }, origin);
+      }
+      return;
+    }
+
     if (request.method === "POST" && url.pathname === "/api/auth/request-otp") {
       try {
         const payload = JSON.parse((await readBody(request)) || "{}");
         const contact = normalizeContact(payload.contact);
         if (!contact) throw new Error("Email or phone is required.");
+        if (!String(payload.password || "").trim()) throw new Error("Password is required.");
         const code = String(crypto.randomInt(100000, 999999));
         const expiresAt = Date.now() + 10 * 60 * 1000;
         const delivery = await sendOtp(contact, code);
         if (!delivery.ok) throw new Error(delivery.message || "Verification code could not be sent.");
-        otpSessions.set(contact, { code, expiresAt, attempts: 0, profile: payload.profile || {} });
+        otpSessions.set(contact, { code, expiresAt, attempts: 0, profile: payload.profile || {}, password: String(payload.password || "") });
         sendJson(response, 200, { ok: true, message: "Verification code sent." }, origin);
       } catch (error) {
         sendJson(response, 400, { ok: false, message: error.message }, origin);
@@ -784,12 +822,26 @@ http
           throw new Error("Verification code expired.");
         }
         if (String(payload.code || "").trim() !== session.code) throw new Error("Incorrect verification code.");
-        const user = upsertUser({ ...session.profile, ...payload.profile, contact });
+        const user = upsertUser({ ...session.profile, ...payload.profile, contact, password: session.password });
         await saveUsers();
         otpSessions.delete(contact);
         sendJson(response, 200, { ok: true, user: publicUser(user) }, origin);
       } catch (error) {
         sendJson(response, 400, { ok: false, message: error.message }, origin);
+      }
+      return;
+    }
+
+    if (request.method === "POST" && url.pathname === "/api/auth/login") {
+      try {
+        const payload = JSON.parse((await readBody(request)) || "{}");
+        const contact = normalizeContact(payload.contact);
+        const user = users.find((item) => normalizeContact(item.contact) === contact);
+        if (!user) throw new Error("Create an account first, then login.");
+        if (!verifyPassword(user, payload.password)) throw new Error("Incorrect password.");
+        sendJson(response, 200, { ok: true, user: publicUser(user) }, origin);
+      } catch (error) {
+        sendJson(response, 401, { ok: false, message: error.message }, origin);
       }
       return;
     }
@@ -812,6 +864,21 @@ http
         return;
       }
       sendJson(response, 200, { ok: true, orders }, origin);
+      return;
+    }
+
+    if (request.method === "GET" && url.pathname === "/api/customer/orders") {
+      const contact = normalizeContact(url.searchParams.get("contact"));
+      if (!contact) {
+        sendJson(response, 400, { ok: false, message: "Customer contact is required." }, origin);
+        return;
+      }
+      const customerOrders = orders.filter((order) => {
+        const email = normalizeContact(order.customer?.email);
+        const phone = normalizeContact(order.customer?.phone);
+        return email === contact || phone === contact;
+      });
+      sendJson(response, 200, { ok: true, orders: customerOrders.slice(0, 50) }, origin);
       return;
     }
 
