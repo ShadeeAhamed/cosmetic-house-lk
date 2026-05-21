@@ -15,8 +15,9 @@
     <meta name="robots" content="index, follow, max-image-preview:large" />
     <meta name="google-site-verification" content="xwkzwmZMOCGaWUxcudd1jM17hZ_MgKdkQAgyBrJN5h0" />
     <link rel="canonical" href="https://cosmetichouse.com.lk/" />
-    <link rel="icon" href="cosmetic-house-logo.jpeg" type="image/jpeg" />
-    <link rel="apple-touch-icon" href="cosmetic-house-logo.jpeg" />
+    <link rel="icon" href="favicon.ico" sizes="any" />
+    <link rel="icon" type="image/png" sizes="48x48" href="assets/icons/icon-48.png" />
+    <link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png" />
     <link rel="sitemap" type="application/xml" href="https://cosmetichouse.com.lk/sitemap.xml" />
     <meta property="og:title" content="Cosmetic House LK | Cosmetics, Skincare & Korean Beauty Sri Lanka" />
     <meta
@@ -31,7 +32,7 @@
     <link rel="manifest" href="site.webmanifest" />
     <link rel="preload" href="cosmetic-house-logo.jpeg" as="image" />
     <link rel="preload" href="assets/editorial/skincare-model-hero.jpg" as="image" />
-    <link rel="stylesheet" href="styles.css?v=20260521-hero-speed" />
+    <link rel="stylesheet" href="styles.css?v=20260521-mobile-image-fix" />
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
@@ -39,8 +40,8 @@
         "name": "Cosmetic House LK",
         "alternateName": ["Cosmetic House", "cosmetichouse.com.lk", "Cosmetic House Sri Lanka"],
         "url": "https://cosmetichouse.com.lk/",
-        "logo": "https://cosmetichouse.com.lk/cosmetic-house-logo.jpeg",
-        "image": "https://cosmetichouse.com.lk/cosmetic-house-logo.jpeg",
+        "logo": "https://cosmetichouse.com.lk/assets/icons/icon-512.png",
+        "image": "https://cosmetichouse.com.lk/assets/icons/icon-512.png",
         "description": "Premium Sri Lankan online beauty store for skincare, makeup, hair care, body care, and routine guidance.",
         "telephone": "+94762245570",
         "email": "cosmetichouse.lk@gmail.com",
@@ -501,18 +502,33 @@
           </label>
           <label>
             <span>District</span>
-            <select name="delivery_district" required>
+            <select name="delivery_district" autocomplete="address-level1" required>
               <option value="">Select district</option>
+              <option>Ampara</option>
+              <option>Anuradhapura</option>
+              <option>Badulla</option>
+              <option>Batticaloa</option>
               <option>Colombo</option>
+              <option>Galle</option>
               <option>Gampaha</option>
+              <option>Hambantota</option>
+              <option>Jaffna</option>
               <option>Kalutara</option>
               <option>Kandy</option>
-              <option>Galle</option>
-              <option>Matara</option>
+              <option>Kegalle</option>
+              <option>Kilinochchi</option>
               <option>Kurunegala</option>
+              <option>Mannar</option>
+              <option>Matale</option>
+              <option>Matara</option>
+              <option>Monaragala</option>
+              <option>Mullaitivu</option>
+              <option>Nuwara Eliya</option>
+              <option>Polonnaruwa</option>
               <option>Puttalam</option>
-              <option>Jaffna</option>
-              <option>Other</option>
+              <option>Ratnapura</option>
+              <option>Trincomalee</option>
+              <option>Vavuniya</option>
             </select>
           </label>
           <label>
@@ -679,6 +695,6 @@
     </script>
     <script src="shopify-config.js?v=20260521-shopify"></script>
     <script src="catalog-data.js?v=20260521-clean-images"></script>
-    <script src="script.js?v=20260521-hero-image"></script>
+    <script src="script.js?v=20260521-mobile-image-fix"></script>
   </body>
 </html>

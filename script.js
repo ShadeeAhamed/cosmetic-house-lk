@@ -573,13 +573,14 @@ function productInitials(name) {
 
 function productImageMarkup(product, mode = "card") {
   const missing = `<span class="missing-photo"><strong>${product.brand}</strong><small>${product.name}</small></span>`;
+  const imageSrc = `${product.image}?v=20260521b`;
   const errorAction =
     mode === "card"
-      ? "this.closest('.product-card')?.classList.add('image-unavailable');this.remove();"
-      : "this.remove();";
+      ? "this.onerror=null;this.hidden=false;this.src='cosmetic-house-logo.jpeg';this.closest('.real-product-frame')?.classList.remove('missing-image');this.closest('.real-product-frame')?.classList.add('has-image','fallback-image');this.closest('.product-card')?.classList.add('image-unavailable');"
+      : "this.onerror=null;this.hidden=false;this.src='cosmetic-house-logo.jpeg';this.closest('.real-product-frame')?.classList.remove('missing-image');this.closest('.real-product-frame')?.classList.add('has-image','fallback-image');";
   return `
     <div class="${mode === "detail" ? "dialog-photo" : "product-photo"} real-product-frame missing-image" style="--photo-color: ${product.color}">
-      <img class="product-main-image" src="${product.image}" alt="${product.name}" loading="lazy" decoding="async" hidden onload="this.hidden=false;this.closest('.real-product-frame').classList.remove('missing-image');this.closest('.real-product-frame').classList.add('has-image');" onerror="${errorAction}" />
+      <img class="product-main-image" src="${imageSrc}" alt="${product.name}" loading="lazy" decoding="async" hidden onload="this.hidden=false;this.closest('.real-product-frame').classList.remove('missing-image');this.closest('.real-product-frame').classList.add('has-image');" onerror="${errorAction}" />
       ${missing}
       <strong>${productInitials(product.name)}</strong>
     </div>
@@ -632,8 +633,7 @@ function renderHeroMix() {
     .map(
       (product) => `
         <div class="hero-mix-card real-product-frame missing-image" style="--photo-color:${product.color}">
-          <img src="${product.image}" alt="${product.name}" loading="lazy" decoding="async" hidden onload="this.hidden=false;this.closest('.real-product-frame').classList.remove('missing-image');this.closest('.real-product-frame').classList.add('has-image');" onerror="this.remove();" />
-          <span class="missing-photo"><strong>${product.brand}</strong><small>Trending beauty edit</small></span>
+          <img src="${product.image}?v=20260521b" alt="${product.name}" loading="lazy" decoding="async" hidden onload="this.hidden=false;this.closest('.real-product-frame').classList.remove('missing-image');this.closest('.real-product-frame').classList.add('has-image');" onerror="this.closest('.hero-mix-card')?.remove();" />
         </div>
       `,
     )
