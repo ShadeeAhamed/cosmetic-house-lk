@@ -42,7 +42,7 @@
     <link rel="manifest" href="site.webmanifest" />
     <link rel="preload" href="cosmetic-house-logo.jpeg" as="image" />
     <link rel="preload" href="assets/editorial/skincare-model-hero.jpg" as="image" />
-    <link rel="stylesheet" href="styles.css?v=20260521-home-image-load-fix" />
+    <link rel="stylesheet" href="styles.css?v=20260521-auth-upgrade" />
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
@@ -573,23 +573,23 @@
 
     <dialog class="login-dialog" data-login-dialog>
       <button class="icon-button dialog-close" type="button" data-close-login aria-label="Close login">x</button>
-      <form class="login-panel" data-login-form>
+      <form class="login-panel auth-panel" data-login-form data-mode="login" novalidate>
         <p class="eyebrow">Beauty account</p>
         <h2 data-login-title>Login to Cosmetic House.lk</h2>
-        <p>Save favorites, routine notes, rewards, and delivery preferences.</p>
+        <p data-auth-intro>Save favorites, routine notes, rewards, and delivery preferences.</p>
         <div class="auth-tabs" role="tablist" aria-label="Account mode">
           <button class="active" type="button" data-auth-mode="login">Login</button>
           <button type="button" data-auth-mode="signup">Sign up</button>
         </div>
-        <label data-signup-only hidden>
+        <label class="auth-field auth-field-signup" data-signup-only hidden>
           <span>Full name</span>
           <input name="full_name" autocomplete="name" placeholder="Your name" />
         </label>
-        <label data-signup-only hidden>
+        <label class="auth-field auth-field-signup" data-signup-only hidden>
           <span>Address</span>
           <input name="address" autocomplete="street-address" placeholder="Delivery address" />
         </label>
-        <label data-signup-only hidden>
+        <label class="auth-field auth-field-signup" data-signup-only hidden>
           <span>Gender</span>
           <select name="gender">
             <option value="">Prefer not to say</option>
@@ -604,9 +604,23 @@
         </label>
         <label>
           <span>Password</span>
-          <input name="password" type="password" required placeholder="Password" />
+          <span class="password-shell">
+            <input name="password" type="password" required placeholder="Password" autocomplete="current-password" />
+            <button type="button" data-toggle-password aria-label="Show password">Show</button>
+          </span>
         </label>
-        <label data-verification-step hidden>
+        <label class="auth-field auth-field-signup" data-signup-only hidden>
+          <span>Confirm password</span>
+          <span class="password-shell">
+            <input name="confirm_password" type="password" placeholder="Confirm password" autocomplete="new-password" />
+            <button type="button" data-toggle-password aria-label="Show password">Show</button>
+          </span>
+        </label>
+        <label class="remember-row" data-login-only>
+          <input name="remember_me" type="checkbox" checked />
+          <span>Keep me signed in</span>
+        </label>
+        <label class="auth-field verification-card" data-verification-step hidden>
           <span>2-step verification</span>
           <div class="verify-row">
             <input data-verification-code name="verification_code" inputmode="numeric" placeholder="Enter code" />
@@ -614,6 +628,7 @@
           </div>
         </label>
         <button class="button primary full" data-auth-submit type="submit">Continue</button>
+        <button class="forgot-button" data-forgot-password type="button">Forgot password?</button>
         <small data-auth-status>Login with your email or phone number.</small>
       </form>
     </dialog>
@@ -705,6 +720,6 @@
     </script>
     <script src="shopify-config.js?v=20260521-shopify"></script>
     <script src="catalog-data.js?v=20260521-clean-images"></script>
-    <script src="script.js?v=20260521-home-image-load-fix"></script>
+    <script src="script.js?v=20260521-auth-upgrade"></script>
   </body>
 </html>

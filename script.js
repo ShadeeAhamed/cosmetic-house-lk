@@ -407,11 +407,14 @@ const loginTitle = document.querySelector("[data-login-title]");
 const loginButton = document.querySelector("[data-open-login]");
 const authModeButtons = document.querySelectorAll("[data-auth-mode]");
 const signupOnlyFields = document.querySelectorAll("[data-signup-only]");
+const loginOnlyFields = document.querySelectorAll("[data-login-only]");
 const verificationStep = document.querySelector("[data-verification-step]");
 const verifyCodeButton = document.querySelector("[data-send-code]");
 const verificationCodeInput = document.querySelector("[data-verification-code]");
 const authStatus = document.querySelector("[data-auth-status]");
 const authSubmitButton = document.querySelector("[data-auth-submit]");
+const authIntro = document.querySelector("[data-auth-intro]");
+const forgotPasswordButton = document.querySelector("[data-forgot-password]");
 const profileDialog = document.querySelector("[data-profile-dialog]");
 const profileForm = document.querySelector("[data-profile-form]");
 const profileTitle = document.querySelector("[data-profile-title]");
@@ -1942,21 +1945,37 @@ mapPinButton?.addEventListener("click", () => {
 function updateAuthMode(mode) {
   authMode = mode;
   authStep = "identity";
+  loginForm.dataset.mode = mode;
+  loginForm.dataset.step = "identity";
   authModeButtons.forEach((button) => button.classList.toggle("active", button.dataset.authMode === mode));
   signupOnlyFields.forEach((field) => {
     field.hidden = mode !== "signup";
     field.querySelectorAll("input, select, textarea").forEach((input) => {
-      input.required = mode === "signup" && ["full_name", "address"].includes(input.name);
+      input.required = mode === "signup" && ["full_name", "address", "confirm_password"].includes(input.name);
     });
+  });
+  loginOnlyFields.forEach((field) => {
+    field.hidden = mode !== "login";
   });
   if (verificationStep) verificationStep.hidden = true;
   if (verificationCodeInput) {
     verificationCodeInput.required = false;
     verificationCodeInput.value = "";
   }
+  const passwordField = loginForm.elements.password;
+  if (passwordField) {
+    passwordField.autocomplete = mode === "signup" ? "new-password" : "current-password";
+  }
   if (authSubmitButton) authSubmitButton.textContent = "Continue";
+  if (forgotPasswordButton) forgotPasswordButton.hidden = mode !== "login";
   if (loginTitle) loginTitle.textContent = mode === "signup" ? "Create your beauty account" : "Login to Cosmetic House.lk";
-  if (authStatus) authStatus.textContent = mode === "signup" ? "Enter your details first. The verification code comes after Continue." : "Login with your email or phone number.";
+  if (authIntro) {
+    authIntro.textContent =
+      mode === "signup"
+        ? "Create an account once, then your delivery details, wishlist, and order history stay ready."
+        : "Login with the email or phone number you used when you signed up.";
+  }
+  if (authStatus) authStatus.textContent = mode === "signup" ? "Enter your details first. The verification code appears after Continue." : "Login with your email or phone number.";
 }
 
 authModeButtons.forEach((button) => button.addEventListener("click", () => updateAuthMode(button.dataset.authMode)));
@@ -2032,21 +2051,61 @@ function authProfileFromForm(formData) {
   };
 }
 
+function validContact(contact) {
+  const value = String(contact || "").trim();
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value) || value.replace(/\D/g, "").length >= 9;
+}
+
+function authPassword(formData) {
+  return String(formData.get("password") || "");
+}
+
+function validateSignupDetails(formData) {
+  const profile = authProfileFromForm(formData);
+  const contact = String(formData.get("contact") || "").trim();
+  const password = authPassword(formData);
+  const confirmPassword = String(formData.get("confirm_password") || "");
+  if (!profile.name) return { ok: false, message: "Add your full name.", field: "full_name" };
+  if (!profile.address) return { ok: false, message: "Add your delivery address.", field: "address" };
+  if (!validContact(contact)) return { ok: false, message: "Add a valid email or phone number.", field: "contact" };
+  if (password.length < 8) return { ok: false, message: "Use at least 8 characters for your password.", field: "password" };
+  if (password !== confirmPassword) return { ok: false, message: "Passwords do not match.", field: "confirm_password" };
+  return { ok: true };
+}
+
+function validateLoginDetails(formData) {
+  const contact = String(formData.get("contact") || "").trim();
+  if (!validContact(contact)) return { ok: false, message: "Add your signup email or phone number.", field: "contact" };
+  if (!authPassword(formData)) return { ok: false, message: "Enter your password.", field: "password" };
+  return { ok: true };
+}
+
+function focusAuthField(name) {
+  const field = loginForm?.elements?.[name];
+  if (field && typeof field.focus === "function") field.focus();
+}
+
+async function localPasswordHash(contact, password) {
+  const text = `${String(contact || "").trim().toLowerCase()}::${password}`;
+  if (window.crypto?.subtle) {
+    const bytes = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(text));
+    return Array.from(new Uint8Array(bytes), (byte) => byte.toString(16).padStart(2, "0")).join("");
+  }
+  return btoa(unescape(encodeURIComponent(text)));
+}
+
 async function requestVerificationCode() {
   const formData = new FormData(loginForm);
   const contact = String(formData.get("contact") || "").trim();
-  const password = String(formData.get("password") || "").trim();
-  if (!contact) {
-    authStatus.textContent = "Enter your email or phone first.";
-    loginForm.elements.contact?.focus();
-    return false;
-  }
-  if (!password) {
-    authStatus.textContent = "Create a password before requesting your code.";
-    loginForm.elements.password?.focus();
+  const password = authPassword(formData);
+  const validation = validateSignupDetails(formData);
+  if (!validation.ok) {
+    authStatus.textContent = validation.message;
+    focusAuthField(validation.field);
     return false;
   }
   authStatus.textContent = "Sending verification code...";
+  authSubmitButton.disabled = true;
   try {
     if (!authApiBase) throw new Error("Verification server is not connected yet.");
     const response = await fetch(`${authApiBase}/api/auth/request-otp`, {
@@ -2060,12 +2119,15 @@ async function requestVerificationCode() {
     });
     const payload = await response.json();
     if (!response.ok || !payload.ok) throw new Error(payload.message || "Could not send verification code.");
-    authStatus.textContent = "Verification code sent. Check your email or WhatsApp.";
+    authStatus.textContent = "Verification code sent. Check your email or WhatsApp, then enter the code below.";
   } catch (error) {
     authStatus.textContent = error.message || "Live verification is being connected. Please try again shortly.";
     return false;
+  } finally {
+    authSubmitButton.disabled = false;
   }
   authStep = "verify";
+  loginForm.dataset.step = "verify";
   if (verificationStep) verificationStep.hidden = false;
   if (verificationCodeInput) verificationCodeInput.required = true;
   if (authSubmitButton) authSubmitButton.textContent = "Verify & continue";
@@ -2095,7 +2157,11 @@ async function verifyCodeAndSaveAccount(formData) {
 async function loginWithAccount(formData) {
   const contact = String(formData.get("contact") || "").trim();
   const password = String(formData.get("password") || "");
-  if (!password) throw new Error("Password is required.");
+  const validation = validateLoginDetails(formData);
+  if (!validation.ok) {
+    focusAuthField(validation.field);
+    throw new Error(validation.message);
+  }
   if (authApiBase) {
     const response = await fetch(`${authApiBase}/api/auth/login`, {
       method: "POST",
@@ -2107,7 +2173,8 @@ async function loginWithAccount(formData) {
     return payload.user;
   }
   const registered = JSON.parse(localStorage.getItem("cosmetic-house-registered-account") || "null");
-  if (!registered || registered.contact !== contact || registered.password !== password) {
+  const hash = await localPasswordHash(contact, password);
+  if (!registered || registered.contact !== contact || registered.passwordHash !== hash) {
     throw new Error("Create an account first, then login with the same email or phone and password.");
   }
   return registered;
@@ -2213,10 +2280,6 @@ loginForm.addEventListener("submit", (event) => {
 async function handleAuthSubmit() {
   const formData = new FormData(loginForm);
   const contact = String(formData.get("contact") || "").trim();
-  if (!contact) {
-    authStatus.textContent = "Email or phone number is required.";
-    return;
-  }
   if (authMode === "signup" && authStep === "identity") {
     await requestVerificationCode();
     return;
@@ -2228,7 +2291,8 @@ async function handleAuthSubmit() {
       const verifiedUser = await verifyCodeAndSaveAccount(formData);
       if (!verifiedUser) return;
       state.account = verifiedUser;
-      localStorage.setItem("cosmetic-house-registered-account", JSON.stringify({ ...state.account, password: String(formData.get("password") || "") }));
+      const passwordHash = await localPasswordHash(contact, String(formData.get("password") || ""));
+      localStorage.setItem("cosmetic-house-registered-account", JSON.stringify({ ...state.account, passwordHash }));
     } catch (error) {
       authStatus.textContent = error.message || "Verification failed.";
       return;
@@ -2258,6 +2322,25 @@ async function handleAuthSubmit() {
   showToast(authMode === "signup" ? "Beauty account created" : "Logged in successfully");
   aiLog.insertAdjacentHTML("beforeend", "<p>Welcome back. Your beauty profile is ready for browsing, reviews, and routine guidance.</p>");
 }
+
+loginForm?.addEventListener("click", (event) => {
+  const toggle = event.target.closest("[data-toggle-password]");
+  if (!toggle) return;
+  const input = toggle.closest(".password-shell")?.querySelector("input");
+  if (!input) return;
+  const shouldShow = input.type === "password";
+  input.type = shouldShow ? "text" : "password";
+  toggle.textContent = shouldShow ? "Hide" : "Show";
+  toggle.setAttribute("aria-label", shouldShow ? "Hide password" : "Show password");
+});
+
+forgotPasswordButton?.addEventListener("click", () => {
+  const contact = String(loginForm.elements.contact?.value || "").trim();
+  authStatus.textContent = contact
+    ? "Password reset is prepared for the live account server. For now, message us on WhatsApp and we will verify your account safely."
+    : "Enter your email or phone number first, then tap Forgot password.";
+  if (!contact) loginForm.elements.contact?.focus();
+});
 
 profileForm?.addEventListener("submit", async (event) => {
   event.preventDefault();

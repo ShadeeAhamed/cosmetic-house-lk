@@ -2079,6 +2079,19 @@ body.product-mode .product-page {
   padding: 2rem;
 }
 
+.auth-panel {
+  position: relative;
+}
+
+.auth-panel[data-mode="login"] .auth-field-signup,
+.auth-panel[data-mode="signup"] [data-login-only] {
+  display: none !important;
+}
+
+.auth-panel[data-step="verify"] .auth-field:not(.verification-card) {
+  opacity: 0.72;
+}
+
 .auth-tabs {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -2104,10 +2117,62 @@ body.product-mode .product-page {
   background: var(--ink);
 }
 
+.password-shell {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: 0.4rem;
+  min-height: 3rem;
+  padding-right: 0.45rem;
+  border: 1px solid var(--line);
+  border-radius: 0.65rem;
+  background: var(--panel);
+}
+
+.password-shell input {
+  min-height: 2.8rem;
+  border: 0;
+  background: transparent;
+}
+
+.password-shell input:focus {
+  outline: 0;
+}
+
+.password-shell button,
+.forgot-button {
+  border: 0;
+  color: var(--rose);
+  background: transparent;
+  cursor: pointer;
+  font-weight: 900;
+}
+
+.remember-row {
+  display: flex !important;
+  grid-template-columns: none !important;
+  align-items: center;
+  gap: 0.55rem !important;
+  color: var(--muted);
+}
+
+.remember-row input {
+  width: 1.05rem;
+  min-height: 1.05rem;
+  accent-color: var(--rose);
+}
+
 .verify-row {
   display: grid;
   grid-template-columns: 1fr auto;
   gap: 0.55rem;
+}
+
+.verification-card {
+  padding: 0.85rem;
+  border: 1px solid color-mix(in srgb, var(--rose) 28%, var(--line));
+  border-radius: 0.9rem;
+  background: color-mix(in srgb, var(--rose) 8%, var(--paper));
 }
 
 .login-panel h2 {
@@ -2129,6 +2194,13 @@ body.product-mode .product-page {
   border-radius: 0.55rem;
   color: var(--ink);
   background: var(--panel);
+}
+
+.login-panel input:focus,
+.login-panel select:focus,
+.password-shell:focus-within {
+  outline: 2px solid color-mix(in srgb, var(--rose) 34%, transparent);
+  border-color: color-mix(in srgb, var(--rose) 55%, var(--line));
 }
 
 .customer-orders-list {
