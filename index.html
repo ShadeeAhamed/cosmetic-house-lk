@@ -15,6 +15,9 @@
     <meta name="robots" content="index, follow, max-image-preview:large" />
     <meta name="google-site-verification" content="xwkzwmZMOCGaWUxcudd1jM17hZ_MgKdkQAgyBrJN5h0" />
     <link rel="canonical" href="https://cosmetichouse.com.lk/" />
+    <link rel="icon" href="cosmetic-house-logo.jpeg" type="image/jpeg" />
+    <link rel="apple-touch-icon" href="cosmetic-house-logo.jpeg" />
+    <link rel="sitemap" type="application/xml" href="https://cosmetichouse.com.lk/sitemap.xml" />
     <meta property="og:title" content="Cosmetic House LK | Cosmetics, Skincare & Korean Beauty Sri Lanka" />
     <meta
       property="og:description"
@@ -22,11 +25,13 @@
     />
     <meta property="og:url" content="https://cosmetichouse.com.lk/" />
     <meta property="og:type" content="website" />
-    <meta property="og:image" content="https://cosmetichouse.com.lk/cosmetic-house-logo.jpeg" />
+    <meta property="og:site_name" content="Cosmetic House LK" />
+    <meta property="og:image" content="https://cosmetichouse.com.lk/assets/editorial/skincare-model-hero.jpg" />
     <meta name="twitter:card" content="summary_large_image" />
     <link rel="manifest" href="site.webmanifest" />
     <link rel="preload" href="cosmetic-house-logo.jpeg" as="image" />
-    <link rel="stylesheet" href="styles.css?v=20260521-seo-products" />
+    <link rel="preload" href="assets/editorial/skincare-model-hero.jpg" as="image" />
+    <link rel="stylesheet" href="styles.css?v=20260521-hero-speed" />
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
@@ -45,7 +50,7 @@
           "addressLocality": "Rajagiriya",
           "addressCountry": "LK"
         },
-        "sameAs": ["https://www.instagram.com/cosmetic_house.lk/"],
+        "sameAs": ["https://www.instagram.com/cosmetic_house.lk/", "https://www.facebook.com/CosmeticHouse.lkk"],
         "areaServed": "Sri Lanka",
         "priceRange": "LKR"
       }
@@ -156,10 +161,21 @@
         </div>
 
         <div class="hero-panel editorial-panel hero-beauty-board">
-          <span class="panel-kicker">Cosmetic House.lk</span>
-          <strong>Glow starts here.</strong>
-          <p>Trending skincare and beauty essentials in one polished routine shelf.</p>
-          <div class="hero-product-mix" data-hero-mix></div>
+          <img
+            class="hero-model-photo"
+            src="assets/editorial/skincare-model-hero.jpg"
+            alt="Skincare model with a fresh glowing complexion"
+            width="1280"
+            height="853"
+            loading="eager"
+            fetchpriority="high"
+          />
+          <div class="hero-panel-copy">
+            <span class="panel-kicker">Cosmetic House.lk</span>
+            <strong>Healthy skin starts here.</strong>
+            <p>Premium skincare, glow essentials, and routine support for confident everyday beauty.</p>
+          </div>
+          <div class="hero-product-mix" data-hero-mix aria-label="Trending product edit"></div>
         </div>
       </section>
 
@@ -662,7 +678,7 @@
       window.COSMETIC_HOUSE_PAYMENT_API = "https://52-74-89-82.nip.io";
     </script>
     <script src="shopify-config.js?v=20260521-shopify"></script>
-    <script src="catalog-data.js?v=20260511-full-catalog"></script>
-    <script src="script.js?v=20260521-account-orders"></script>
+    <script src="catalog-data.js?v=20260521-clean-images"></script>
+    <script src="script.js?v=20260521-hero-image"></script>
   </body>
 </html>

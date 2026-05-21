@@ -333,9 +333,10 @@ p {
 }
 
 .hero-copy h1 {
-  max-width: none;
-  font-size: clamp(2.45rem, 4vw, 4.45rem);
-  white-space: nowrap;
+  max-width: 13ch;
+  font-size: clamp(2.35rem, 3.75vw, 4.25rem);
+  line-height: 0.98;
+  text-wrap: balance;
 }
 
 .hero-actions {
@@ -390,6 +391,7 @@ p {
 }
 
 .hero-panel {
+  position: relative;
   display: grid;
   min-height: clamp(22rem, 34vw, 31rem);
   align-content: end;
@@ -405,21 +407,55 @@ p {
 }
 
 .hero-panel > .panel-kicker,
-.hero-panel > p {
+.hero-panel > p,
+.hero-panel-copy .panel-kicker,
+.hero-panel-copy p {
   color: rgba(255, 250, 253, 0.72);
 }
 
-.hero-panel > strong {
+.hero-panel > strong,
+.hero-panel-copy strong {
+  display: block;
   max-width: 14ch;
   font-size: clamp(2.45rem, 5vw, 5.15rem);
   line-height: 0.95;
 }
 
-.hero-panel > p {
+.hero-panel > p,
+.hero-panel-copy p {
   max-width: 28rem;
 }
 
+.hero-panel-copy {
+  position: relative;
+  z-index: 2;
+  max-width: 34rem;
+}
+
+.hero-model-photo {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  filter: saturate(1.04) contrast(1.03);
+}
+
+.hero-panel::after {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  content: "";
+  background:
+    linear-gradient(90deg, rgba(8, 4, 7, 0.74), rgba(8, 4, 7, 0.26) 54%, rgba(8, 4, 7, 0.14)),
+    linear-gradient(0deg, rgba(8, 4, 7, 0.58), transparent 46%);
+}
+
 .hero-product-mix {
+  position: relative;
+  z-index: 2;
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 0.75rem;
@@ -2951,7 +2987,7 @@ footer a:hover {
 }
 
 .hero-copy h1 {
-  max-width: 11ch;
+  max-width: 13ch;
   letter-spacing: 0;
 }
 
@@ -2992,10 +3028,8 @@ footer a:hover {
 
 .hero-beauty-board {
   overflow: hidden;
-  background:
-    radial-gradient(circle at 78% 20%, rgba(255, 20, 147, 0.42), transparent 12rem),
-    radial-gradient(circle at 28% 78%, rgba(255, 216, 229, 0.16), transparent 14rem),
-    linear-gradient(145deg, #080407, #2a061c 52%, #070407);
+  border-radius: 1.6rem;
+  background: #0b0609;
 }
 
 .hero-product-mix {
@@ -3005,7 +3039,8 @@ footer a:hover {
 .hero-mix-card {
   min-height: 10rem;
   border-radius: 1.2rem;
-  background: transparent;
+  background: rgba(255, 255, 255, 0.14);
+  backdrop-filter: blur(14px);
 }
 
 .hero-mix-card img {
@@ -3423,8 +3458,8 @@ footer a:hover {
   min-height: 10rem;
   overflow: visible;
   border: 0;
-  border-radius: 0;
-  background: transparent;
+  border-radius: 1.1rem;
+  background: rgba(255, 255, 255, 0.12);
   box-shadow: none;
 }
 
@@ -3503,12 +3538,18 @@ footer a:hover {
     padding: 0.9rem;
   }
 
-  .hero-panel > strong {
+  .hero-model-photo {
+    object-position: 58% center;
+  }
+
+  .hero-panel > strong,
+  .hero-panel-copy strong {
     max-width: none;
     font-size: clamp(1.75rem, 8vw, 2.35rem);
   }
 
-  .hero-panel > p {
+  .hero-panel > p,
+  .hero-panel-copy p {
     display: none;
   }
 

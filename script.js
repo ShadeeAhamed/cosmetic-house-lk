@@ -579,7 +579,7 @@ function productImageMarkup(product, mode = "card") {
       : "this.remove();";
   return `
     <div class="${mode === "detail" ? "dialog-photo" : "product-photo"} real-product-frame missing-image" style="--photo-color: ${product.color}">
-      <img class="product-main-image" src="${product.image}" alt="${product.name}" loading="lazy" hidden onload="this.hidden=false;this.closest('.real-product-frame').classList.remove('missing-image');this.closest('.real-product-frame').classList.add('has-image');" onerror="${errorAction}" />
+      <img class="product-main-image" src="${product.image}" alt="${product.name}" loading="lazy" decoding="async" hidden onload="this.hidden=false;this.closest('.real-product-frame').classList.remove('missing-image');this.closest('.real-product-frame').classList.add('has-image');" onerror="${errorAction}" />
       ${missing}
       <strong>${productInitials(product.name)}</strong>
     </div>
@@ -632,7 +632,7 @@ function renderHeroMix() {
     .map(
       (product) => `
         <div class="hero-mix-card real-product-frame missing-image" style="--photo-color:${product.color}">
-          <img src="${product.image}" alt="${product.name}" hidden onload="this.hidden=false;this.closest('.real-product-frame').classList.remove('missing-image');this.closest('.real-product-frame').classList.add('has-image');" onerror="this.remove();" />
+          <img src="${product.image}" alt="${product.name}" loading="lazy" decoding="async" hidden onload="this.hidden=false;this.closest('.real-product-frame').classList.remove('missing-image');this.closest('.real-product-frame').classList.add('has-image');" onerror="this.remove();" />
           <span class="missing-photo"><strong>${product.brand}</strong><small>Trending beauty edit</small></span>
         </div>
       `,
