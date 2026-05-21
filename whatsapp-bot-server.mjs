@@ -527,6 +527,10 @@ function publicUser(user) {
     address: user.address,
     gender: user.gender,
     contact: user.contact,
+    verificationStatus: user.verificationStatus || "verified",
+    verifiedAt: user.verifiedAt || "",
+    disabled: Boolean(user.disabled),
+    lastLoginAt: user.lastLoginAt || "",
     createdAt: user.createdAt,
     updatedAt: user.updatedAt,
   };
@@ -548,19 +552,24 @@ function upsertUser(payload) {
   const contact = normalizeContact(payload.contact);
   if (!contact) throw new Error("Email or phone is required.");
   const existingIndex = users.findIndex((user) => normalizeContact(user.contact) === contact);
+  const existing = existingIndex >= 0 ? users[existingIndex] : {};
   const passwordFields = payload.password ? hashPassword(payload.password) : {};
   const user = {
-    id: existingIndex >= 0 ? users[existingIndex].id : `CHLK-USER-${Date.now()}`,
-    name: String(payload.name || "").slice(0, 120),
-    address: String(payload.address || "").slice(0, 220),
-    gender: String(payload.gender || "").slice(0, 40),
+    id: existing.id || `CHLK-USER-${Date.now()}`,
+    name: String(payload.name || existing.name || "").slice(0, 120),
+    address: String(payload.address || existing.address || "").slice(0, 220),
+    gender: String(payload.gender || existing.gender || "").slice(0, 40),
     contact,
-    passwordHash: passwordFields.hash || users[existingIndex]?.passwordHash || "",
-    passwordSalt: passwordFields.salt || users[existingIndex]?.passwordSalt || "",
-    createdAt: existingIndex >= 0 ? users[existingIndex].createdAt : now,
+    passwordHash: passwordFields.hash || existing.passwordHash || "",
+    passwordSalt: passwordFields.salt || existing.passwordSalt || "",
+    verificationStatus: payload.verificationStatus || existing.verificationStatus || "verified",
+    verifiedAt: payload.verifiedAt || existing.verifiedAt || "",
+    disabled: Boolean(payload.disabled ?? existing.disabled ?? false),
+    lastLoginAt: payload.lastLoginAt || existing.lastLoginAt || "",
+    createdAt: existing.createdAt || now,
     updatedAt: now,
   };
-  if (existingIndex >= 0) users[existingIndex] = { ...users[existingIndex], ...user };
+  if (existingIndex >= 0) users[existingIndex] = { ...existing, ...user };
   else users.unshift(user);
   return user;
 }
@@ -618,7 +627,7 @@ function sendJson(response, status, payload, origin = "") {
     "Content-Type": "application/json",
     "Access-Control-Allow-Origin": origin || siteOrigin,
     "Access-Control-Allow-Methods": "GET, POST, PUT, OPTIONS",
-    "Access-Control-Allow-Headers": "Content-Type, X-Admin-Pin",
+    "Access-Control-Allow-Headers": "Content-Type, X-Admin-Pin, Authorization",
   });
   response.end(JSON.stringify(payload));
 }
@@ -794,6 +803,10 @@ http
         const contact = normalizeContact(payload.contact);
         if (!contact) throw new Error("Email or phone is required.");
         if (!String(payload.password || "").trim()) throw new Error("Password is required.");
+        const existingUser = users.find((item) => normalizeContact(item.contact) === contact);
+        if (existingUser?.verificationStatus === "verified") throw new Error("An account already exists. Please login instead.");
+        upsertUser({ ...(payload.profile || {}), contact, password: payload.password, verificationStatus: "pending" });
+        await saveUsers();
         const code = String(crypto.randomInt(100000, 999999));
         const expiresAt = Date.now() + 10 * 60 * 1000;
         const delivery = await sendOtp(contact, code);
@@ -822,7 +835,14 @@ http
           throw new Error("Verification code expired.");
         }
         if (String(payload.code || "").trim() !== session.code) throw new Error("Incorrect verification code.");
-        const user = upsertUser({ ...session.profile, ...payload.profile, contact, password: session.password });
+        const user = upsertUser({
+          ...session.profile,
+          ...payload.profile,
+          contact,
+          password: session.password,
+          verificationStatus: "verified",
+          verifiedAt: new Date().toISOString(),
+        });
         await saveUsers();
         otpSessions.delete(contact);
         sendJson(response, 200, { ok: true, user: publicUser(user) }, origin);
@@ -838,7 +858,12 @@ http
         const contact = normalizeContact(payload.contact);
         const user = users.find((item) => normalizeContact(item.contact) === contact);
         if (!user) throw new Error("Create an account first, then login.");
+        if (user.disabled) throw new Error("This account is currently blocked. Please contact Cosmetic House.");
+        if (user.verificationStatus === "pending") throw new Error("Verify your account first. Tap Sign up and request a fresh code.");
         if (!verifyPassword(user, payload.password)) throw new Error("Incorrect password.");
+        user.lastLoginAt = new Date().toISOString();
+        user.updatedAt = user.lastLoginAt;
+        await saveUsers();
         sendJson(response, 200, { ok: true, user: publicUser(user) }, origin);
       } catch (error) {
         sendJson(response, 401, { ok: false, message: error.message }, origin);
@@ -987,6 +1012,11 @@ http
       }
 
       send(response, 200, "EVENT_RECEIVED");
+      return;
+    }
+
+    if (url.pathname.startsWith("/api/")) {
+      sendJson(response, 404, { ok: false, message: "API route not found on this server. Please update the live bot service." }, origin);
       return;
     }
 

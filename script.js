@@ -2094,6 +2094,20 @@ async function localPasswordHash(contact, password) {
   return btoa(unescape(encodeURIComponent(text)));
 }
 
+async function readApiJson(response) {
+  const text = await response.text();
+  try {
+    return JSON.parse(text || "{}");
+  } catch {
+    throw new Error("Account server is updating. Please try again in a few minutes.");
+  }
+}
+
+function friendlyAuthError(error) {
+  if (error instanceof TypeError) return "Account server cannot be reached right now. Please try again in a few minutes.";
+  return error.message || "Account action could not be completed. Please try again.";
+}
+
 async function requestVerificationCode() {
   const formData = new FormData(loginForm);
   const contact = String(formData.get("contact") || "").trim();
@@ -2117,11 +2131,11 @@ async function requestVerificationCode() {
         profile: authProfileFromForm(formData),
       }),
     });
-    const payload = await response.json();
+    const payload = await readApiJson(response);
     if (!response.ok || !payload.ok) throw new Error(payload.message || "Could not send verification code.");
     authStatus.textContent = "Verification code sent. Check your email or WhatsApp, then enter the code below.";
   } catch (error) {
-    authStatus.textContent = error.message || "Live verification is being connected. Please try again shortly.";
+    authStatus.textContent = friendlyAuthError(error);
     return false;
   } finally {
     authSubmitButton.disabled = false;
@@ -2149,7 +2163,7 @@ async function verifyCodeAndSaveAccount(formData) {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ contact, code, profile }),
   });
-  const payload = await response.json();
+  const payload = await readApiJson(response);
   if (!response.ok || !payload.ok) throw new Error(payload.message || "Verification failed.");
   return payload.user;
 }
@@ -2168,7 +2182,7 @@ async function loginWithAccount(formData) {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ contact, password }),
     });
-    const payload = await response.json();
+    const payload = await readApiJson(response);
     if (!response.ok || !payload.ok) throw new Error(payload.message || "Login failed.");
     return payload.user;
   }
@@ -2360,7 +2374,7 @@ profileForm?.addEventListener("submit", async (event) => {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(updated),
       });
-      const payload = await response.json();
+      const payload = await readApiJson(response);
       if (!response.ok || !payload.ok) throw new Error(payload.message || "Could not save profile.");
       state.account = payload.user;
     } else {
@@ -2372,7 +2386,7 @@ profileForm?.addEventListener("submit", async (event) => {
     if (profileStatus) profileStatus.textContent = "Profile saved.";
     showToast("Profile updated");
   } catch (error) {
-    if (profileStatus) profileStatus.textContent = error.message || "Could not save profile.";
+    if (profileStatus) profileStatus.textContent = friendlyAuthError(error);
   }
 });
 
