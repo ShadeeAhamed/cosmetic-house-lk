@@ -48,7 +48,7 @@ const products = [
     category: "Moisturizers",
     type: "Creams",
     brand: "CeraVe",
-    image: "assets/products/cerave-moisturising-cream.jpg",
+    image: "assets/products/cerave-moisturizing-cream-340g.jpg",
     price: 7250,
     color: "#0e0d12",
     note: "Comfort cream for dry-feeling skin.",
@@ -65,7 +65,7 @@ const products = [
     category: "Sunscreen",
     type: "SPF",
     brand: "Beauty of Joseon",
-    image: "assets/products/beauty-of-joseon-relief-sun-spf50.jpg",
+    image: "assets/products/beauty-of-joseon-relief-sun-rice-probiotics-spf50-pa.jpg",
     price: 6350,
     color: "#211019",
     note: "Soft sunscreen step for daily glow routines.",
@@ -82,7 +82,7 @@ const products = [
     category: "Makeup",
     type: "Lip Makeup",
     brand: "Maybelline",
-    image: "assets/products/maybelline-superstay-matte-ink.jpg",
+    image: "assets/products/peptide-lip-tint-ribbon.jpg",
     price: 3950,
     color: "#2c071d",
     note: "Bold long-wear lip color.",
@@ -99,7 +99,7 @@ const products = [
     category: "Makeup",
     type: "Face Makeup",
     brand: "Maybelline",
-    image: "assets/products/maybelline-fit-me-foundation.jpg",
+    image: "assets/products/mac-m-a-c-sculpt-glow-duo-highlight-contour-palette.jpg",
     price: 4750,
     color: "#13080d",
     note: "Everyday base makeup with a polished finish.",
@@ -116,7 +116,7 @@ const products = [
     category: "Shampoos & Hair",
     type: "Hair Treatments",
     brand: "K18",
-    image: "assets/products/k18-leave-in-molecular-repair-mask.jpg",
+    image: "assets/products/fino-premium-touch-penetrating-serum-hair-mask-hair-treatment-230g.jpg",
     price: 13850,
     color: "#0a0a0c",
     note: "Premium hair repair treatment.",
@@ -150,7 +150,7 @@ const products = [
     category: "Body Wash",
     type: "Body Care",
     brand: "Cosmetic House Edit",
-    image: "assets/products/luxury-body-wash-glow-gel.jpg",
+    image: "assets/products/dove-renewing-glow-pink-clay-shower-gel-500-ml.jpg",
     price: 2850,
     color: "#230015",
     note: "Soft shower gel for smooth, fresh-feeling skin.",
@@ -167,7 +167,7 @@ const products = [
     category: "Shampoos & Hair",
     type: "Shampoos",
     brand: "Cosmetic House Edit",
-    image: "assets/products/daily-smooth-shampoo.jpg",
+    image: "assets/products/tresemme-keratin-smooth-shampoo-conditioner-680ml.jpg",
     price: 3350,
     color: "#09070a",
     note: "Everyday shampoo category starter.",
@@ -184,7 +184,7 @@ const products = [
     category: "Best Moving",
     type: "Serums",
     brand: "Celimax",
-    image: "assets/products/celimax-vita-a-retinol-shot-tightening-serum-15ml.jpg",
+    image: "assets/products/celimax-the-vita-a-retinol-shot-tightening-serum-30ml.jpg",
     price: 5705,
     color: "#1b0914",
     note: "Night serum for firm-looking skin routines.",
@@ -200,7 +200,7 @@ const products = [
     category: "Moisturizers",
     type: "Creams",
     brand: "Torriden",
-    image: "assets/products/torriden-dive-in-hyaluronic-acid-soothing-cream-100ml.jpg",
+    image: "assets/products/torriden-dive-in-low-molecular-hyaluronic-acid-soothing-cream-100ml.jpg",
     price: 6155,
     color: "#0b1620",
     note: "Hydrating cream for fresh, comfortable skin.",
@@ -280,7 +280,7 @@ const products = [
     category: "Sunscreen",
     type: "SPF",
     brand: "La Roche-Posay",
-    image: "assets/products/la-roche-posay-anthelios-uvmune-400-invisible-fluid-spf50.jpg",
+    image: "assets/products/la-roche-posay-anthelios-uvmune-400-invisible-fluid-spf50-non-perfumed.jpg",
     price: 7001,
     color: "#1b140c",
     note: "Premium sunscreen fluid for daily protection.",
@@ -573,14 +573,14 @@ function productInitials(name) {
 
 function productImageMarkup(product, mode = "card") {
   const missing = `<span class="missing-photo"><strong>${product.brand}</strong><small>${product.name}</small></span>`;
-  const imageSrc = `${product.image}?v=20260521b`;
+  const imageSrc = `${product.image}?v=20260521c`;
   const errorAction =
     mode === "card"
-      ? "this.onerror=null;this.hidden=false;this.src='cosmetic-house-logo.jpeg';this.closest('.real-product-frame')?.classList.remove('missing-image');this.closest('.real-product-frame')?.classList.add('has-image','fallback-image');"
-      : "this.onerror=null;this.hidden=false;this.src='cosmetic-house-logo.jpeg';this.closest('.real-product-frame')?.classList.remove('missing-image');this.closest('.real-product-frame')?.classList.add('has-image','fallback-image');";
+      ? "this.onerror=null;this.src='cosmetic-house-logo.jpeg';this.closest('.real-product-frame')?.classList.remove('missing-image');this.closest('.real-product-frame')?.classList.add('has-image','fallback-image');"
+      : "this.onerror=null;this.src='cosmetic-house-logo.jpeg';this.closest('.real-product-frame')?.classList.remove('missing-image');this.closest('.real-product-frame')?.classList.add('has-image','fallback-image');";
   return `
     <div class="${mode === "detail" ? "dialog-photo" : "product-photo"} real-product-frame missing-image" style="--photo-color: ${product.color}">
-      <img class="product-main-image" src="${imageSrc}" alt="${product.name}" loading="lazy" decoding="async" hidden onload="this.hidden=false;this.closest('.real-product-frame').classList.remove('missing-image');this.closest('.real-product-frame').classList.add('has-image');" onerror="${errorAction}" />
+      <img class="product-main-image" src="${imageSrc}" alt="${product.name}" loading="${mode === "card" ? "lazy" : "eager"}" decoding="async" onload="this.closest('.real-product-frame').classList.remove('missing-image');this.closest('.real-product-frame').classList.add('has-image');" onerror="${errorAction}" />
       ${missing}
       <strong>${productInitials(product.name)}</strong>
     </div>
@@ -633,7 +633,7 @@ function renderHeroMix() {
     .map(
       (product) => `
         <div class="hero-mix-card real-product-frame missing-image" style="--photo-color:${product.color}">
-          <img src="${product.image}?v=20260521b" alt="${product.name}" loading="lazy" decoding="async" hidden onload="this.hidden=false;this.closest('.real-product-frame').classList.remove('missing-image');this.closest('.real-product-frame').classList.add('has-image');" onerror="this.closest('.hero-mix-card')?.remove();" />
+          <img src="${product.image}?v=20260521c" alt="${product.name}" loading="eager" decoding="async" onload="this.closest('.real-product-frame').classList.remove('missing-image');this.closest('.real-product-frame').classList.add('has-image');" onerror="this.closest('.hero-mix-card')?.remove();" />
         </div>
       `,
     )
@@ -793,7 +793,7 @@ function renderPhotoList() {
       (product) => `
         <article class="photo-item">
           <div class="photo-thumb real-product-frame" style="--photo-color: ${product.color}">
-            <img src="${product.image}?v=20260521b" alt="${product.name}" loading="lazy" onerror="this.onerror=null;this.src='cosmetic-house-logo.jpeg';this.closest('.real-product-frame')?.classList.add('fallback-image');" />
+            <img src="${product.image}?v=20260521c" alt="${product.name}" loading="lazy" onerror="this.onerror=null;this.src='cosmetic-house-logo.jpeg';this.closest('.real-product-frame')?.classList.add('fallback-image');" />
           </div>
           <div>
             <span class="badge">${product.brand}</span>
@@ -916,10 +916,10 @@ function renderProductPage(index) {
     <div class="product-page-photo">
       ${productImageMarkup(product, "detail")}
       <div class="detail-gallery" aria-label="Product gallery">
-        <button type="button" class="active"><img src="${product.image}?v=20260521b" alt="${product.name}" loading="lazy" onerror="this.onerror=null;this.src='cosmetic-house-logo.jpeg';" /></button>
+        <button type="button" class="active"><img src="${product.image}?v=20260521c" alt="${product.name}" loading="lazy" onerror="this.onerror=null;this.src='cosmetic-house-logo.jpeg';" /></button>
         ${related
           .slice(0, 3)
-          .map((item) => `<button type="button" data-view-related="${products.indexOf(item)}"><img src="${item.image}?v=20260521b" alt="${item.name}" loading="lazy" onerror="this.onerror=null;this.src='cosmetic-house-logo.jpeg';" /></button>`)
+          .map((item) => `<button type="button" data-view-related="${products.indexOf(item)}"><img src="${item.image}?v=20260521c" alt="${item.name}" loading="lazy" onerror="this.onerror=null;this.src='cosmetic-house-logo.jpeg';" /></button>`)
           .join("")}
       </div>
       <div class="routine-wheel" aria-label="Routine placement">
@@ -1236,7 +1236,7 @@ function renderSearchSuggestions() {
     .map(
       (product) => `
         <button type="button" data-view="${products.indexOf(product)}">
-          <img src="${product.image}?v=20260521b" alt="" loading="lazy" onerror="this.onerror=null;this.src='cosmetic-house-logo.jpeg';" />
+          <img src="${product.image}?v=20260521c" alt="" loading="lazy" onerror="this.onerror=null;this.src='cosmetic-house-logo.jpeg';" />
           <span><strong>${product.name}</strong><small>${product.brand} - ${money(product.price)}</small></span>
         </button>
       `,
