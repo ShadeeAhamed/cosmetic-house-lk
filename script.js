@@ -3,6 +3,7 @@ const whatsappNumber = "94762245570";
 const paymentApiBase = (window.COSMETIC_HOUSE_PAYMENT_API || "").replace(/\/$/, "");
 const orderApiBase = paymentApiBase;
 const authApiBase = paymentApiBase;
+const shopifySettings = window.COSMETIC_HOUSE_SHOPIFY || {};
 
 const products = [
   {
@@ -1035,9 +1036,19 @@ function renderCart() {
   if (orderWhatsAppField) orderWhatsAppField.value = message;
   if (checkoutButton) checkoutButton.disabled = !state.cart.length;
   if (cancelOrderButton) cancelOrderButton.disabled = !state.cart.length;
-  if (checkoutButton) checkoutButton.textContent = payment === "Online card payment" && paymentGateway.ready ? "Pay securely" : "Place order";
+  if (checkoutButton) {
+    checkoutButton.textContent = shopifyEnabled()
+      ? "Checkout with Shopify"
+      : payment === "Online card payment" && paymentGateway.ready
+        ? "Pay securely"
+        : "Place order";
+  }
   cardForm.hidden = selectedPaymentMethod() !== "Online card payment";
-  if (paymentStatus) paymentStatus.textContent = paymentGateway.message;
+  if (paymentStatus) {
+    paymentStatus.textContent = shopifyEnabled()
+      ? "Secure checkout will open in Shopify."
+      : paymentGateway.message;
+  }
   autofillOrderForm();
 }
 
@@ -1428,6 +1439,66 @@ function showCancellationSaved(orderId, reason) {
   `;
 }
 
+function shopifyEnabled() {
+  return Boolean(shopifySettings.enabled && shopifySettings.shopDomain && shopifySettings.storefrontAccessToken);
+}
+
+function shopifyVariantForProduct(product) {
+  return shopifySettings.variantMap?.[product.slug] || product.shopifyVariantId || "";
+}
+
+function shopifyFallbackUrl() {
+  if (shopifySettings.fallbackShopUrl) return shopifySettings.fallbackShopUrl;
+  if (shopifySettings.shopDomain) return `https://${shopifySettings.shopDomain}`;
+  return "";
+}
+
+async function startShopifyCheckout() {
+  if (!shopifyEnabled()) {
+    const fallback = shopifyFallbackUrl();
+    if (fallback) {
+      window.location.href = fallback;
+      return;
+    }
+    throw new Error("Shopify checkout is waiting for your Shopify store URL and Storefront token.");
+  }
+
+  const lines = state.cart
+    .map((product) => ({ merchandiseId: shopifyVariantForProduct(product), quantity: 1 }))
+    .filter((line) => line.merchandiseId);
+
+  if (!lines.length || lines.length !== state.cart.length) {
+    throw new Error("Some products are not linked to Shopify variants yet. Add the Shopify variant IDs first.");
+  }
+
+  const response = await fetch(`https://${shopifySettings.shopDomain}/api/${shopifySettings.apiVersion || "2026-04"}/graphql.json`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "X-Shopify-Storefront-Access-Token": shopifySettings.storefrontAccessToken,
+    },
+    body: JSON.stringify({
+      query: `
+        mutation CreateCart($lines: [CartLineInput!]!) {
+          cartCreate(input: { lines: $lines }) {
+            cart { id checkoutUrl }
+            userErrors { field message }
+          }
+        }
+      `,
+      variables: { lines },
+    }),
+  });
+
+  const payload = await response.json();
+  const errors = payload?.data?.cartCreate?.userErrors || payload?.errors || [];
+  const checkoutUrl = payload?.data?.cartCreate?.cart?.checkoutUrl;
+  if (!response.ok || errors.length || !checkoutUrl) {
+    throw new Error(errors[0]?.message || "Shopify checkout could not start.");
+  }
+  window.location.href = checkoutUrl;
+}
+
 async function cancelCurrentOrder() {
   const reason = cancelReasonField?.value.trim();
   if (!reason) {
@@ -1699,6 +1770,19 @@ orderForm?.addEventListener("submit", async (event) => {
   saveDeliveryDetailsFromForm(orderForm);
   renderCart();
   const payload = orderPayloadFromForm(orderForm);
+  if (shopifyEnabled()) {
+    checkoutButton.disabled = true;
+    checkoutButton.textContent = "Opening Shopify...";
+    try {
+      await recordOrder({ ...payload, source: "website-shopify", status: "Pending", payment: "Shopify checkout" });
+      await startShopifyCheckout();
+    } catch (error) {
+      alert(error.message);
+      checkoutButton.disabled = false;
+      renderCart();
+    }
+    return;
+  }
   if (selectedPaymentMethod() === "Online card payment") {
     checkoutButton.disabled = true;
     checkoutButton.textContent = "Opening secure payment...";

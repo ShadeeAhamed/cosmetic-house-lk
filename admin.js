@@ -97,10 +97,12 @@ function renderStats() {
   const pending = orders.filter((order) => !["Delivered", "Cancelled"].includes(order.status)).length;
   const todayUsers = state.users.filter((user) => String(user.createdAt || "").startsWith(today)).length;
   const todayVisits = state.visits.filter((visit) => String(visit.createdAt || "").startsWith(today)).length;
+  const shopifyLeads = orders.filter((order) => String(order.source || "").includes("shopify") || String(order.payment || "").includes("Shopify")).length;
   statsEl.innerHTML = `
     <article><span>Total orders</span><strong>${orders.length}</strong></article>
     <article><span>Today orders</span><strong>${todayOrders}</strong></article>
     <article><span>Open orders</span><strong>${pending}</strong></article>
+    <article><span>Shopify checkout leads</span><strong>${shopifyLeads}</strong></article>
     <article><span>User accounts</span><strong>${state.users.length}</strong><small>${todayUsers} today</small></article>
     <article><span>Website visits</span><strong>${state.visits.length}</strong><small>${todayVisits} today</small></article>
     <article><span>Total sales</span><strong>${money(total)}</strong></article>
