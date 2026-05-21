@@ -576,7 +576,7 @@ function productImageMarkup(product, mode = "card") {
   const imageSrc = `${product.image}?v=20260521b`;
   const errorAction =
     mode === "card"
-      ? "this.onerror=null;this.hidden=false;this.src='cosmetic-house-logo.jpeg';this.closest('.real-product-frame')?.classList.remove('missing-image');this.closest('.real-product-frame')?.classList.add('has-image','fallback-image');this.closest('.product-card')?.classList.add('image-unavailable');"
+      ? "this.onerror=null;this.hidden=false;this.src='cosmetic-house-logo.jpeg';this.closest('.real-product-frame')?.classList.remove('missing-image');this.closest('.real-product-frame')?.classList.add('has-image','fallback-image');"
       : "this.onerror=null;this.hidden=false;this.src='cosmetic-house-logo.jpeg';this.closest('.real-product-frame')?.classList.remove('missing-image');this.closest('.real-product-frame')?.classList.add('has-image','fallback-image');";
   return `
     <div class="${mode === "detail" ? "dialog-photo" : "product-photo"} real-product-frame missing-image" style="--photo-color: ${product.color}">
@@ -793,7 +793,7 @@ function renderPhotoList() {
       (product) => `
         <article class="photo-item">
           <div class="photo-thumb real-product-frame" style="--photo-color: ${product.color}">
-            <img src="${product.image}" alt="${product.name}" loading="lazy" onerror="this.closest('.photo-item')?.remove();" />
+            <img src="${product.image}?v=20260521b" alt="${product.name}" loading="lazy" onerror="this.onerror=null;this.src='cosmetic-house-logo.jpeg';this.closest('.real-product-frame')?.classList.add('fallback-image');" />
           </div>
           <div>
             <span class="badge">${product.brand}</span>
@@ -916,10 +916,10 @@ function renderProductPage(index) {
     <div class="product-page-photo">
       ${productImageMarkup(product, "detail")}
       <div class="detail-gallery" aria-label="Product gallery">
-        <button type="button" class="active"><img src="${product.image}" alt="${product.name}" loading="lazy" /></button>
+        <button type="button" class="active"><img src="${product.image}?v=20260521b" alt="${product.name}" loading="lazy" onerror="this.onerror=null;this.src='cosmetic-house-logo.jpeg';" /></button>
         ${related
           .slice(0, 3)
-          .map((item) => `<button type="button" data-view-related="${products.indexOf(item)}"><img src="${item.image}" alt="${item.name}" loading="lazy" /></button>`)
+          .map((item) => `<button type="button" data-view-related="${products.indexOf(item)}"><img src="${item.image}?v=20260521b" alt="${item.name}" loading="lazy" onerror="this.onerror=null;this.src='cosmetic-house-logo.jpeg';" /></button>`)
           .join("")}
       </div>
       <div class="routine-wheel" aria-label="Routine placement">
@@ -1236,7 +1236,7 @@ function renderSearchSuggestions() {
     .map(
       (product) => `
         <button type="button" data-view="${products.indexOf(product)}">
-          <img src="${product.image}" alt="" loading="lazy" />
+          <img src="${product.image}?v=20260521b" alt="" loading="lazy" onerror="this.onerror=null;this.src='cosmetic-house-logo.jpeg';" />
           <span><strong>${product.name}</strong><small>${product.brand} - ${money(product.price)}</small></span>
         </button>
       `,
