@@ -373,6 +373,7 @@ const cartRecommendations = document.querySelector("[data-cart-recommendations]"
 const cartCount = document.querySelector("[data-cart-count]");
 const subtotalEl = document.querySelector("[data-subtotal]");
 const totalEl = document.querySelector("[data-total]");
+const cartKokoLine = document.querySelector("[data-cart-koko]");
 const checkoutButton = document.querySelector("[data-checkout]");
 const whatsAppCheckoutLink = document.querySelector("[data-whatsapp-checkout]");
 const orderForm = document.querySelector("[data-order-form]");
@@ -458,6 +459,40 @@ const formatter = new Intl.NumberFormat("en-LK", {
 
 function money(value) {
   return formatter.format(value).replace("LKR", "LKR ");
+}
+
+function slugify(value) {
+  return String(value || "")
+    .toLowerCase()
+    .replace(/&/g, "and")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
+
+function productPageUrl(product) {
+  return `products/${product.slug}.html`;
+}
+
+function categoryPageUrl(category) {
+  if (!category || category === "All") return "products.html";
+  return `products.html#category-${slugify(category)}`;
+}
+
+function brandPageUrl(brand) {
+  return `products.html#brand-${slugify(brand)}`;
+}
+
+function kokoInstallmentValue(price) {
+  return Math.ceil(Number(price || 0) / 3);
+}
+
+function kokoMarkup(price, compact = false) {
+  return `
+    <div class="koko-installment${compact ? " compact" : ""}">
+      <span class="koko-logo" aria-label="KOKO">KOKO</span>
+      <span>Or pay in 3 x ${money(kokoInstallmentValue(price))} with KOKO</span>
+    </div>
+  `;
 }
 
 function whatsAppUrl(message) {
@@ -611,12 +646,13 @@ function renderFilters() {
   filterRow.innerHTML = categories
     .map(
       (category) =>
-        `<button type="button" class="${state.category === category ? "active" : ""}" data-category="${category}">${category}</button>`,
+        `<a href="${categoryPageUrl(category)}" class="${state.category === category ? "active" : ""}" data-category="${category}">${category}</a>`,
     )
     .join("");
 }
 
 function renderHeroMix() {
+  if (!heroMix) return;
   const mixSlots = [
     { brand: "The Ordinary", file: "assets/products/hero-the-ordinary-cutout.png" },
     { brand: "CeraVe", file: "assets/products/hero-cerave-cutout.png" },
@@ -753,11 +789,11 @@ function renderProducts() {
       const index = products.indexOf(product);
       const rating = productRating(product);
       return `
-        <article class="product-card">
-          <button class="product-open" type="button" data-view="${index}" aria-label="Open ${product.name}">
+        <article class="product-card" data-product-index="${index}">
+          <a class="product-open" href="${productPageUrl(product)}" aria-label="Open ${product.name}">
             ${productImageMarkup(product)}
             <span class="product-ribbon">${productTag(product)}</span>
-          </button>
+          </a>
           <div class="body">
             <div class="card-meta-row">
               <span class="badge">${product.brand} / ${product.category}</span>
@@ -765,7 +801,7 @@ function renderProducts() {
                 ${state.wishlist.includes(product.slug) ? "Saved" : "Love"}
               </button>
             </div>
-            <button class="product-title" type="button" data-view="${index}">${product.name}</button>
+            <a class="product-title" href="${productPageUrl(product)}">${product.name}</a>
             <div class="rating-row"><span>5 stars</span><small>${rating.rating} (${rating.count})</small></div>
             <p>${product.note}</p>
             <div class="best-for-labels"><span>${product.type}</span><span>${product.category}</span></div>
@@ -773,10 +809,11 @@ function renderProducts() {
               <strong>${money(product.price)}</strong>
               <span>${stockLabel(product)}</span>
             </div>
+            ${kokoMarkup(product.price, true)}
           </div>
           <div class="card-actions">
             <button class="button primary" type="button" data-add="${index}">Quick add</button>
-            <button class="button secondary" type="button" data-quick-view="${index}">Quick view</button>
+            <a class="button secondary" href="${productPageUrl(product)}">Details</a>
           </div>
         </article>
       `;
@@ -785,7 +822,7 @@ function renderProducts() {
   const canLoadMore = items.length > state.visibleCount;
   loadMoreButton.hidden = !canLoadMore;
   loadMoreButton.disabled = !canLoadMore;
-  loadMoreButton.textContent = canLoadMore ? `Show more products (${items.length - state.visibleCount} left)` : "All products shown";
+  loadMoreButton.textContent = canLoadMore ? "Show More Products" : "All Products Shown";
   setTimeout(() => productGrid.classList.remove("is-filtering"), 160);
 }
 
@@ -803,7 +840,7 @@ function renderPhotoList() {
             <h3>${product.name}</h3>
             <p>${product.note}</p>
             <strong>${money(product.price)}</strong>
-            <button class="text-button" type="button" data-view="${products.indexOf(product)}">View details</button>
+            <a class="text-button" href="${productPageUrl(product)}">View details</a>
           </div>
         </article>
       `,
@@ -938,10 +975,11 @@ function renderProductPage(index) {
         <h2>${product.name}</h2>
         <p>${product.description}</p>
         <div class="rating-row detail-rating"><span>5 stars</span><small>${rating.rating} out of 5 - ${rating.count} reviews</small></div>
-        <div class="price-row">
-          <strong>${money(product.price)}</strong>
-          <span>${stockLabel(product)}</span>
-        </div>
+            <div class="price-row">
+              <strong>${money(product.price)}</strong>
+              <span>${stockLabel(product)}</span>
+            </div>
+            ${kokoMarkup(product.price)}
       </div>
         <div class="detail-trust-row">
           <span>100% authentic sourcing</span>
@@ -1004,6 +1042,10 @@ function renderCart() {
   cartCount.textContent = state.cart.length;
   subtotalEl.textContent = money(subtotal);
   totalEl.textContent = money(total);
+  if (cartKokoLine) {
+    cartKokoLine.hidden = !total;
+    cartKokoLine.innerHTML = total ? kokoMarkup(total) : "";
+  }
   if (orderStatusPanel && !orderStatusPanel.dataset.persist) orderStatusPanel.hidden = true;
   if (cancelReasonBox) cancelReasonBox.hidden = true;
 
@@ -1238,10 +1280,10 @@ function renderSearchSuggestions() {
   searchSuggestionsPanel.innerHTML = matches
     .map(
       (product) => `
-        <button type="button" data-view="${products.indexOf(product)}">
+        <a href="${productPageUrl(product)}">
           <img src="${product.image}?v=20260521c" alt="" loading="lazy" onerror="this.onerror=null;this.src='cosmetic-house-logo.jpeg';" />
           <span><strong>${product.name}</strong><small>${product.brand} - ${money(product.price)}</small></span>
-        </button>
+        </a>
       `,
     )
     .join("");
@@ -1269,9 +1311,10 @@ function renderQuickView(index) {
         <div class="rating-row"><span>5 stars</span><small>${rating.rating} (${rating.count})</small></div>
         <p>${product.note}</p>
         <strong class="quick-price">${money(product.price)}</strong>
+        ${kokoMarkup(product.price, true)}
         <div class="quick-actions">
           <button class="button primary" type="button" data-add="${index}">Add to cart</button>
-          <button class="button secondary" type="button" data-view="${index}">Full details</button>
+          <a class="button secondary" href="${productPageUrl(product)}">Full details</a>
         </div>
       </div>
     </div>
@@ -1683,25 +1726,19 @@ function cosmeticsReply(question) {
 filterRow.addEventListener("click", (event) => {
   const button = event.target.closest("[data-category]");
   if (!button) return;
-  state.category = button.dataset.category;
-  state.brand = "";
-  state.visibleCount = 10;
-  renderFilters();
-  renderProducts();
+  if (button instanceof HTMLAnchorElement) return;
 });
 
 productGrid.addEventListener("click", (event) => {
   const addButton = event.target.closest("[data-add]");
-  const viewButton = event.target.closest("[data-view]");
   const quickButton = event.target.closest("[data-quick-view]");
   const wishlistButton = event.target.closest(".wishlist-button");
   if (addButton) addToCart(Number(addButton.dataset.add));
   if (quickButton) renderQuickView(Number(quickButton.dataset.quickView));
   if (wishlistButton) {
-    const wishlistIndex = Number(wishlistButton.closest(".product-card")?.querySelector("[data-view]")?.dataset.view);
+    const wishlistIndex = Number(wishlistButton.closest(".product-card")?.dataset.productIndex);
     if (Number.isFinite(wishlistIndex)) toggleWishlist(wishlistIndex);
   }
-  if (viewButton && !wishlistButton) renderProductPage(Number(viewButton.dataset.view));
 });
 
 productPageContent.addEventListener("click", (event) => {
@@ -1819,10 +1856,7 @@ searchInput.addEventListener("input", (event) => {
 });
 
 searchSuggestionsPanel?.addEventListener("click", (event) => {
-  const button = event.target.closest("[data-view]");
-  if (!button) return;
   searchSuggestionsPanel.hidden = true;
-  renderProductPage(Number(button.dataset.view));
 });
 
 sortSelect?.addEventListener("change", (event) => {
@@ -1835,26 +1869,13 @@ sortSelect?.addEventListener("change", (event) => {
 document.querySelectorAll("[data-category-jump]").forEach((link) => {
   link.addEventListener("click", (event) => {
     event.preventDefault();
-    state.category = link.dataset.categoryJump;
-    state.brand = "";
-    state.visibleCount = 10;
-    renderFilters();
-    renderProducts();
-    megaMenu.hidden = true;
-    document.querySelector("#shop")?.scrollIntoView({ behavior: "smooth", block: "start" });
+    window.location.href = categoryPageUrl(link.dataset.categoryJump);
   });
 });
 
 document.querySelectorAll("[data-brand-jump]").forEach((button) => {
   button.addEventListener("click", () => {
-    state.category = "All";
-    state.brand = button.dataset.brandJump;
-    state.search = "";
-    searchInput.value = "";
-    state.visibleCount = 10;
-    renderFilters();
-    renderProducts();
-    document.querySelector("#shop")?.scrollIntoView({ behavior: "smooth", block: "start" });
+    window.location.href = brandPageUrl(button.dataset.brandJump);
   });
 });
 

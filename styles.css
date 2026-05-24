@@ -606,7 +606,8 @@ body.product-mode .product-page {
   display: none;
 }
 
-.search-suggestions-panel button {
+.search-suggestions-panel button,
+.search-suggestions-panel a {
   display: grid;
   grid-template-columns: 3.35rem 1fr;
   gap: 0.75rem;
@@ -618,11 +619,14 @@ body.product-mode .product-page {
   color: var(--ink);
   background: transparent;
   cursor: pointer;
+  text-decoration: none;
   text-align: left;
 }
 
 .search-suggestions-panel button:hover,
-.search-suggestions-panel button:focus-visible {
+.search-suggestions-panel button:focus-visible,
+.search-suggestions-panel a:hover,
+.search-suggestions-panel a:focus-visible {
   background: color-mix(in srgb, var(--rose) 10%, transparent);
 }
 
@@ -675,17 +679,23 @@ body.product-mode .product-page {
   gap: 0.55rem;
 }
 
-.filter-row button {
+.filter-row button,
+.filter-row a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   min-height: 2.65rem;
   padding: 0 0.95rem;
   border: 1px solid var(--line);
   border-radius: 999px;
   color: var(--muted);
   background: var(--panel);
+  text-decoration: none;
   font-weight: 800;
 }
 
-.filter-row button.active {
+.filter-row button.active,
+.filter-row a.active {
   color: white;
   background: var(--plum);
   border-color: var(--plum);
@@ -756,6 +766,7 @@ body.product-mode .product-page {
   background: transparent;
   cursor: pointer;
   text-align: left;
+  text-decoration: none;
 }
 
 .product-ribbon {
@@ -934,6 +945,43 @@ body.product-mode .product-page {
   color: var(--muted);
 }
 
+.koko-installment {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  align-items: center;
+  width: max-content;
+  max-width: 100%;
+  border: 1px solid color-mix(in srgb, #ffd100 42%, var(--line));
+  border-radius: 999px;
+  padding: 0.34rem 0.55rem;
+  color: color-mix(in srgb, var(--ink) 80%, #7a6100);
+  background: linear-gradient(135deg, rgba(255, 240, 138, 0.3), rgba(255, 255, 255, 0.72));
+  font-size: 0.78rem;
+  font-weight: 850;
+  line-height: 1.25;
+}
+
+.koko-installment.compact {
+  font-size: 0.72rem;
+}
+
+.seo-koko {
+  margin: 0.8rem 0 1rem;
+}
+
+.koko-logo {
+  display: inline-grid;
+  min-width: 2.75rem;
+  place-items: center;
+  border-radius: 999px;
+  padding: 0.12rem 0.36rem;
+  color: #111;
+  background: #ffd100;
+  font-size: 0.68rem;
+  font-weight: 950;
+}
+
 .card-actions {
   display: grid;
   grid-template-columns: 1fr;
@@ -942,11 +990,17 @@ body.product-mode .product-page {
 }
 
 .text-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 2.45rem;
+  padding: 0 0.8rem;
   border: 1px solid var(--line);
   border-radius: 0.55rem;
   color: var(--ink);
   background: transparent;
   cursor: pointer;
+  text-decoration: none;
   font-weight: 900;
 }
 
@@ -1719,6 +1773,14 @@ body.product-mode .product-page {
 
 .cart-summary .total {
   font-size: 1.25rem;
+}
+
+.cart-koko-line {
+  justify-content: flex-end;
+}
+
+.cart-koko-line .koko-installment {
+  margin-left: auto;
 }
 
 .cart-note {
@@ -3645,5 +3707,269 @@ footer a:hover {
 
   .hero-product-mix {
     display: none;
+  }
+}
+
+/* Professional storefront audit pass */
+.hero-product-mix {
+  display: none !important;
+}
+
+.luxury-hero {
+  grid-template-columns: minmax(0, 0.88fr) minmax(22rem, 1.05fr);
+  gap: clamp(1.5rem, 4vw, 4rem);
+  align-items: center;
+  padding-top: clamp(2.5rem, 5vw, 5rem);
+  padding-bottom: clamp(2.5rem, 5vw, 5rem);
+}
+
+.hero-copy {
+  align-content: center;
+}
+
+.hero-copy h1 {
+  max-width: 14ch;
+  font-size: clamp(3rem, 4.8vw, 5.6rem);
+  line-height: 0.98;
+  letter-spacing: 0;
+  text-wrap: balance;
+}
+
+.hero-copy p:not(.eyebrow) {
+  max-width: 58ch;
+}
+
+.hero-panel {
+  min-height: clamp(24rem, 36vw, 34rem);
+  overflow: hidden;
+  border-radius: 1.35rem;
+}
+
+.hero-panel-copy {
+  max-width: 34rem;
+}
+
+.hero-panel-copy strong {
+  font-size: clamp(2.4rem, 5vw, 5.2rem);
+  line-height: 0.98;
+  letter-spacing: 0;
+}
+
+.load-more-row .button {
+  min-width: min(100%, 17rem);
+  border-radius: 999px;
+  box-shadow: 0 1rem 2.6rem color-mix(in srgb, var(--rose) 16%, transparent);
+  transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease;
+}
+
+.load-more-row .button:hover,
+.load-more-row .button:focus-visible {
+  transform: translateY(-2px);
+  box-shadow: 0 1.4rem 3rem color-mix(in srgb, var(--rose) 22%, transparent);
+}
+
+.product-card {
+  min-height: 30rem;
+}
+
+.product-title {
+  font-weight: 950;
+  line-height: 1.22;
+}
+
+.product-title:hover,
+.product-title:focus-visible {
+  color: var(--rose);
+}
+
+@media (max-width: 980px) {
+  .luxury-hero {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 760px) {
+  body {
+    overflow-x: hidden;
+  }
+
+  .luxury-hero {
+    gap: 1rem;
+    padding: 1rem 0.85rem 1.25rem;
+  }
+
+  .hero-copy {
+    gap: 0.85rem;
+  }
+
+  .hero-copy h1 {
+    max-width: 100%;
+    font-size: clamp(1.75rem, 7.2vw, 2.35rem);
+    line-height: 1.03;
+    white-space: nowrap;
+  }
+
+  .hero-copy p:not(.eyebrow) {
+    -webkit-line-clamp: 2;
+    font-size: 0.98rem;
+    line-height: 1.55;
+  }
+
+  .hero-actions {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .hero-actions .button:last-child {
+    grid-column: 1 / -1;
+  }
+
+  .hero-panel {
+    min-height: 13.75rem;
+    border-radius: 1.1rem;
+  }
+
+  .hero-panel-copy strong {
+    max-width: 9ch;
+    font-size: clamp(2rem, 9vw, 2.85rem);
+  }
+
+  section:not(.hero) {
+    padding-top: 1.45rem;
+    padding-bottom: 1.45rem;
+  }
+
+  .section-heading {
+    margin-bottom: 1rem;
+  }
+
+  .section-heading h2 {
+    font-size: clamp(1.75rem, 8vw, 2.4rem);
+    line-height: 1.04;
+  }
+
+  .shop-tools {
+    gap: 0.85rem;
+    margin-bottom: 0.95rem;
+  }
+
+  .filter-row {
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    margin-right: -0.85rem;
+    margin-left: -0.85rem;
+    padding: 0 0.85rem 0.25rem;
+    overflow-x: auto;
+    scroll-snap-type: x proximity;
+  }
+
+  .filter-row a,
+  .filter-row button {
+    flex: 0 0 auto;
+    min-height: 2.45rem;
+    padding: 0 0.8rem;
+    scroll-snap-align: start;
+    font-size: 0.86rem;
+  }
+
+  .product-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 0.75rem;
+  }
+
+  .product-card {
+    min-height: 0;
+    border-radius: 0.95rem;
+  }
+
+  .product-photo {
+    min-height: 9.75rem;
+    aspect-ratio: 1 / 1.05;
+  }
+
+  .product-card .body {
+    gap: 0.5rem;
+    padding: 0.72rem;
+  }
+
+  .card-meta-row {
+    gap: 0.35rem;
+  }
+
+  .badge {
+    max-width: 100%;
+    font-size: 0.62rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .wishlist-button {
+    min-height: 2rem;
+    padding: 0 0.45rem;
+    font-size: 0.68rem;
+  }
+
+  .product-title {
+    display: -webkit-box;
+    min-height: 2.35rem;
+    overflow: hidden;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    font-size: 0.86rem;
+  }
+
+  .product-card p,
+  .best-for-labels {
+    display: none;
+  }
+
+  .rating-row {
+    gap: 0.3rem;
+    font-size: 0.72rem;
+  }
+
+  .price-row {
+    display: grid;
+    gap: 0.12rem;
+  }
+
+  .price-row strong {
+    font-size: 1.02rem;
+  }
+
+  .price-row span {
+    font-size: 0.73rem;
+  }
+
+  .koko-installment {
+    width: 100%;
+    border-radius: 0.65rem;
+    padding: 0.36rem 0.42rem;
+    font-size: 0.64rem;
+  }
+
+  .koko-logo {
+    min-width: 2.25rem;
+    font-size: 0.58rem;
+  }
+
+  .card-actions {
+    gap: 0.4rem;
+    padding: 0 0.72rem 0.72rem;
+  }
+
+  .card-actions .button {
+    min-height: 2.35rem;
+    padding: 0.55rem 0.5rem;
+    font-size: 0.78rem;
+  }
+
+  .card-actions .button.secondary {
+    display: none;
+  }
+
+  .load-more-row {
+    margin-top: 1rem;
   }
 }
