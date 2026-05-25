@@ -127,9 +127,12 @@ async function publishInstagramPhoto({ igBusinessId, accessToken, imageUrl, capt
 }
 
 const date = process.argv[2] || todayInSriLanka();
+const forcePublish = process.argv.includes("--force");
 const calendar = JSON.parse(await readFile("business-suite-calendar/meta-business-suite-30-day-calendar.json", "utf8"));
 const item = calendar.find((entry) => entry.date === date);
 if (!item) throw new Error(`No social calendar item is scheduled for ${date}.`);
+const existingHistory = await readJson(historyFile, {});
+const existingRecord = existingHistory[date] || {};
 const caption = cleanPublicCaption(item.feedCaption);
 const report = {
   date,
@@ -145,7 +148,14 @@ const pageAccessToken = process.env.META_PAGE_ACCESS_TOKEN;
 const instagramAccessToken = process.env.INSTAGRAM_ACCESS_TOKEN || pageAccessToken;
 const facebookDirectApiEnabled = process.env.FACEBOOK_DIRECT_API_ENABLED === "true";
 
-if (!facebookDirectApiEnabled) {
+if (existingRecord.facebook?.posted && !forcePublish) {
+  report.facebook = {
+    attempted: false,
+    skipped: true,
+    alreadyPosted: true,
+    note: "Facebook was already posted for this date. Use --force to publish again.",
+  };
+} else if (!facebookDirectApiEnabled) {
   report.facebook = {
     attempted: false,
     skipped: true,
@@ -168,6 +178,16 @@ if (!facebookDirectApiEnabled) {
   }
 }
 
+if (existingRecord.instagram?.posted && !forcePublish) {
+  report.instagram = {
+    attempted: false,
+    skipped: true,
+    alreadyPosted: true,
+    imageUrl: existingRecord.instagram.imageUrl,
+    result: existingRecord.instagram.result,
+    note: "Instagram was already posted for this date. Use --force to publish again.",
+  };
+} else {
 try {
   const igBusinessId = pageId && pageAccessToken ? await findInstagramBusinessId({ pageId, accessToken: pageAccessToken }) : null;
   if (!igBusinessId) {
@@ -187,10 +207,11 @@ try {
 } catch (error) {
   report.instagram.error = error.message;
 }
+}
 
 await writeFile("social-automation-data/last-publish-report.json", `${JSON.stringify(report, null, 2)}\n`, "utf8");
 
-const history = await readJson(historyFile, {});
+const history = existingHistory;
 history[date] = {
   ...(history[date] || {}),
   date,
@@ -231,7 +252,7 @@ await writeJson(historyFile, history);
 console.log(JSON.stringify({
   date: report.date,
   productName: report.productName,
-  facebook: report.facebook.result ? "posted" : `not posted: ${report.facebook.error}`,
-  instagram: report.instagram.result ? "posted" : `not posted: ${report.instagram.error}`,
+  facebook: report.facebook.alreadyPosted ? "already posted" : report.facebook.result ? "posted" : `not posted: ${report.facebook.error}`,
+  instagram: report.instagram.alreadyPosted ? "already posted" : report.instagram.result ? "posted" : `not posted: ${report.instagram.error}`,
   reportFile: "social-automation-data/last-publish-report.json",
 }, null, 2));
