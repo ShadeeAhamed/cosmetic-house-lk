@@ -26,12 +26,150 @@
       "note": "Facebook Page posting is handled through Meta Business Suite to avoid personal-profile cross-posting and blocked API permissions."
     },
     "instagram": {
-      "attemptedAt": "2026-05-18T18:46:09.859Z",
+      "attemptedAt": "2026-05-25T05:15:17.421Z",
       "posted": false,
-      "error": "Error validating access token: Session has expired on Sunday, 17-May-26 05:00:00 PDT. The current time is Monday, 18-May-26 11:46:09 PDT.",
+      "error": "Error validating access token: Session has expired on Tuesday, 19-May-26 03:00:00 PDT. The current time is Sunday, 24-May-26 22:15:14 PDT.",
       "missed": true,
-      "missedAt": "2026-05-18T18:50:56.078Z",
+      "missedAt": "2026-05-25T05:30:16.586Z",
       "note": "Skipped because the scheduled day passed before Instagram could publish. Future posts should not be blocked by old failures."
+    }
+  },
+  "2026-05-19": {
+    "date": "2026-05-19",
+    "productName": "ROUND LAB Birch Juice Moisturizing Sun Cream 50ml",
+    "imagePath": "assets/products/round-lab-birch-juice-moisturizing-sun-cream-50ml.jpg",
+    "facebook": {
+      "attemptedAt": "2026-05-19T09:00:16.591Z",
+      "posted": true,
+      "skipped": true,
+      "method": "Meta Business Suite",
+      "note": "Facebook Page posting is handled through Meta Business Suite to avoid personal-profile cross-posting and blocked API permissions."
+    },
+    "instagram": {
+      "attemptedAt": "2026-05-19T08:45:17.157Z",
+      "imageUrl": "https://raw.githubusercontent.com/ShadeeAhamed/cosmetic-house-lk/main/assets/products/round-lab-birch-juice-moisturizing-sun-cream-50ml.jpg",
+      "result": {
+        "id": "17939480349233960"
+      },
+      "posted": true
+    }
+  },
+  "2026-05-20": {
+    "date": "2026-05-20",
+    "productName": "Cosrx Advanced Snail Mucin Gel Cleanser",
+    "imagePath": "assets/products/cosrx-advanced-snail-mucin-gel-cleanser.jpg",
+    "facebook": {
+      "attemptedAt": "2026-05-21T09:30:16.788Z",
+      "posted": true,
+      "skipped": true,
+      "method": "Meta Business Suite",
+      "note": "Facebook Page posting is handled through Meta Business Suite to avoid personal-profile cross-posting and blocked API permissions."
+    },
+    "instagram": {
+      "attemptedAt": "2026-05-25T05:15:17.712Z",
+      "posted": false,
+      "error": "Error validating access token: Session has expired on Tuesday, 19-May-26 03:00:00 PDT. The current time is Sunday, 24-May-26 22:15:14 PDT.",
+      "missed": true,
+      "missedAt": "2026-05-25T05:30:16.586Z",
+      "note": "Skipped because the scheduled day passed before Instagram could publish. Future posts should not be blocked by old failures."
+    }
+  },
+  "2026-05-21": {
+    "date": "2026-05-21",
+    "productName": "Medicube Deep Vita C Capsule Cream 55g",
+    "imagePath": "assets/products/medicube-deep-vita-c-capsule-cream-55g.jpg",
+    "facebook": {
+      "attemptedAt": "2026-05-22T19:30:27.994Z",
+      "posted": true,
+      "skipped": true,
+      "method": "Meta Business Suite",
+      "note": "Facebook Page posting is handled through Meta Business Suite to avoid personal-profile cross-posting and blocked API permissions."
+    },
+    "instagram": {
+      "attemptedAt": "2026-05-25T05:15:18.007Z",
+      "posted": false,
+      "error": "Error validating access token: Session has expired on Tuesday, 19-May-26 03:00:00 PDT. The current time is Sunday, 24-May-26 22:15:15 PDT.",
+      "missed": true,
+      "missedAt": "2026-05-25T05:30:16.586Z",
+      "note": "Skipped because the scheduled day passed before Instagram could publish. Future posts should not be blocked by old failures."
+    }
+  },
+  "2026-05-22": {
+    "date": "2026-05-22",
+    "productName": "Nivea, Caring Scrub Super Soft Lips, Rosehip Oil + Vitamin E",
+    "imagePath": "assets/products/nivea-caring-scrub-super-soft-lips-rosehip-oil-vitamin-e.jpg",
+    "facebook": {
+      "attemptedAt": "2026-05-22T19:30:28.300Z",
+      "posted": true,
+      "skipped": true,
+      "method": "Meta Business Suite",
+      "note": "Facebook Page posting is handled through Meta Business Suite to avoid personal-profile cross-posting and blocked API permissions."
+    },
+    "instagram": {
+      "attemptedAt": "2026-05-25T05:15:18.308Z",
+      "posted": false,
+      "error": "Error validating access token: Session has expired on Tuesday, 19-May-26 03:00:00 PDT. The current time is Sunday, 24-May-26 22:15:15 PDT.",
+      "missed": true,
+      "missedAt": "2026-05-25T05:30:16.586Z",
+      "note": "Skipped because the scheduled day passed before Instagram could publish. Future posts should not be blocked by old failures."
+    }
+  },
+  "2026-05-23": {
+    "date": "2026-05-23",
+    "productName": "OGX Thick & Full + Biotin & Collagen Volumizing Shampoo & Conditioner Set,",
+    "imagePath": "assets/products/ogx-thick-full-biotin-collagen-volumizing-shampoo-conditioner-set.jpg",
+    "facebook": {
+      "attemptedAt": "2026-05-23T14:30:18.268Z",
+      "posted": true,
+      "skipped": true,
+      "method": "Meta Business Suite",
+      "note": "Facebook Page posting is handled through Meta Business Suite to avoid personal-profile cross-posting and blocked API permissions."
+    },
+    "instagram": {
+      "attemptedAt": "2026-05-25T05:15:18.604Z",
+      "posted": false,
+      "error": "Error validating access token: Session has expired on Tuesday, 19-May-26 03:00:00 PDT. The current time is Sunday, 24-May-26 22:15:15 PDT.",
+      "missed": true,
+      "missedAt": "2026-05-25T05:30:16.586Z",
+      "note": "Skipped because the scheduled day passed before Instagram could publish. Future posts should not be blocked by old failures."
+    }
+  },
+  "2026-05-24": {
+    "date": "2026-05-24",
+    "productName": "Dove Bath Therapy Glow - Body Scrub",
+    "imagePath": "assets/products/dove-bath-therapy-glow-body-scrub.jpg",
+    "facebook": {
+      "attemptedAt": "2026-05-24T13:15:18.463Z",
+      "posted": true,
+      "skipped": true,
+      "method": "Meta Business Suite",
+      "note": "Facebook Page posting is handled through Meta Business Suite to avoid personal-profile cross-posting and blocked API permissions."
+    },
+    "instagram": {
+      "attemptedAt": "2026-05-25T05:15:18.900Z",
+      "posted": false,
+      "error": "Error validating access token: Session has expired on Tuesday, 19-May-26 03:00:00 PDT. The current time is Sunday, 24-May-26 22:15:16 PDT.",
+      "missed": true,
+      "missedAt": "2026-05-25T05:30:16.586Z",
+      "note": "Skipped because the scheduled day passed before Instagram could publish. Future posts should not be blocked by old failures."
+    }
+  },
+  "2026-05-25": {
+    "date": "2026-05-25",
+    "productName": "Medicube Deep Vita A Retinol Serum",
+    "imagePath": "assets/products/medicube-deep-vita-a-retinol-serum.jpg",
+    "facebook": {
+      "attemptedAt": "2026-05-25T07:11:10.829Z",
+      "posted": false,
+      "error": "(#200) The permission(s) pages_manage_posts are not available. It could because either they are deprecated or need to be approved by App Review."
+    },
+    "instagram": {
+      "attemptedAt": "2026-05-25T07:11:10.842Z",
+      "posted": true,
+      "imageUrl": "https://raw.githubusercontent.com/ShadeeAhamed/cosmetic-house-lk/main/assets/products/medicube-deep-vita-a-retinol-serum.jpg",
+      "result": {
+        "id": "18082566005540792"
+      }
     }
   }
 }

@@ -1,17 +1,17 @@
 {
-  "date": "2026-05-17",
-  "productName": "CLEAN & CLEAR Daily pore cleanser|Deep action cleanser|acne cleanser",
-  "imagePath": "assets/products/clean-clear-daily-pore-cleanser-deep-action-cleanser-acne-cleanser.jpg",
-  "caption": "Fresh skin starts with a cleanser that fits your routine.\nCLEAN & CLEAR Daily pore cleanser|Deep action cleanser|acne cleanser\nFor anyone building a simple cleanser routine with products that feel easy to use and easy to love.\nDM us to order or ask which routine step this fits into.\n#cosmetic_house_lk #CosmeticHouseLK #SkincareSriLanka #SriLankaBeauty #BeautySriLanka #SkincareRoutine #GlowRoutine #OnlineShoppingSriLanka #ColomboBeauty",
+  "date": "2026-05-25",
+  "productName": "Medicube Deep Vita A Retinol Serum",
+  "imagePath": "assets/products/medicube-deep-vita-a-retinol-serum.jpg",
+  "caption": "Small routine step, big glow energy.\n\nMedicube Deep Vita A Retinol Serum\n\nFor anyone building a simple trending beauty routine with products that feel easy to use and easy to love.\n\nDM us to order or ask which routine step this fits into.\n\n#cosmetic_house_lk #CosmeticHouseLK #SkincareSriLanka #SriLankaBeauty\n\n#BeautySriLanka #SkincareRoutine #GlowRoutine #OnlineShoppingSriLanka\n\n#ColomboBeauty #SriLankaOnlineShopping #BeautyProductsSriLanka #KoreanSkincareSriLanka\n\n#Medicube",
   "facebook": {
     "attempted": true,
-    "error": "(#200) The permission(s) publish_actions are not available. It has been deprecated. If you want to provide a way for your app users to share content to Facebook, we encourage you to use our Sharing products instead."
+    "error": "(#200) The permission(s) pages_manage_posts are not available. It could because either they are deprecated or need to be approved by App Review."
   },
   "instagram": {
     "attempted": true,
-    "imageUrl": "https://cosmocosmetic.lk/cdn/shop/files/download_69.png?v=1737384575",
+    "imageUrl": "https://raw.githubusercontent.com/ShadeeAhamed/cosmetic-house-lk/main/assets/products/medicube-deep-vita-a-retinol-serum.jpg",
     "result": {
-      "id": "17937981867219775"
+      "id": "18082566005540792"
     }
   }
 }
