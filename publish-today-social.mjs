@@ -1,10 +1,11 @@
-import { readFile, writeFile } from "node:fs/promises";
+import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { existsSync } from "node:fs";
 import path from "node:path";
 import { assertSocialImageQuality, cleanPublicCaption, publicImageUrl } from "./social-posting-utils.mjs";
 
 const graphVersion = process.env.GRAPH_API_VERSION || "v25.0";
 const envFiles = [".env.whatsapp", ".env"];
+const historyFile = "social-automation-data/publish-history.json";
 
 function loadEnvFile(file) {
   if (!existsSync(file)) return;
@@ -74,6 +75,19 @@ async function graphGet(endpoint, accessToken) {
   const json = await response.json();
   if (!response.ok || json.error) throw new Error(json.error?.message || `HTTP ${response.status}`);
   return json;
+}
+
+async function readJson(file, fallback) {
+  try {
+    return JSON.parse(await readFile(file, "utf8"));
+  } catch {
+    return fallback;
+  }
+}
+
+async function writeJson(file, data) {
+  await mkdir(path.dirname(file), { recursive: true });
+  await writeFile(file, `${JSON.stringify(data, null, 2)}\n`, "utf8");
 }
 
 async function publishFacebookPhoto({ pageId, accessToken, imagePath, caption }) {
@@ -175,6 +189,44 @@ try {
 }
 
 await writeFile("social-automation-data/last-publish-report.json", `${JSON.stringify(report, null, 2)}\n`, "utf8");
+
+const history = await readJson(historyFile, {});
+history[date] = {
+  ...(history[date] || {}),
+  date,
+  productName: item.productName,
+  imagePath: item.imagePath,
+  facebook: report.facebook.result
+    ? {
+        attemptedAt: new Date().toISOString(),
+        posted: true,
+        result: report.facebook.result,
+      }
+    : {
+        ...(history[date]?.facebook || {}),
+        attemptedAt: new Date().toISOString(),
+        posted: false,
+        error: report.facebook.error,
+        skipped: report.facebook.skipped,
+        method: report.facebook.method,
+        note: report.facebook.note,
+      },
+  instagram: report.instagram.result
+    ? {
+        attemptedAt: new Date().toISOString(),
+        posted: true,
+        imageUrl: report.instagram.imageUrl,
+        result: report.instagram.result,
+      }
+    : {
+        ...(history[date]?.instagram || {}),
+        attemptedAt: new Date().toISOString(),
+        posted: false,
+        imageUrl: report.instagram.imageUrl,
+        error: report.instagram.error,
+      },
+};
+await writeJson(historyFile, history);
 
 console.log(JSON.stringify({
   date: report.date,

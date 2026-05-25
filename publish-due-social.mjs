@@ -107,7 +107,7 @@ const calendar = await readJson("business-suite-calendar/meta-business-suite-30-
 const history = await readJson(historyFile, {});
 const pageId = process.env.FACEBOOK_PAGE_ID;
 const pageAccessToken = process.env.META_PAGE_ACCESS_TOKEN;
-const instagramAccessToken = process.env.INSTAGRAM_ACCESS_TOKEN || pageAccessToken;
+const instagramAccessToken = process.env.INSTAGRAM_ACCESS_TOKEN || process.env.META_PAGE_ACCESS_TOKEN;
 const igBusinessId = process.env.INSTAGRAM_BUSINESS_ACCOUNT_ID;
 const facebookDirectApiEnabled = process.env.FACEBOOK_DIRECT_API_ENABLED === "true";
 
@@ -130,59 +130,77 @@ for (const entry of calendar.filter((item) => item.date < now.date && item.statu
 
 if (changedHistory) await writeJson(historyFile, history);
 
-const due = calendar
-  .filter((entry) => entry.date === now.date)
-  .filter((entry) => minutesOf(entry.time) <= now.minutes)
+const dueItems = calendar
+  .filter((entry) => entry.date <= now.date)
+  .filter((entry) => entry.date < now.date || minutesOf(entry.time) <= now.minutes)
   .filter((entry) => entry.status !== "posted_manually")
-  .find((entry) => !(history[entry.date]?.facebook?.posted && history[entry.date]?.instagram?.posted));
+  .filter((entry) => {
+    const record = history[entry.date];
+    const facebookHandled = record?.facebook?.posted || record?.facebook?.skipped || record?.facebook?.missed;
+    const instagramHandled = record?.instagram?.posted || record?.instagram?.skipped || record?.instagram?.missed;
+    return !(facebookHandled && instagramHandled);
+  })
+  .sort((a, b) => (a.date === b.date ? minutesOf(a.time) - minutesOf(b.time) : a.date.localeCompare(b.date)));
 
-if (!due) {
-  console.log(JSON.stringify({ ok: true, message: "No due social post right now.", checkedAt: now }, null, 2));
+if (!dueItems.length) {
+  console.log(JSON.stringify({ ok: true, message: "No due social posts right now.", checkedAt: now }, null, 2));
   process.exit(0);
 }
 
-const caption = cleanPublicCaption(due.feedCaption);
-const record = history[due.date] || { date: due.date, productName: due.productName, imagePath: due.imagePath, facebook: {}, instagram: {} };
+const published = [];
 
-if (!facebookDirectApiEnabled && !record.facebook?.posted) {
-  record.facebook = {
-    attemptedAt: new Date().toISOString(),
-    posted: true,
-    skipped: true,
-    method: "Meta Business Suite",
-    note: "Facebook Page posting is handled through Meta Business Suite to avoid personal-profile cross-posting and blocked API permissions.",
-  };
-}
+for (const due of dueItems) {
+  const caption = cleanPublicCaption(due.feedCaption);
+  const record = history[due.date] || { date: due.date, productName: due.productName, imagePath: due.imagePath, facebook: {}, instagram: {} };
 
-if (facebookDirectApiEnabled && !record.facebook?.posted) {
-  try {
-    record.facebook = {
-      attemptedAt: new Date().toISOString(),
-      result: await publishFacebookPhoto({ pageId, accessToken: pageAccessToken, imagePath: due.imagePath, caption }),
-      posted: true,
-    };
-  } catch (error) {
-    record.facebook = { attemptedAt: new Date().toISOString(), posted: false, error: error.message };
+  if (!record.facebook?.posted && !record.facebook?.skipped) {
+    if (!facebookDirectApiEnabled) {
+      record.facebook = {
+        attemptedAt: new Date().toISOString(),
+        posted: false,
+        skipped: true,
+        method: "Meta Business Suite",
+        note: "Facebook Page posting is handled through Meta Business Suite because direct API posting is disabled.",
+      };
+    } else {
+      try {
+        if (!pageId || !pageAccessToken) throw new Error("FACEBOOK_PAGE_ID or META_PAGE_ACCESS_TOKEN is missing.");
+        record.facebook = {
+          attemptedAt: new Date().toISOString(),
+          result: await publishFacebookPhoto({ pageId, accessToken: pageAccessToken, imagePath: due.imagePath, caption }),
+          posted: true,
+        };
+      } catch (error) {
+        record.facebook = { attemptedAt: new Date().toISOString(), posted: false, error: error.message };
+      }
+    }
   }
-}
 
-if (!record.instagram?.posted) {
-  try {
-    if (!igBusinessId) throw new Error("INSTAGRAM_BUSINESS_ACCOUNT_ID is missing.");
-    await assertSocialImageQuality(due.imagePath);
-    const imageUrl = publicImageUrl(due.imagePath);
-    record.instagram = {
-      attemptedAt: new Date().toISOString(),
-      imageUrl,
-      result: await publishInstagramPhoto({ igBusinessId, accessToken: instagramAccessToken, imageUrl, caption }),
-      posted: true,
-    };
-  } catch (error) {
-    record.instagram = { attemptedAt: new Date().toISOString(), posted: false, error: error.message };
+  if (!record.instagram?.posted) {
+    try {
+      if (!igBusinessId) throw new Error("INSTAGRAM_BUSINESS_ACCOUNT_ID is missing.");
+      await assertSocialImageQuality(due.imagePath);
+      const imageUrl = publicImageUrl(due.imagePath);
+      record.instagram = {
+        attemptedAt: new Date().toISOString(),
+        imageUrl,
+        result: await publishInstagramPhoto({ igBusinessId, accessToken: instagramAccessToken, imageUrl, caption }),
+        posted: true,
+      };
+    } catch (error) {
+      record.instagram = { attemptedAt: new Date().toISOString(), posted: false, error: error.message };
+    }
   }
+
+  history[due.date] = record;
+  published.push({
+    date: due.date,
+    productName: due.productName,
+    facebook: record.facebook?.posted ? "posted" : record.facebook?.skipped ? "skipped: Meta Business Suite" : `not posted: ${record.facebook?.error || "skipped"}`,
+    instagram: record.instagram?.posted ? "posted" : `not posted: ${record.instagram?.error || "skipped"}`,
+  });
 }
 
-history[due.date] = record;
 await writeJson(historyFile, history);
 
-console.log(JSON.stringify({ ok: true, checkedAt: now, published: record }, null, 2));
+console.log(JSON.stringify({ ok: true, checkedAt: now, published }, null, 2));
