@@ -3997,9 +3997,9 @@ body {
 
 .hero-copy h1 {
   max-width: none !important;
-  white-space: nowrap;
+  white-space: normal;
   letter-spacing: -0.04em;
-  font-size: clamp(3.6rem, 5.7vw, 6.4rem) !important;
+  font-size: clamp(3.3rem, 5.1vw, 5.9rem) !important;
   line-height: 0.95 !important;
 }
 
@@ -4204,7 +4204,7 @@ body {
   }
 
   .hero-copy h1 {
-    font-size: clamp(2rem, 8.9vw, 2.72rem) !important;
+    font-size: clamp(2.35rem, 11vw, 3.05rem) !important;
   }
 
   .hero-beauty-board {
