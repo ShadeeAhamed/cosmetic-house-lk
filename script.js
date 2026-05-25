@@ -610,17 +610,14 @@ function productInitials(name) {
 }
 
 function productImageMarkup(product, mode = "card") {
-  const missing = `<span class="missing-photo"><strong>${product.brand}</strong><small>${product.name}</small></span>`;
   const imageSrc = `${product.image}?v=20260521c`;
   const errorAction =
     mode === "card"
-      ? "this.onerror=null;this.src='cosmetic-house-logo.jpeg';this.closest('.real-product-frame')?.classList.remove('missing-image');this.closest('.real-product-frame')?.classList.add('has-image','fallback-image');"
-      : "this.onerror=null;this.src='cosmetic-house-logo.jpeg';this.closest('.real-product-frame')?.classList.remove('missing-image');this.closest('.real-product-frame')?.classList.add('has-image','fallback-image');";
+      ? "this.onerror=null;this.src='cosmetic-house-logo.jpeg';this.closest('.real-product-frame')?.classList.add('has-image','fallback-image');"
+      : "this.onerror=null;this.src='cosmetic-house-logo.jpeg';this.closest('.real-product-frame')?.classList.add('has-image','fallback-image');";
   return `
-    <div class="${mode === "detail" ? "dialog-photo" : "product-photo"} real-product-frame missing-image" style="--photo-color: ${product.color}">
-      <img class="product-main-image" src="${imageSrc}" alt="${product.name}" loading="${mode === "card" ? "lazy" : "eager"}" decoding="async" onload="this.closest('.real-product-frame').classList.remove('missing-image');this.closest('.real-product-frame').classList.add('has-image');" onerror="${errorAction}" />
-      ${missing}
-      <strong>${productInitials(product.name)}</strong>
+    <div class="${mode === "detail" ? "dialog-photo" : "product-photo"} real-product-frame has-image" style="--photo-color: ${product.color}">
+      <img class="product-main-image" src="${imageSrc}" alt="${product.name}" loading="${mode === "card" ? "lazy" : "eager"}" decoding="async" onload="this.closest('.real-product-frame')?.classList.add('has-image');" onerror="${errorAction}" />
     </div>
   `;
 }
@@ -710,10 +707,11 @@ function filteredProducts() {
 }
 
 function productRating(product) {
-  const seed = product.name.length + product.brand.length + product.price;
+  const seed = product.slug.split("").reduce((sum, char) => sum + char.charCodeAt(0), 0) + product.price;
+  const popularBoost = /ordinary|cerave|beauty of joseon|anua|cosrx|rhode|skin1004|laneige|medicube/i.test(`${product.brand} ${product.name}`) ? 28 : 0;
   return {
-    rating: seed % 5 === 0 ? "4.7" : seed % 3 === 0 ? "4.8" : "4.9",
-    count: 18 + (seed % 84),
+    rating: seed % 11 === 0 ? "4.6" : seed % 5 === 0 ? "4.7" : seed % 3 === 0 ? "4.8" : "4.9",
+    count: 12 + popularBoost + (seed % 96),
   };
 }
 
@@ -1236,6 +1234,105 @@ function buildRoutine(goalText) {
   `;
 }
 
+function concernProfile(text) {
+  const normalized = normalizeText(text);
+  if (/pores?|blackhead|texture|oil|oily|sebum/.test(normalized)) {
+    return {
+      title: "pores and oily-looking texture",
+      words: ["niacinamide", "salicylic", "bha", "pore", "oil", "cleanser", "anua", "cosrx", "ordinary"],
+      howTo: "Use cleanser first, then one pore-focused serum at night or morning, finish with moisturizer, and use sunscreen every morning.",
+      caution: "Do not start salicylic acid and retinol on the same night. Patch test first.",
+    };
+  }
+  if (/acne|pimple|blemish|breakout/.test(normalized)) {
+    return {
+      title: "blemish-prone skin",
+      words: ["salicylic", "bha", "niacinamide", "acne", "blemish", "cleanser", "cosrx", "panoxyl", "ordinary"],
+      howTo: "Keep it simple: cleanser, one treatment, moisturizer, and daily sunscreen. Add actives slowly.",
+      caution: "If acne is painful, infected, or spreading, please check with a dermatologist.",
+    };
+  }
+  if (/dark spot|pigment|bright|glow|dull|marks?/.test(normalized)) {
+    return {
+      title: "glow, marks, and uneven tone",
+      words: ["vitamin c", "niacinamide", "alpha arbutin", "bright", "glow", "axis-y", "anua", "sunscreen"],
+      howTo: "Use brightening serum on clean skin, moisturize, and make sunscreen non-negotiable every morning.",
+      caution: "Brightening routines work slowly. Daily SPF is the key step.",
+    };
+  }
+  if (/dry|dehydrat|barrier|sensitive|redness|irritat/.test(normalized)) {
+    return {
+      title: "dry or sensitive barrier support",
+      words: ["hyaluronic", "cerave", "moistur", "cream", "barrier", "soothing", "centella", "torriden", "laneige"],
+      howTo: "Use a gentle cleanser, hydrating serum, barrier cream, and sunscreen. Pause strong acids until skin feels calm.",
+      caution: "Avoid layering too many actives while your skin barrier feels weak.",
+    };
+  }
+  if (/spf|sun|sunscreen|uv/.test(normalized)) {
+    return {
+      title: "daily sunscreen",
+      words: ["sunscreen", "spf", "sun", "uv", "beauty of joseon", "skin1004", "round lab", "la roche"],
+      howTo: "Apply as the last morning step and reapply when outdoors or sweating.",
+      caution: "Use enough product. A tiny layer will not give proper protection.",
+    };
+  }
+  if (/hair|shampoo|frizz|damage|scalp/.test(normalized)) {
+    return {
+      title: "hair care",
+      words: ["shampoo", "hair", "mask", "conditioner", "treatment", "fino", "k18", "mielle", "ogx"],
+      howTo: "Cleanse scalp, condition lengths, and use a mask one or two times weekly.",
+      caution: "Avoid heavy oils on scalp if it feels oily or flaky.",
+    };
+  }
+  return null;
+}
+
+function scoreProductForSophia(product, terms) {
+  const text = productText(product);
+  return terms.reduce((score, term) => {
+    const normalizedTerm = normalizeText(term);
+    if (!normalizedTerm) return score;
+    if (normalizeText(product.name).includes(normalizedTerm)) return score + 5;
+    if (normalizeText(product.brand).includes(normalizedTerm)) return score + 4;
+    if (normalizeText(product.category).includes(normalizedTerm) || normalizeText(product.type).includes(normalizedTerm)) return score + 3;
+    return text.includes(normalizedTerm) ? score + 2 : score;
+  }, 0);
+}
+
+function sophiaProductsFor(question, limit = 5) {
+  const profile = concernProfile(question);
+  const budget = extractBudget(question);
+  const terms = profile?.words || concernWordsFor(question);
+  return availableProducts()
+    .filter((product) => !budget || product.price <= budget)
+    .map((product) => ({ product, score: scoreProductForSophia(product, terms) }))
+    .filter((item) => item.score > 0)
+    .sort((a, b) => b.score - a.score || Number(productRating(b.product).rating) - Number(productRating(a.product).rating) || a.product.price - b.product.price)
+    .slice(0, limit)
+    .map((item) => item.product);
+}
+
+function sophiaProductReply(question) {
+  const profile = concernProfile(question);
+  if (!profile && !/(product|recommend|suggest|best|cheap|budget|brand|routine|skin|face|serum|cleanser|cream|toner)/i.test(question)) return "";
+  const budget = extractBudget(question);
+  const picks = sophiaProductsFor(question, 5);
+  const fallback = budget ? cheapestProducts(5, concernWordsFor(question)) : bestBrandProducts(5);
+  const finalPicks = picks.length ? picks : fallback;
+  const budgetLine = budget ? ` within ${money(budget)}` : "";
+  const title = profile?.title || "your beauty goal";
+  const howTo = profile?.howTo || "Start with cleanser, add one focused treatment, moisturize, and use SPF every morning.";
+  const caution = profile?.caution || "Patch test new products and add only one new active at a time.";
+  return `
+    <strong>Sophia's product picks for ${title}${budgetLine}</strong><br>
+    ${formatProductList(finalPicks)}<br><br>
+    <strong>How I would use them</strong><br>
+    ${howTo}<br><br>
+    <strong>Quick note</strong><br>
+    ${caution}
+  `;
+}
+
 function renderCartRecommendations() {
   if (!state.cart.length) {
     cartRecommendations.innerHTML = "";
@@ -1670,6 +1767,8 @@ function cosmeticsReply(question) {
   const uploadNote = hasUpload
     ? " I also see that you added an image, so I can include it as routine context when giving beauty guidance."
     : "";
+  const sophiaReply = sophiaProductReply(question);
+  if (sophiaReply) return `${sophiaReply}${uploadNote ? `<br><br>${uploadNote.trim()}` : ""}`;
   if (text.includes("product name") || text.includes("product names") || text.includes("what products") || text.includes("suggest product") || text.includes("recommend product")) {
     const matches = findProductsByWords(text.split(/\s+/), 6);
     return `<strong>Product suggestions from our catalog</strong><br>${formatProductList(matches.length ? matches : bestBrandProducts(6))}<br><br>Tell me your skin type and budget and I can make this into a morning/night routine.${uploadNote}`;
