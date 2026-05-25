@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 116" role="img" aria-labelledby="title">
+  <title id="title">KOKO</title>
+  <defs>
+    <linearGradient id="kokoFill" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0" stop-color="#ff9bd2"/>
+      <stop offset="0.52" stop-color="#f6b5ff"/>
+      <stop offset="1" stop-color="#83e2ff"/>
+    </linearGradient>
+  </defs>
+  <rect width="320" height="116" rx="24" fill="none"/>
+  <text x="12" y="84" fill="#101014" font-family="Arial Black, Arial, sans-serif" font-size="82" font-weight="900" letter-spacing="-8">KOKO</text>
+  <text x="8" y="78" fill="url(#kokoFill)" stroke="#7038ff" stroke-width="3" font-family="Arial Black, Arial, sans-serif" font-size="82" font-weight="900" letter-spacing="-8">KOKO</text>
+</svg>

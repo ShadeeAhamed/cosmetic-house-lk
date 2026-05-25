@@ -489,8 +489,8 @@ function kokoInstallmentValue(price) {
 function kokoMarkup(price, compact = false) {
   return `
     <div class="koko-installment${compact ? " compact" : ""}">
-      <span class="koko-logo" aria-label="KOKO">KOKO</span>
-      <span>Or pay in 3 x ${money(kokoInstallmentValue(price))} with KOKO</span>
+      <img class="koko-logo-img" src="assets/brand/koko-logo.svg" alt="KOKO" loading="lazy" decoding="async" />
+      <span>${compact ? "3 x" : "Or pay in 3 x"} ${money(kokoInstallmentValue(price))} with KOKO</span>
     </div>
   `;
 }
@@ -824,6 +824,7 @@ function renderProducts() {
   loadMoreButton.disabled = !canLoadMore;
   loadMoreButton.textContent = canLoadMore ? "Show More Products" : "All Products Shown";
   setTimeout(() => productGrid.classList.remove("is-filtering"), 160);
+  requestAnimationFrame(initScrollReveal);
 }
 
 function renderPhotoList() {
@@ -2452,6 +2453,7 @@ assetFile?.addEventListener("change", () => {
 
 async function initStorefront() {
   setTheme(localStorage.getItem("cosmetic-house-theme") || "light");
+  initScrollReveal();
   trackWebsiteVisit();
   try {
     state.recentlyViewed = JSON.parse(localStorage.getItem("cosmetic-house-recently-viewed")) || [];
@@ -2483,11 +2485,34 @@ async function initStorefront() {
     renderHeroMix();
     renderAssetProducts();
   }
+  initScrollReveal();
   openInitialProductFromHash();
   maybeOpenLoginPrompt();
 }
 
 initStorefront();
+
+function initScrollReveal() {
+  const targets = document.querySelectorAll(
+    ".hero-copy, .hero-panel, .section-heading, .category-card, .product-card, .brand-card, .trust-card, .review-card, .beauty-ai-card"
+  );
+  targets.forEach((target) => target.classList.add("scroll-reveal"));
+  if (!("IntersectionObserver" in window)) {
+    targets.forEach((target) => target.classList.add("is-visible"));
+    return;
+  }
+  const observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) return;
+        entry.target.classList.add("is-visible");
+        observer.unobserve(entry.target);
+      });
+    },
+    { rootMargin: "0px 0px -8% 0px", threshold: 0.12 }
+  );
+  targets.forEach((target) => observer.observe(target));
+}
 
 function trackWebsiteVisit() {
   const visitId = sessionStorage.getItem("cosmetic-house-visit-id") || `${Date.now()}-${Math.random().toString(16).slice(2)}`;
