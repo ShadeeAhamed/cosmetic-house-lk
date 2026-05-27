@@ -4,6 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "start:backend": "node whatsapp-bot-server.mjs",
     "start:whatsapp": "node whatsapp-bot-server.mjs",
     "start:social": "node social-bot-server.mjs",
     "schedule:social": "node social-automation-runner.mjs",

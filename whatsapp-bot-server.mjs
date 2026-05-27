@@ -46,8 +46,24 @@ const adminPin = process.env.ADMIN_PIN || "";
 const ordersFile = process.env.ORDERS_FILE || "data/orders.json";
 const usersFile = process.env.USERS_FILE || "data/users.json";
 const visitsFile = process.env.VISITS_FILE || "data/visits.json";
+const cartsFile = process.env.CARTS_FILE || "data/carts.json";
+const wishlistFile = process.env.WISHLIST_FILE || "data/wishlist.json";
 const resendApiKey = process.env.RESEND_API_KEY || "";
 const otpFromEmail = process.env.OTP_FROM_EMAIL || "Cosmetic House <onboarding@resend.dev>";
+const supabaseUrl = String(process.env.SUPABASE_URL || "").replace(/\/$/, "");
+const supabaseServiceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY || "";
+const supabaseEnabled = Boolean(supabaseUrl && supabaseServiceRoleKey);
+const allowedOrigins = new Set(
+  [
+    siteOrigin,
+    process.env.GITHUB_PAGES_ORIGIN,
+    process.env.ADMIN_ORIGIN,
+    "http://localhost:8097",
+    "http://127.0.0.1:8097",
+    "http://localhost:8091",
+    "http://127.0.0.1:8091",
+  ].filter(Boolean),
+);
 
 let catalog = [];
 let automationRules = {};
@@ -55,6 +71,8 @@ const customerSessions = new Map();
 let orders = [];
 let users = [];
 let visits = [];
+let carts = [];
+let wishlist = [];
 const otpSessions = new Map();
 
 function normalize(value) {
@@ -77,19 +95,163 @@ async function readJson(file, fallback) {
   }
 }
 
+function corsOrigin(requestOrigin) {
+  if (!requestOrigin) return siteOrigin;
+  return allowedOrigins.has(requestOrigin) ? requestOrigin : siteOrigin;
+}
+
+async function supabaseRequest(path, options = {}) {
+  if (!supabaseEnabled) throw new Error("Supabase is not configured.");
+  const response = await fetch(`${supabaseUrl}/rest/v1/${path}`, {
+    ...options,
+    headers: {
+      apikey: supabaseServiceRoleKey,
+      Authorization: `Bearer ${supabaseServiceRoleKey}`,
+      "Content-Type": "application/json",
+      Prefer: "return=representation,resolution=merge-duplicates",
+      ...(options.headers || {}),
+    },
+  });
+  const text = await response.text();
+  const payload = text ? JSON.parse(text) : null;
+  if (!response.ok) {
+    throw new Error(payload?.message || payload?.hint || `Supabase request failed: ${response.status}`);
+  }
+  return payload;
+}
+
+function rowPayload(row) {
+  return row?.payload && typeof row.payload === "object" ? { ...row.payload, id: row.id || row.payload.id } : row;
+}
+
+async function selectPayloadTable(table, orderBy = "created_at.desc", limit = 1000) {
+  const rows = await supabaseRequest(`${table}?select=*&order=${orderBy}&limit=${limit}`, {
+    method: "GET",
+    headers: { Prefer: "return=representation" },
+  });
+  return Array.isArray(rows) ? rows.map(rowPayload) : [];
+}
+
+function orderRow(order) {
+  return {
+    id: order.id,
+    status: order.status,
+    payment_status: order.paymentStatus,
+    payment_method: order.paymentMethod,
+    customer_name: order.customer?.name || "",
+    customer_phone: order.customer?.phone || "",
+    customer_email: order.customer?.email || "",
+    total: Number(order.total || 0),
+    source: order.source || "website",
+    payload: order,
+    created_at: order.createdAt || new Date().toISOString(),
+    updated_at: order.updatedAt || new Date().toISOString(),
+  };
+}
+
+function userRow(user) {
+  return {
+    id: user.id,
+    contact: user.contact,
+    name: user.name || "",
+    gender: user.gender || "",
+    disabled: Boolean(user.disabled),
+    verification_status: user.verificationStatus || "verified",
+    payload: user,
+    created_at: user.createdAt || new Date().toISOString(),
+    updated_at: user.updatedAt || new Date().toISOString(),
+  };
+}
+
+function visitRow(visit) {
+  return {
+    id: visit.id,
+    page: visit.page || "/",
+    referrer: visit.referrer || "",
+    payload: visit,
+    created_at: visit.createdAt || new Date().toISOString(),
+  };
+}
+
+function cartRow(cart) {
+  const contact = normalizeContact(cart.contact || cart.customerContact || cart.email || cart.phone);
+  const id = String(cart.id || contact || crypto.createHash("sha1").update(JSON.stringify(cart.items || [])).digest("hex")).slice(0, 160);
+  return {
+    id,
+    user_id: cart.userId || null,
+    contact,
+    payload: { ...cart, id, contact },
+    created_at: cart.createdAt || new Date().toISOString(),
+    updated_at: cart.updatedAt || new Date().toISOString(),
+  };
+}
+
+function wishlistRow(item) {
+  const contact = normalizeContact(item.contact || item.customerContact || item.email || item.phone);
+  const productId = String(item.productId || item.slug || item.product?.slug || item.product?.id || "").slice(0, 160);
+  const id = String(item.id || `${contact}:${productId}` || crypto.randomUUID()).slice(0, 220);
+  return {
+    id,
+    user_id: item.userId || null,
+    contact,
+    product_id: productId,
+    payload: { ...item, id, contact, productId },
+    created_at: item.createdAt || new Date().toISOString(),
+    updated_at: item.updatedAt || new Date().toISOString(),
+  };
+}
+
+async function upsertRows(table, rows) {
+  if (!rows.length) return;
+  await supabaseRequest(`${table}?on_conflict=id`, {
+    method: "POST",
+    body: JSON.stringify(rows),
+  });
+}
+
 async function saveOrders() {
+  if (supabaseEnabled) {
+    await upsertRows("orders", orders.slice(0, 1000).map(orderRow));
+    return;
+  }
   await mkdir(ordersFile.split("/").slice(0, -1).join("/") || ".", { recursive: true });
   await writeFile(ordersFile, JSON.stringify(orders.slice(0, 1000), null, 2));
 }
 
 async function saveUsers() {
+  if (supabaseEnabled) {
+    await upsertRows("users", users.slice(0, 5000).map(userRow));
+    return;
+  }
   await mkdir(usersFile.split("/").slice(0, -1).join("/") || ".", { recursive: true });
   await writeFile(usersFile, JSON.stringify(users.slice(0, 5000), null, 2));
 }
 
 async function saveVisits() {
+  if (supabaseEnabled) {
+    await upsertRows("visits", visits.slice(-10000).map(visitRow));
+    return;
+  }
   await mkdir(visitsFile.split("/").slice(0, -1).join("/") || ".", { recursive: true });
   await writeFile(visitsFile, JSON.stringify(visits.slice(-10000), null, 2));
+}
+
+async function saveCarts() {
+  if (supabaseEnabled) {
+    await upsertRows("carts", carts.slice(0, 5000).map(cartRow));
+    return;
+  }
+  await mkdir(cartsFile.split("/").slice(0, -1).join("/") || ".", { recursive: true });
+  await writeFile(cartsFile, JSON.stringify(carts.slice(0, 5000), null, 2));
+}
+
+async function saveWishlist() {
+  if (supabaseEnabled) {
+    await upsertRows("wishlist", wishlist.slice(0, 10000).map(wishlistRow));
+    return;
+  }
+  await mkdir(wishlistFile.split("/").slice(0, -1).join("/") || ".", { recursive: true });
+  await writeFile(wishlistFile, JSON.stringify(wishlist.slice(0, 10000), null, 2));
 }
 
 function authorizeAdmin(request) {
@@ -210,13 +372,55 @@ function sanitizeProduct(product) {
   };
 }
 
+function productRow(product) {
+  const stableId = String(product.slug || crypto.createHash("sha1").update(shortName(product)).digest("hex")).slice(0, 160);
+  return {
+    id: stableId,
+    slug: product.slug || stableId,
+    name: shortName(product),
+    brand: product.brand || inferBrand(product),
+    category: product.category || product.type || "Beauty",
+    price: Number(product.price || 0),
+    image: product.image || "",
+    payload: product,
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+  };
+}
+
 async function loadData() {
   const rawCatalog = await readJson("catalog-data.json", []);
   catalog = rawCatalog.filter((product) => product.name && product.price).map(sanitizeProduct);
   automationRules = await readJson("whatsapp-automation-rules.json", {});
+  if (supabaseEnabled) {
+    try {
+      const [cloudOrders, cloudUsers, cloudVisits, cloudCarts, cloudWishlist] = await Promise.all([
+        selectPayloadTable("orders", "created_at.desc", 1000),
+        selectPayloadTable("users", "created_at.desc", 5000),
+        selectPayloadTable("visits", "created_at.desc", 10000),
+        selectPayloadTable("carts", "updated_at.desc", 5000),
+        selectPayloadTable("wishlist", "created_at.desc", 10000),
+      ]);
+      orders = cloudOrders;
+      users = cloudUsers;
+      visits = cloudVisits;
+      carts = cloudCarts;
+      wishlist = cloudWishlist;
+      try {
+        await upsertRows("products", catalog.map(productRow));
+      } catch (error) {
+        console.warn("Supabase product sync failed:", error.message);
+      }
+      return;
+    } catch (error) {
+      console.warn("Supabase load failed, using local JSON fallback:", error.message);
+    }
+  }
   orders = await readJson(ordersFile, []);
   users = await readJson(usersFile, []);
   visits = await readJson(visitsFile, []);
+  carts = await readJson(cartsFile, []);
+  wishlist = await readJson(wishlistFile, []);
 }
 
 function productText(product) {
@@ -628,6 +832,8 @@ function sendJson(response, status, payload, origin = "") {
     "Access-Control-Allow-Origin": origin || siteOrigin,
     "Access-Control-Allow-Methods": "GET, POST, PUT, OPTIONS",
     "Access-Control-Allow-Headers": "Content-Type, X-Admin-Pin, Authorization",
+    "Vary": "Origin",
+    "X-Content-Type-Options": "nosniff",
   });
   response.end(JSON.stringify(payload));
 }
@@ -715,9 +921,9 @@ await loadData();
 http
   .createServer(async (request, response) => {
     const url = new URL(request.url, `http://${request.headers.host}`);
-    const origin = request.headers.origin || siteOrigin;
+    const origin = corsOrigin(request.headers.origin);
 
-    if (request.method === "OPTIONS" && url.pathname.startsWith("/api/")) {
+    if (request.method === "OPTIONS" && (url.pathname.startsWith("/api/") || url.pathname === "/payhere/notify")) {
       sendJson(response, 200, { ok: true }, origin);
       return;
     }
@@ -732,6 +938,7 @@ http
           apiConfigured: Boolean(accessToken && phoneNumberId),
           ownerNumberConfigured: Boolean(ownerNumber),
           payhereConfigured: Boolean(payhereMerchantId && payhereMerchantSecret),
+          database: supabaseEnabled ? "supabase" : "local-json",
           payhereMode,
         },
         origin,
@@ -764,6 +971,81 @@ http
         return;
       }
       sendJson(response, 200, { ok: true, visits }, origin);
+      return;
+    }
+
+    if (request.method === "GET" && url.pathname === "/api/products") {
+      sendJson(response, 200, { ok: true, products: catalog }, origin);
+      return;
+    }
+
+    if (request.method === "GET" && url.pathname === "/api/cart") {
+      const contact = normalizeContact(url.searchParams.get("contact"));
+      if (!contact) {
+        sendJson(response, 400, { ok: false, message: "Customer contact is required." }, origin);
+        return;
+      }
+      const cart = carts.find((item) => normalizeContact(item.contact) === contact) || { contact, items: [] };
+      sendJson(response, 200, { ok: true, cart }, origin);
+      return;
+    }
+
+    if (request.method === "PUT" && url.pathname === "/api/cart") {
+      try {
+        const payload = JSON.parse((await readBody(request)) || "{}");
+        const contact = normalizeContact(payload.contact);
+        if (!contact) throw new Error("Customer contact is required.");
+        const cart = {
+          id: payload.id || contact,
+          userId: payload.userId || "",
+          contact,
+          items: Array.isArray(payload.items) ? payload.items.map(cleanOrderItem) : [],
+          updatedAt: new Date().toISOString(),
+          createdAt: payload.createdAt || new Date().toISOString(),
+        };
+        const index = carts.findIndex((item) => normalizeContact(item.contact) === contact);
+        if (index >= 0) carts[index] = { ...carts[index], ...cart };
+        else carts.unshift(cart);
+        await saveCarts();
+        sendJson(response, 200, { ok: true, cart }, origin);
+      } catch (error) {
+        sendJson(response, 400, { ok: false, message: error.message }, origin);
+      }
+      return;
+    }
+
+    if (request.method === "GET" && url.pathname === "/api/wishlist") {
+      const contact = normalizeContact(url.searchParams.get("contact"));
+      if (!contact) {
+        sendJson(response, 400, { ok: false, message: "Customer contact is required." }, origin);
+        return;
+      }
+      sendJson(response, 200, { ok: true, wishlist: wishlist.filter((item) => normalizeContact(item.contact) === contact) }, origin);
+      return;
+    }
+
+    if (request.method === "PUT" && url.pathname === "/api/wishlist") {
+      try {
+        const payload = JSON.parse((await readBody(request)) || "{}");
+        const contact = normalizeContact(payload.contact);
+        if (!contact) throw new Error("Customer contact is required.");
+        const incoming = Array.isArray(payload.items) ? payload.items : [];
+        wishlist = wishlist.filter((item) => normalizeContact(item.contact) !== contact);
+        wishlist.unshift(
+          ...incoming.map((item) => ({
+            ...item,
+            contact,
+            userId: payload.userId || item.userId || "",
+            productId: item.productId || item.slug || item.product?.slug || item.product?.id || "",
+            createdAt: item.createdAt || new Date().toISOString(),
+            updatedAt: new Date().toISOString(),
+          })),
+        );
+        await saveWishlist();
+        sendJson(response, 200, { ok: true, wishlist: wishlist.filter((item) => normalizeContact(item.contact) === contact) }, origin);
+      } catch (error) {
+        sendJson(response, 400, { ok: false, message: error.message }, origin);
+      }
       return;
     }
 

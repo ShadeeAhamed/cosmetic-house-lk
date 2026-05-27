@@ -27,13 +27,27 @@ services:
         value: Sophia
       - key: SITE_ORIGIN
         value: https://cosmetichouse.com.lk
+      - key: GITHUB_PAGES_ORIGIN
+        value: https://shadeeahamed.github.io
+      - key: ADMIN_ORIGIN
+        value: https://cosmetichouse.com.lk
       - key: PAYMENT_PUBLIC_URL
+        sync: false
+      - key: ADMIN_PIN
         sync: false
       - key: PAYHERE_MODE
         value: sandbox
       - key: PAYHERE_MERCHANT_ID
         sync: false
       - key: PAYHERE_MERCHANT_SECRET
+        sync: false
+      - key: SUPABASE_URL
+        sync: false
+      - key: SUPABASE_SERVICE_ROLE_KEY
+        sync: false
+      - key: RESEND_API_KEY
+        sync: false
+      - key: OTP_FROM_EMAIL
         sync: false
 
   - type: web
