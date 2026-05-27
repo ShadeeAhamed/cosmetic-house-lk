@@ -2096,7 +2096,14 @@ function updateAuthMode(mode) {
         ? "Create an account once, then your delivery details, wishlist, and order history stay ready."
         : "Login with the email or phone number you used when you signed up.";
   }
-  if (authStatus) authStatus.textContent = mode === "signup" ? "Enter your details first. The verification code appears after Continue." : "Login with your email or phone number.";
+  if (authStatus) {
+    authStatus.textContent =
+      mode === "signup"
+        ? authApiBase
+          ? "Enter your details first. The verification code appears after Continue."
+          : "Create your account once. We will use this email or phone for order updates."
+        : "Login with your email or phone number.";
+  }
 }
 
 authModeButtons.forEach((button) => button.addEventListener("click", () => updateAuthMode(button.dataset.authMode)));
@@ -2181,6 +2188,61 @@ function authPassword(formData) {
   return String(formData.get("password") || "");
 }
 
+function normalizeContactValue(contact) {
+  return String(contact || "").trim().toLowerCase();
+}
+
+function localRegisteredAccounts() {
+  let accounts = [];
+  try {
+    const storedAccounts = JSON.parse(localStorage.getItem("cosmetic-house-users") || "[]");
+    if (Array.isArray(storedAccounts)) accounts = storedAccounts;
+  } catch {
+    // Fall through to the legacy single-account migration below.
+  }
+  try {
+    const legacy = JSON.parse(localStorage.getItem("cosmetic-house-registered-account") || "null");
+    if (legacy && !accounts.some((account) => normalizeContactValue(account.contact) === normalizeContactValue(legacy.contact))) {
+      accounts.unshift(legacy);
+    }
+  } catch {
+    // Ignore corrupt legacy data.
+  }
+  return accounts;
+}
+
+function saveLocalRegisteredAccount(account) {
+  const accounts = localRegisteredAccounts();
+  const contact = normalizeContactValue(account.contact);
+  const nextAccount = {
+    ...account,
+    contact,
+    id: account.id || `CH-CUSTOMER-${Date.now()}`,
+    source: account.source || "website",
+    updatedAt: new Date().toISOString(),
+  };
+  const existingIndex = accounts.findIndex((item) => normalizeContactValue(item.contact) === contact);
+  if (existingIndex >= 0) accounts[existingIndex] = { ...accounts[existingIndex], ...nextAccount };
+  else accounts.unshift(nextAccount);
+  localStorage.setItem("cosmetic-house-users", JSON.stringify(accounts.slice(0, 200)));
+  localStorage.setItem("cosmetic-house-registered-account", JSON.stringify(nextAccount));
+  return nextAccount;
+}
+
+async function createLocalAccountFromSignup(formData) {
+  const contact = normalizeContactValue(formData.get("contact"));
+  const existing = localRegisteredAccounts().find((account) => normalizeContactValue(account.contact) === contact);
+  if (existing) throw new Error("An account already exists for this email or phone. Please login instead.");
+  const passwordHash = await localPasswordHash(contact, authPassword(formData));
+  return saveLocalRegisteredAccount({
+    ...authProfileFromForm(formData),
+    contact,
+    passwordHash,
+    verified: false,
+    createdAt: new Date().toISOString(),
+  });
+}
+
 function validateSignupDetails(formData) {
   const profile = authProfileFromForm(formData);
   const contact = String(formData.get("contact") || "").trim();
@@ -2232,7 +2294,6 @@ function friendlyAuthError(error) {
 async function requestVerificationCode() {
   const formData = new FormData(loginForm);
   const contact = String(formData.get("contact") || "").trim();
-  const password = authPassword(formData);
   const validation = validateSignupDetails(formData);
   if (!validation.ok) {
     authStatus.textContent = validation.message;
@@ -2242,7 +2303,18 @@ async function requestVerificationCode() {
   authStatus.textContent = "Sending verification code...";
   authSubmitButton.disabled = true;
   try {
-    if (!authApiBase) throw new Error("Verification server is not connected yet.");
+    if (!authApiBase) {
+      const account = await createLocalAccountFromSignup(formData);
+      state.account = account;
+      localStorage.setItem("cosmetic-house-account", JSON.stringify(state.account));
+      sessionStorage.setItem("cosmetic-house-login-dismissed", "true");
+      isLoggedIn = true;
+      updateAccountButton();
+      autofillOrderForm();
+      loginDialog.close();
+      showToast("Beauty account created");
+      return false;
+    }
     const response = await fetch(`${authApiBase}/api/auth/request-otp`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -2290,7 +2362,7 @@ async function verifyCodeAndSaveAccount(formData) {
 }
 
 async function loginWithAccount(formData) {
-  const contact = String(formData.get("contact") || "").trim();
+  const contact = normalizeContactValue(formData.get("contact"));
   const password = String(formData.get("password") || "");
   const validation = validateLoginDetails(formData);
   if (!validation.ok) {
@@ -2298,20 +2370,31 @@ async function loginWithAccount(formData) {
     throw new Error(validation.message);
   }
   if (authApiBase) {
-    const response = await fetch(`${authApiBase}/api/auth/login`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ contact, password }),
-    });
-    const payload = await readApiJson(response);
-    if (!response.ok || !payload.ok) throw new Error(payload.message || "Login failed.");
-    return payload.user;
+    try {
+      const response = await fetch(`${authApiBase}/api/auth/login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ contact, password }),
+      });
+      const payload = await readApiJson(response);
+      if (!response.ok || !payload.ok) throw new Error(payload.message || "Login failed.");
+      return payload.user;
+    } catch (error) {
+      const localAccount = await loginWithLocalAccount(contact, password);
+      if (localAccount) return localAccount;
+      throw error;
+    }
   }
-  const registered = JSON.parse(localStorage.getItem("cosmetic-house-registered-account") || "null");
+  const localAccount = await loginWithLocalAccount(contact, password);
+  if (localAccount) return localAccount;
+  throw new Error("Create an account first, then login with the same email or phone and password.");
+}
+
+async function loginWithLocalAccount(contact, password) {
+  const accounts = localRegisteredAccounts();
+  const registered = accounts.find((account) => normalizeContactValue(account.contact) === normalizeContactValue(contact));
   const hash = await localPasswordHash(contact, password);
-  if (!registered || registered.contact !== contact || registered.passwordHash !== hash) {
-    throw new Error("Create an account first, then login with the same email or phone and password.");
-  }
+  if (!registered || registered.passwordHash !== hash) return null;
   return registered;
 }
 
@@ -2499,7 +2582,7 @@ profileForm?.addEventListener("submit", async (event) => {
       if (!response.ok || !payload.ok) throw new Error(payload.message || "Could not save profile.");
       state.account = payload.user;
     } else {
-      state.account = updated;
+      state.account = saveLocalRegisteredAccount(updated);
     }
     localStorage.setItem("cosmetic-house-account", JSON.stringify(state.account));
     updateAccountButton();

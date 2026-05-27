@@ -12,6 +12,7 @@ const state = {
 
 const ordersEl = document.querySelector("[data-admin-orders]");
 const statsEl = document.querySelector("[data-admin-stats]");
+const usersEl = document.querySelector("[data-admin-users]");
 const pinInput = document.querySelector("[data-admin-pin]");
 const searchInput = document.querySelector("[data-admin-search]");
 const statusFilter = document.querySelector("[data-admin-status-filter]");
@@ -37,7 +38,9 @@ function localOrders() {
 
 function localUsers() {
   try {
-    const account = JSON.parse(localStorage.getItem("cosmetic-house-account")) || null;
+    const accounts = JSON.parse(localStorage.getItem("cosmetic-house-users") || "[]");
+    if (Array.isArray(accounts) && accounts.length) return accounts;
+    const account = JSON.parse(localStorage.getItem("cosmetic-house-account") || "null");
     return account ? [account] : [];
   } catch {
     return [];
@@ -149,13 +152,48 @@ function renderOrders() {
 
 function render() {
   renderStats();
+  renderUsers();
   renderOrders();
+}
+
+function renderUsers() {
+  if (!usersEl) return;
+  const users = [...state.users]
+    .sort((a, b) => String(b.createdAt || "").localeCompare(String(a.createdAt || "")))
+    .slice(0, 12);
+  usersEl.innerHTML = users.length
+    ? users
+        .map(
+          (user) => `
+            <article class="admin-customer-card">
+              <div>
+                <strong>${user.name || "Customer"}</strong>
+                <span>${user.contact || "No contact saved"}</span>
+              </div>
+              <small>${user.gender || "Not set"}${user.createdAt ? ` - ${new Date(user.createdAt).toLocaleDateString("en-LK")}` : ""}</small>
+              <p>${user.address || "No address saved yet."}</p>
+            </article>
+          `,
+        )
+        .join("")
+    : `<p class="cart-note">No customer accounts yet. New website signups will appear here.</p>`;
 }
 
 async function updateOrder(id) {
   const status = document.querySelector(`[data-status-order="${id}"]`)?.value;
   const tracking = document.querySelector(`[data-tracking-order="${id}"]`)?.value || "";
   const body = { status, tracking, activityText: `Status changed to ${status}` };
+  if (!apiBase) {
+    const saved = localOrders();
+    const index = saved.findIndex((order) => order.id === id);
+    if (index >= 0) {
+      const activity = [...(saved[index].activity || []), { at: new Date().toISOString(), text: body.activityText }];
+      saved[index] = { ...saved[index], ...body, id, updatedAt: new Date().toISOString(), activity };
+      localStorage.setItem("cosmetic-house-orders", JSON.stringify(saved.slice(0, 50)));
+      await fetchOrders();
+    }
+    return;
+  }
   try {
     const response = await fetch(`${apiBase}/api/orders/${encodeURIComponent(id)}`, {
       method: "PUT",
@@ -213,6 +251,8 @@ document.querySelector("[data-manual-order]").addEventListener("submit", async (
     id: `CHLK-MANUAL-${Date.now()}`,
     source: "manual",
     status: "New Order",
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
     payment: form.get("payment"),
     customer: {
       name: form.get("customerName"),
@@ -224,23 +264,24 @@ document.querySelector("[data-manual-order]").addEventListener("submit", async (
     delivery,
     total: price + delivery,
     notes: form.get("notes"),
+    activity: [{ at: new Date().toISOString(), text: "Manual order created" }],
   };
   try {
+    if (!apiBase) throw new Error("Local dashboard mode");
     const response = await fetch(`${apiBase}/api/orders`, {
       method: "POST",
       headers: headers(),
       body: JSON.stringify(order),
     });
     if (!response.ok) throw new Error("Manual order failed");
-    event.currentTarget.reset();
-    await fetchOrders();
   } catch {
     const saved = localOrders();
     saved.unshift(order);
     localStorage.setItem("cosmetic-house-orders", JSON.stringify(saved.slice(0, 50)));
     state.orders = saved;
-    render();
   }
+  event.currentTarget.reset();
+  await fetchOrders();
 });
 
 pinInput.value = state.pin;

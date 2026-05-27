@@ -4455,6 +4455,46 @@ body {
   background: rgba(255, 248, 252, 0.92);
 }
 
+.admin-customers-panel {
+  margin-top: 1rem;
+}
+
+.admin-customers {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 0.85rem;
+}
+
+.admin-customer-card {
+  display: grid;
+  gap: 0.45rem;
+  padding: 1rem;
+  border: 1px solid rgba(25, 16, 22, 0.08);
+  border-radius: 1rem;
+  background: rgba(255, 255, 255, 0.86);
+  box-shadow: 0 0.9rem 2rem rgba(45, 20, 35, 0.06);
+}
+
+.admin-customer-card div {
+  display: grid;
+  gap: 0.18rem;
+}
+
+.admin-customer-card strong {
+  color: var(--ink);
+  font-weight: 950;
+}
+
+.admin-customer-card span,
+.admin-customer-card small,
+.admin-customer-card p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.88rem;
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+}
+
 @media (max-width: 820px) {
   .site-footer,
   .footer-links {
