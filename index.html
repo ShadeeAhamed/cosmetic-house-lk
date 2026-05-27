@@ -42,7 +42,7 @@
     <link rel="manifest" href="site.webmanifest" />
     <link rel="preload" href="cosmetic-house-logo.jpeg" as="image" />
     <link rel="preload" href="assets/editorial/luxury-skincare-model.jpg" as="image" />
-    <link rel="stylesheet" href="styles.css?v=20260524-luxury-koko" />
+    <link rel="stylesheet" href="styles.css?v=20260527-production" />
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
@@ -87,14 +87,14 @@
         <img src="cosmetic-house-logo.jpeg" alt="Cosmetic House LK logo" />
         <span>
           <strong>Cosmetic House.lk</strong>
-          <small>Premium beauty destination</small>
+          <small>Premium beauty store</small>
         </span>
       </a>
 
       <nav class="main-nav" aria-label="Primary navigation" data-mega-nav>
         <a href="#top">Home</a>
-        <button type="button" data-mega-trigger="shop">Shop</button>
-        <button type="button" data-mega-trigger="beauty">Beauty</button>
+        <a href="#shop">Shop</a>
+        <a href="#beauty">Beauty</a>
         <a href="products.html">Products</a>
         <a href="#brands">Brands</a>
         <a href="#ai">Beauty AI</a>
@@ -237,7 +237,7 @@
         </div>
       </section>
 
-      <section class="social-style-section" aria-label="Social beauty edits">
+      <section class="social-style-section" id="beauty" aria-label="Social beauty edits">
         <div class="section-heading">
           <p class="eyebrow">Seen on socials</p>
           <h2>Routine picks made for Instagram, TikTok, and real-life glow.</h2>
@@ -315,20 +315,6 @@
         </div>
       </section>
 
-      <section class="rewards-section" id="rewards">
-        <div class="section-heading center-heading">
-          <p class="eyebrow">Beauty rewards</p>
-          <h2>Make every order feel more valuable.</h2>
-          <p>Membership-inspired rewards for loyal Cosmetic House customers.</p>
-        </div>
-        <div class="rewards-grid">
-          <article><span>Glow</span><strong>Beauty Points</strong><p>Earn points on confirmed orders and redeem on future beauty baskets.</p></article>
-          <article><span>VIP</span><strong>Member Tiers</strong><p>Unlock early access, exclusive edits, and priority routine support.</p></article>
-          <article><span>Gift</span><strong>Birthday Treats</strong><p>Celebrate your month with selected beauty surprises and member offers.</p></article>
-          <article><span>Share</span><strong>Referral Rewards</strong><p>Invite friends and receive special Cosmetic House perks.</p></article>
-        </div>
-      </section>
-
       <section class="reviews-section" id="reviews">
         <div class="section-heading">
           <p class="eyebrow">Customer reviews</p>
@@ -382,7 +368,7 @@
           <article><strong>Secure card checkout</strong><span>Visa, Mastercard, and American Express gateway option.</span></article>
           <article><strong>Cash on delivery</strong><span>Available for eligible confirmed orders.</span></article>
           <article><strong>Bank transfer</strong><span>Simple transfer option for confirmed baskets.</span></article>
-          <article><strong>Koko / Mintpay ready</strong><span>Buy-now-pay-later messaging can be added after provider approval.</span></article>
+          <article><strong>KOKO ready</strong><span>Buy-now-pay-later messaging is prepared for approved KOKO checkout.</span></article>
           <article><strong>Payment proof upload</strong><span>Upload bank transfer screenshots during checkout for faster confirmation.</span></article>
           <article><strong>Secure order ID</strong><span>Every basket receives a Cosmetic House order reference for tracking.</span></article>
         </div>
@@ -698,16 +684,50 @@
       </div>
     </dialog>
 
-    <footer>
-      <strong>Cosmetic House LK</strong>
-      <span>
-        <a href="return-policy.html">Return Policy</a> |
-        <a href="privacy-policy.html">Privacy Policy</a> |
-        <a href="terms-and-conditions.html">Terms & Conditions</a>
-      </span>
+    <footer class="site-footer" id="contact">
+      <div class="footer-brand">
+        <a class="brand" href="#top" aria-label="Cosmetic House LK home">
+          <img src="cosmetic-house-logo.jpeg" alt="Cosmetic House LK logo" />
+          <span>
+            <strong>Cosmetic House LK</strong>
+            <small>Premium beauty store in Sri Lanka</small>
+          </span>
+        </a>
+        <p>
+          Curated skincare, Korean beauty, makeup, hair care, and body care with friendly routine
+          support and islandwide ordering.
+        </p>
+      </div>
+      <div class="footer-links" aria-label="Footer links">
+        <div>
+          <strong>Shop Support</strong>
+          <a href="#shop">Shop Products</a>
+          <a href="track-order.html">Track Order</a>
+          <a href="delivery-policy.html">Delivery Policy</a>
+          <a href="refund-policy.html">Refund Policy</a>
+        </div>
+        <div>
+          <strong>Business</strong>
+          <a href="about.html">About Us</a>
+          <a href="contact.html">Contact Us</a>
+          <a href="privacy-policy.html">Privacy Policy</a>
+          <a href="terms-and-conditions.html">Terms & Conditions</a>
+        </div>
+        <div>
+          <strong>Contact</strong>
+          <a href="tel:+94762245570">+94 76 224 5570</a>
+          <a href="mailto:cosmetichouse.lk@gmail.com">cosmetichouse.lk@gmail.com</a>
+          <a href="https://www.instagram.com/cosmetic_house.lk/" rel="noopener">Instagram</a>
+          <a href="https://www.facebook.com/CosmeticHouse.lkk" rel="noopener">Facebook</a>
+        </div>
+      </div>
+      <p class="footer-note">
+        Secure checkout ready. Cash on delivery, bank transfer, and approved online payment methods
+        are shown clearly before order confirmation.
+      </p>
     </footer>
 
-    <section class="seo-cloud" aria-label="Search terms">
+    <section class="seo-cloud" aria-label="Search terms" hidden>
       Cosmetic House LK, cosmetichouse.com.lk, Cosmetic House Sri Lanka, skincare Sri Lanka,
       cosmetics Sri Lanka, Korean skincare Sri Lanka, online cosmetics Sri Lanka, The Ordinary Sri Lanka,
       ordinary niacinamide Sri Lanka, CeraVe Sri Lanka, Beauty of Joseon Sri Lanka, COSRX Sri Lanka,
@@ -720,6 +740,6 @@
     </script>
     <script src="shopify-config.js?v=20260524-shopify"></script>
     <script src="catalog-data.js?v=20260521-clean-images"></script>
-    <script src="script.js?v=20260524-luxury-koko"></script>
+    <script src="script.js?v=20260527-production"></script>
   </body>
 </html>
