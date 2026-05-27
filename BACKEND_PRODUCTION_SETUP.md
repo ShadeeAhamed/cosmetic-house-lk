@@ -40,10 +40,24 @@ WhatsApp and Meta variables stay in `.env.whatsapp` or the host environment.
 ## 3. Connect Frontend to Backend
 
 After the backend has a stable HTTPS URL, set this in `index.html` and
-`admin.html`:
+`admin.html`.
+
+Current live AWS endpoint:
 
 ```html
-window.COSMETIC_HOUSE_PAYMENT_API = "https://your-backend-domain.com";
+window.COSMETIC_HOUSE_PAYMENT_API = "https://52-74-89-82.nip.io";
+```
+
+Branded production endpoint to add in DNS later:
+
+- Type: `A`
+- Name/Host: `bot`
+- Value: `52.74.89.82`
+
+After that DNS record works, change the frontend value to:
+
+```html
+window.COSMETIC_HOUSE_PAYMENT_API = "https://bot.cosmetichouse.com.lk";
 ```
 
 Then customer signup/login, order submission, admin dashboard, visits, PayHere,

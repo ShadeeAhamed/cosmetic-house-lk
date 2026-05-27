@@ -1395,6 +1395,7 @@ function toggleWishlist(index) {
   localStorage.setItem("cosmetic-house-wishlist", JSON.stringify(state.wishlist));
   showToast(exists ? "Removed from wishlist" : "Saved to wishlist");
   renderProducts();
+  syncWishlistToCloud();
 }
 
 function renderQuickView(index) {
@@ -1442,11 +1443,129 @@ function addToCart(index) {
   state.cart.push(products[index]);
   showToast(`${products[index].name} added to cart`);
   openCart();
+  syncCartToCloud();
 }
 
 function removeFromCart(index) {
   state.cart.splice(index, 1);
   renderCart();
+  syncCartToCloud();
+}
+
+function currentAccountContact() {
+  return normalizeContactValue(state.account?.contact || "");
+}
+
+function cartItemPayload(product) {
+  return {
+    name: product.name,
+    slug: product.slug,
+    price: product.price,
+    quantity: 1,
+    image: product.image,
+    brand: product.brand,
+  };
+}
+
+function productFromCloudItem(item) {
+  const slug = item.slug || item.productId || item.product?.slug;
+  const product = products.find((entry) => entry.slug === slug);
+  if (product) return product;
+  return {
+    name: item.name || item.product?.name || "Beauty product",
+    slug: slug || `cloud-cart-${Date.now()}`,
+    price: Number(item.price || item.product?.price || 0),
+    image: item.image || item.product?.image || "cosmetic-house-logo.jpeg",
+    brand: item.brand || item.product?.brand || "Cosmetic House",
+    category: item.category || item.product?.category || "Beauty",
+    type: item.type || item.product?.type || "Beauty",
+    note: item.note || item.product?.note || "Saved beauty item.",
+  };
+}
+
+async function syncCartToCloud() {
+  const contact = currentAccountContact();
+  if (!orderApiBase || !contact) return;
+  try {
+    await fetch(`${orderApiBase}/api/cart`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        contact,
+        userId: state.account?.id || "",
+        items: state.cart.map(cartItemPayload),
+      }),
+      keepalive: true,
+    });
+  } catch {
+    // Cart still remains available locally if the live server is temporarily unreachable.
+  }
+}
+
+async function loadCloudCart() {
+  const contact = currentAccountContact();
+  if (!orderApiBase || !contact) return;
+  try {
+    const response = await fetch(`${orderApiBase}/api/cart?contact=${encodeURIComponent(contact)}`, { cache: "no-store" });
+    const payload = await readApiJson(response);
+    if (!response.ok || !payload.ok) return;
+    const items = Array.isArray(payload.cart?.items) ? payload.cart.items : [];
+    if (!items.length) return;
+    state.cart = items.flatMap((item) => Array.from({ length: Math.max(1, Number(item.quantity || 1)) }, () => productFromCloudItem(item)));
+    renderCart();
+  } catch {
+    // Local cart is kept if cloud cart cannot load.
+  }
+}
+
+async function syncWishlistToCloud() {
+  const contact = currentAccountContact();
+  if (!orderApiBase || !contact) return;
+  try {
+    await fetch(`${orderApiBase}/api/wishlist`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        contact,
+        userId: state.account?.id || "",
+        items: state.wishlist.map((slug) => {
+          const product = products.find((entry) => entry.slug === slug);
+          return {
+            productId: slug,
+            slug,
+            product: product ? cartItemPayload(product) : { slug },
+          };
+        }),
+      }),
+      keepalive: true,
+    });
+  } catch {
+    // Wishlist still remains available locally if cloud sync is unavailable.
+  }
+}
+
+async function loadCloudWishlist() {
+  const contact = currentAccountContact();
+  if (!orderApiBase || !contact) return;
+  try {
+    const response = await fetch(`${orderApiBase}/api/wishlist?contact=${encodeURIComponent(contact)}`, { cache: "no-store" });
+    const payload = await readApiJson(response);
+    if (!response.ok || !payload.ok || !Array.isArray(payload.wishlist)) return;
+    const cloudSlugs = payload.wishlist.map((item) => item.productId || item.slug || item.product?.slug).filter(Boolean);
+    if (!cloudSlugs.length) return;
+    state.wishlist = Array.from(new Set([...cloudSlugs, ...state.wishlist])).slice(0, 80);
+    localStorage.setItem("cosmetic-house-wishlist", JSON.stringify(state.wishlist));
+    renderProducts();
+  } catch {
+    // Local wishlist is kept if cloud wishlist cannot load.
+  }
+}
+
+async function loadCloudCustomerState() {
+  if (!isLoggedIn || !currentAccountContact()) return;
+  if (state.cart.length) await syncCartToCloud();
+  if (state.wishlist.length) await syncWishlistToCloud();
+  await Promise.allSettled([loadCloudCart(), loadCloudWishlist(), loadCustomerOrders()]);
 }
 
 function orderPayloadFromForm(form) {
@@ -1673,6 +1792,7 @@ async function cancelCurrentOrder() {
   renderCart();
   showCancellationSaved(orderId, reason);
   showToast("Cancellation reason saved", "info");
+  syncCartToCloud();
 }
 
 function submitPayherePayment(fields, action) {
@@ -1875,6 +1995,7 @@ cartRecommendations.addEventListener("click", (event) => {
   if (!button) return;
   state.cart.push(products[Number(button.dataset.addRecommendation)]);
   renderCart();
+  syncCartToCloud();
 });
 
 function setupWhatsAppLinks() {
@@ -1945,6 +2066,7 @@ orderForm?.addEventListener("submit", async (event) => {
   orderForm.reset();
   renderCart();
   showToast("Order submitted successfully");
+  syncCartToCloud();
 });
 
 searchInput.addEventListener("input", (event) => {
@@ -2294,6 +2416,7 @@ function friendlyAuthError(error) {
 async function requestVerificationCode() {
   const formData = new FormData(loginForm);
   const contact = String(formData.get("contact") || "").trim();
+  const password = authPassword(formData);
   const validation = validateSignupDetails(formData);
   if (!validation.ok) {
     authStatus.textContent = validation.message;
@@ -2536,6 +2659,7 @@ async function handleAuthSubmit() {
   isLoggedIn = true;
   updateAccountButton();
   autofillOrderForm();
+  await loadCloudCustomerState();
   loginDialog.close();
   showToast(authMode === "signup" ? "Beauty account created" : "Logged in successfully");
   aiLog.insertAdjacentHTML("beforeend", "<p>Welcome back. Your beauty profile is ready for browsing, reviews, and routine guidance.</p>");
@@ -2667,6 +2791,7 @@ async function initStorefront() {
     renderHeroMix();
     renderAssetProducts();
   }
+  await loadCloudCustomerState();
   initScrollReveal();
   openInitialProductFromHash();
   maybeOpenLoginPrompt();
