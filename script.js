@@ -490,7 +490,7 @@ function kokoMarkup(price, compact = false) {
   return `
     <div class="koko-installment${compact ? " compact" : ""}">
       <img class="koko-logo-img" src="assets/brand/koko-logo.svg" alt="KOKO" loading="lazy" decoding="async" />
-      <span>${compact ? "3 x" : "Or pay in 3 x"} ${money(kokoInstallmentValue(price))} with KOKO</span>
+      <span>${compact ? "3 x" : "Pay in 3 installments:"} ${money(kokoInstallmentValue(price))} with KOKO</span>
     </div>
   `;
 }
@@ -537,6 +537,20 @@ function productIdentityText(product) {
 
 function productNameText(product) {
   return normalizeText(`${product.name} ${product.brand} ${product.type} ${product.note}`);
+}
+
+function productDisplayNote(product) {
+  const note = String(product.note || "").trim();
+  if (note && !/beauty selected for cosmetic house lk customers/i.test(note)) return note;
+  const text = productText(product);
+  if (/sunscreen|spf|sun/.test(text)) return "Daily SPF support for glowing Sri Lankan routines.";
+  if (/cleanser|face wash|cleansing|micellar|foam|wash/.test(text)) return "A gentle first step for clean, comfortable skin.";
+  if (/serum|ampoule|niacinamide|retinol|vitamin c|hyaluronic|peptide/.test(text)) return "A focused treatment step for a simple glow routine.";
+  if (/moistur|cream|lotion|barrier/.test(text)) return "Barrier-friendly comfort for soft, hydrated skin.";
+  if (/hair|shampoo|conditioner|mask/.test(text)) return "A polished hair-care pick for smoother routine days.";
+  if (/lip|makeup|foundation|mascara|blush|palette/.test(text)) return "A soft-glam beauty pick for everyday polish.";
+  if (/body|scrub|shower/.test(text)) return "Body-care comfort for a fresh, smooth routine.";
+  return "A curated beauty pick with routine support before checkout.";
 }
 
 function inferBrand(product) {
@@ -800,8 +814,8 @@ function renderProducts() {
               </button>
             </div>
             <a class="product-title" href="${productPageUrl(product)}">${product.name}</a>
-            <div class="rating-row"><span>5 stars</span><small>${rating.rating} (${rating.count})</small></div>
-            <p>${product.note}</p>
+            <div class="rating-row" aria-label="${rating.rating} out of 5 stars"><span>5 stars</span><small>${rating.rating} (${rating.count})</small></div>
+            <p>${productDisplayNote(product)}</p>
             <div class="best-for-labels"><span>${product.type}</span><span>${product.category}</span></div>
             <div class="price-row">
               <strong>${money(product.price)}</strong>
@@ -837,7 +851,7 @@ function renderPhotoList() {
           <div>
             <span class="badge">${product.brand}</span>
             <h3>${product.name}</h3>
-            <p>${product.note}</p>
+            <p>${productDisplayNote(product)}</p>
             <strong>${money(product.price)}</strong>
             <a class="text-button" href="${productPageUrl(product)}">View details</a>
           </div>
@@ -973,7 +987,7 @@ function renderProductPage(index) {
         <p class="eyebrow">${product.brand} / ${product.category}</p>
         <h2>${product.name}</h2>
         <p>${product.description}</p>
-        <div class="rating-row detail-rating"><span>5 stars</span><small>${rating.rating} out of 5 - ${rating.count} reviews</small></div>
+        <div class="rating-row detail-rating" aria-label="${rating.rating} out of 5 stars"><span>5 stars</span><small>${rating.rating} out of 5 - ${rating.count} reviews</small></div>
             <div class="price-row">
               <strong>${money(product.price)}</strong>
               <span>${stockLabel(product)}</span>
@@ -1407,8 +1421,8 @@ function renderQuickView(index) {
       <div>
         <p class="eyebrow">${product.brand} / ${product.category}</p>
         <h2>${product.name}</h2>
-        <div class="rating-row"><span>5 stars</span><small>${rating.rating} (${rating.count})</small></div>
-        <p>${product.note}</p>
+        <div class="rating-row" aria-label="${rating.rating} out of 5 stars"><span>5 stars</span><small>${rating.rating} (${rating.count})</small></div>
+        <p>${productDisplayNote(product)}</p>
         <strong class="quick-price">${money(product.price)}</strong>
         ${kokoMarkup(product.price, true)}
         <div class="quick-actions">
