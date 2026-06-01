@@ -42,7 +42,7 @@
     <link rel="manifest" href="site.webmanifest" />
     <link rel="preload" href="cosmetic-house-logo.jpeg" as="image" />
     <link rel="preload" href="assets/editorial/luxury-skincare-model.jpg" as="image" />
-    <link rel="stylesheet" href="styles.css?v=20260601-polish" />
+    <link rel="stylesheet" href="styles.css?v=20260601-koko" />
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
@@ -186,6 +186,23 @@
             <strong>Healthy skin starts here.</strong>
             <p>Premium skincare, glow essentials, and routine support for confident everyday beauty.</p>
           </div>
+        </div>
+      </section>
+
+      <section class="koko-promo-section" id="koko" aria-label="KOKO installment payments">
+        <div class="koko-promo-copy">
+          <p class="eyebrow">KOKO ready</p>
+          <h2>Glow now, pay in 3 with KOKO.</h2>
+          <p>
+            Split eligible beauty baskets into 3 interest-free monthly installments after KOKO
+            checkout activation. Browse with the installment value shown clearly before you order.
+          </p>
+          <a class="button primary" href="#shop">Shop KOKO-ready picks</a>
+        </div>
+        <div class="koko-promo-card">
+          <img src="assets/brand/koko-logo.svg" alt="KOKO" width="220" height="82" loading="lazy" decoding="async" />
+          <strong>Pay in 3 Interest-Free Installments with KOKO</strong>
+          <span>Installment values update automatically from each product price and cart total.</span>
         </div>
       </section>
 
@@ -472,6 +489,14 @@
           <label><input type="radio" name="payment" value="Online card payment" checked /> Online card payment</label>
           <label><input type="radio" name="payment" value="Cash on delivery" /> Cash on delivery</label>
           <label><input type="radio" name="payment" value="Bank transfer" /> Bank transfer</label>
+          <label class="payment-choice-koko">
+            <input type="radio" name="payment" value="KOKO installments" disabled />
+            <span>
+              <img src="assets/brand/koko-logo.svg" alt="KOKO" width="70" height="26" loading="lazy" decoding="async" />
+              KOKO installments <em>COMING SOON</em>
+            </span>
+            <small>Pay in 3 interest-free installments once KOKO checkout activation is complete.</small>
+          </label>
         </div>
 
         <div class="card-payment-form" data-card-form>
@@ -767,6 +792,6 @@
     </script>
     <script src="shopify-config.js?v=20260524-shopify"></script>
     <script src="catalog-data.js?v=20260521-clean-images"></script>
-    <script src="script.js?v=20260601-polish"></script>
+    <script src="script.js?v=20260601-koko"></script>
   </body>
 </html>

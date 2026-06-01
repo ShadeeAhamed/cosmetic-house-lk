@@ -483,14 +483,22 @@ function brandPageUrl(brand) {
 }
 
 function kokoInstallmentValue(price) {
-  return Math.ceil(Number(price || 0) / 3);
+  const numericPrice = Number(price || 0);
+  return Math.ceil(numericPrice / 3);
 }
 
-function kokoMarkup(price, compact = false) {
+function kokoMarkup(price, compact = false, context = "product") {
+  const installment = kokoInstallmentValue(price);
+  const label = compact
+    ? `3 x ${money(installment)} with KOKO`
+    : context === "cart"
+      ? `Or pay: 3 x ${money(installment)} with KOKO`
+      : `Pay in 3 Interest-Free Installments with KOKO - 3 x ${money(installment)}`;
+
   return `
-    <div class="koko-installment${compact ? " compact" : ""}">
+    <div class="koko-installment${compact ? " compact" : ""}${context === "cart" ? " cart" : ""}">
       <img class="koko-logo-img" src="assets/brand/koko-logo.svg" alt="KOKO" loading="lazy" decoding="async" />
-      <span>${compact ? "3 x" : "Pay in 3 installments:"} ${money(kokoInstallmentValue(price))} with KOKO</span>
+      <span>${label}</span>
     </div>
   `;
 }
@@ -1057,7 +1065,7 @@ function renderCart() {
   totalEl.textContent = money(total);
   if (cartKokoLine) {
     cartKokoLine.hidden = !total;
-    cartKokoLine.innerHTML = total ? kokoMarkup(total) : "";
+    cartKokoLine.innerHTML = total ? kokoMarkup(total, false, "cart") : "";
   }
   if (orderStatusPanel && !orderStatusPanel.dataset.persist) orderStatusPanel.hidden = true;
   if (cancelReasonBox) cancelReasonBox.hidden = true;

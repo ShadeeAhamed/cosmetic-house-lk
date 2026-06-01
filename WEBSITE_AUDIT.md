@@ -2,6 +2,68 @@
 
 Date: 2026-06-01
 
+## 2026-06-01 KOKO Production Readiness Pass
+
+### Fixes Implemented
+
+- Added a dedicated premium KOKO homepage section with the local KOKO brand logo, customer-friendly installment explanation, and a direct shopping CTA.
+- Updated product and product-detail KOKO messaging to use `Pay in 3 Interest-Free Installments with KOKO` with automatic price-divided-by-3 calculation.
+- Updated the cart summary so basket totals show `Or pay: 3 x LKR ... with KOKO`.
+- Added a checkout payment option for KOKO with a clear `COMING SOON` status so the storefront looks ready without allowing unfinished payment selection.
+- Added production preparation files for future official KOKO credentials:
+  - `config/koko.config.js`
+  - `services/kokoService.js`
+  - `.env.example`
+  - `scripts/export-koko-feed.mjs`
+- Regenerated `koko-product-feed.json` with SKU, title, brand, category, LKR price, KOKO installment value, image URL, product URL, availability, and inventory sync fields.
+- Added responsive CSS for KOKO promo, product-card KOKO rows, cart KOKO rows, and checkout KOKO option.
+
+### KOKO Status
+
+- Frontend: ready for customer education and merchant review.
+- Checkout: intentionally marked `COMING SOON` until live KOKO merchant API credentials and webhook documentation are issued.
+- Marketplace feed: prepared as `koko-product-feed.json`.
+- Future required values:
+  - `KOKO_MERCHANT_ID`
+  - `KOKO_API_KEY`
+  - `KOKO_SECRET`
+  - `KOKO_WEBHOOK`
+
+### SEO Audit
+
+- Canonical homepage URL remains `https://cosmetichouse.com.lk/`.
+- `robots.txt` points to the HTTPS sitemap.
+- Sitemap uses HTTPS final URLs.
+- Visible keyword stuffing remains hidden from customers; keyword relevance should be built through product names, metadata, category pages, and blog content.
+- Search result logo/profile updates are controlled by Google/Bing recrawling and can take time after favicon and structured data updates.
+
+### Performance Audit
+
+- KOKO assets are loaded as lightweight SVG/optimized image references.
+- Product-card KOKO rows are CSS-only and do not add heavy scripts.
+- Merchant feed export is offline/build-time and does not slow the storefront.
+- Continue compressing large product/model images before upload to protect mobile PageSpeed.
+
+### Shopify Readiness
+
+- KOKO feed fields map cleanly to Shopify product export fields: SKU, title, vendor/brand, product type/category, price, image, URL, and availability.
+- Existing Shopify migration files can reuse the same SKU and URL structure.
+- Next Shopify step is deciding whether Shopify becomes the checkout/order backend or remains an optional migration path.
+
+### Dropshipping Readiness
+
+- SKU-first feed structure supports future CJ Dropshipping, Zendrop, AliExpress, or supplier CSV mapping.
+- Inventory sync payload is prepared in `services/kokoService.js`.
+- Actual supplier automation still requires supplier API access or a stable import CSV format.
+
+### Priority Roadmap
+
+1. Get final KOKO API/webhook documentation and activate checkout from `COMING SOON` to live.
+2. Choose the final order backend: Shopify checkout, Supabase custom backend, or a hybrid.
+3. Add dedicated collection URLs for high-intent SEO categories.
+4. Compress and verify all product images after each catalog import.
+5. Build weekly blog/guide pages for Sri Lankan search demand.
+
 ## Executive Summary
 
 Cosmetic House LK is now visually closer to a premium Korean skincare storefront. The latest pass focused on the issues visible to customers: navigation wrapping, product-card clipping, KOKO installment alignment, and homepage scanability. The frontend can be used publicly, while the remaining production work is mainly payment activation, Shopify/Supabase backend decisions, and official KOKO API/feed onboarding.

@@ -4785,3 +4785,157 @@ body {
     overflow: hidden !important;
   }
 }
+
+/* KOKO production readiness pass: official logo rows, cart messaging, and homepage promo. */
+.main-nav a[href="#ai"] {
+  white-space: nowrap !important;
+  min-width: max-content;
+}
+
+.koko-promo-section {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(280px, 0.55fr);
+  gap: clamp(1rem, 3vw, 2rem);
+  align-items: center;
+  margin: 0 clamp(1rem, 5vw, 5rem) clamp(1.2rem, 3vw, 2rem);
+  padding: clamp(1.25rem, 3vw, 2rem);
+  border: 1px solid rgba(43, 92, 255, 0.13);
+  border-radius: 1.5rem;
+  background:
+    radial-gradient(circle at 88% 12%, rgba(255, 155, 216, 0.28), transparent 13rem),
+    linear-gradient(135deg, rgba(255, 255, 255, 0.96), rgba(244, 248, 255, 0.92));
+  box-shadow: 0 1.4rem 4rem rgba(41, 20, 52, 0.08);
+}
+
+.koko-promo-copy {
+  display: grid;
+  gap: 0.7rem;
+}
+
+.koko-promo-copy h2 {
+  max-width: 15ch;
+  margin: 0;
+  font-size: clamp(2rem, 4.5vw, 4.25rem);
+  line-height: 0.96;
+  letter-spacing: -0.035em;
+}
+
+.koko-promo-copy p {
+  max-width: 52rem;
+  margin: 0;
+  color: var(--muted);
+  font-size: clamp(0.98rem, 1.3vw, 1.15rem);
+  line-height: 1.65;
+}
+
+.koko-promo-card {
+  display: grid;
+  gap: 0.75rem;
+  align-content: center;
+  min-height: 15rem;
+  padding: clamp(1rem, 3vw, 1.45rem);
+  border: 1px solid rgba(43, 92, 255, 0.16);
+  border-radius: 1.25rem;
+  background:
+    linear-gradient(135deg, rgba(15, 18, 30, 0.94), rgba(50, 25, 64, 0.92)),
+    #14121d;
+  color: white;
+  box-shadow: 0 1.25rem 3rem rgba(14, 16, 30, 0.2);
+}
+
+.koko-promo-card img {
+  width: min(10rem, 70%);
+  height: auto;
+  filter: drop-shadow(0 0.45rem 1rem rgba(255, 155, 216, 0.2));
+}
+
+.koko-promo-card strong {
+  font-size: clamp(1.1rem, 2vw, 1.45rem);
+  line-height: 1.2;
+}
+
+.koko-promo-card span {
+  color: rgba(255, 255, 255, 0.76);
+  line-height: 1.55;
+}
+
+.koko-installment.cart {
+  width: 100%;
+  justify-content: space-between;
+  border-color: rgba(43, 92, 255, 0.18);
+  background: linear-gradient(135deg, rgba(255, 248, 253, 0.96), rgba(237, 246, 255, 0.96));
+}
+
+.cart-koko-line:not([hidden]) {
+  display: block !important;
+}
+
+.payment-choice-koko {
+  align-items: flex-start !important;
+  flex-direction: column;
+  gap: 0.45rem !important;
+  padding: 0.75rem;
+  border: 1px solid rgba(43, 92, 255, 0.13);
+  border-radius: 0.8rem;
+  background: linear-gradient(135deg, rgba(255, 250, 253, 0.9), rgba(241, 247, 255, 0.88));
+}
+
+.payment-choice-koko > span {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--ink);
+  font-weight: 950;
+}
+
+.payment-choice-koko img {
+  width: 4.35rem;
+  height: auto;
+}
+
+.payment-choice-koko em {
+  border-radius: 999px;
+  padding: 0.18rem 0.45rem;
+  background: rgba(7, 5, 8, 0.08);
+  color: var(--muted);
+  font-size: 0.66rem;
+  font-style: normal;
+  letter-spacing: 0.04em;
+}
+
+.payment-choice-koko small {
+  color: var(--muted);
+  line-height: 1.45;
+}
+
+.product-card .body > p {
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 900px) {
+  .koko-promo-section {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .koko-promo-section {
+    margin-inline: 1rem;
+    padding: 1rem;
+    border-radius: 1.1rem;
+  }
+
+  .koko-promo-copy h2 {
+    max-width: 100%;
+    font-size: clamp(1.8rem, 8vw, 2.5rem);
+  }
+
+  .koko-promo-card {
+    min-height: 11.5rem;
+  }
+
+  .product-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+}
