@@ -1,6 +1,6 @@
 # Cosmetic House LK premium storefront
 
-This is a publish-ready frontend draft for Cosmetic House LK.
+This repository contains the Cosmetic House LK storefront prototype and supporting backend/automation code. Production use depends on completing and verifying the external integrations described below.
 
 ## Included
 
@@ -31,7 +31,7 @@ This is a publish-ready frontend draft for Cosmetic House LK.
 
 ## Important before going live
 
-0. Register the domain `cosmetichouse.lk` through an LK Domain Registry approved registrar, then point it to the hosting provider.
+0. The repository's current `CNAME` file points to `cosmetichouse.com.lk`. Confirm the domain's DNS and hosting configuration before making domain changes.
 1. Connect a real payment gateway such as PayHere, WebXPay, Genie, Stripe, or another PCI-compliant merchant provider before accepting card payments. Do not process or store card details yourself.
 2. Connect the Beauty AI and face upload to OpenAI through a private backend. Do not place an OpenAI API key inside browser JavaScript. Camera access requires HTTPS on the live domain or `localhost` during testing.
 3. Connect login to secure authentication before saving customer data.
@@ -41,7 +41,7 @@ This is a publish-ready frontend draft for Cosmetic House LK.
 
 ## WhatsApp bot setup
 
-The website now links customers directly to WhatsApp with pre-filled messages. The automatic reply bot needs WhatsApp Business API access before it can reply inside WhatsApp.
+The storefront includes WhatsApp links with pre-filled messages. Automated replies require the WhatsApp Business Cloud API and valid server-side credentials. The automatic reply bot needs WhatsApp Business API access before it can reply inside WhatsApp.
 
 Files:
 
