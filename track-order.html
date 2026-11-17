@@ -1,11 +1,11 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Track Order | Cosmetic House.lk</title>
-  <meta name="description" content="Track Cosmetic House.lk beauty orders and delivery progress in Sri Lanka." />
-  <link rel="stylesheet" href="styles.css?v=20260527-production" />
+  <meta name="description" content="Get help with a Cosmetic House order in Sri Lanka." />
+  <link rel="stylesheet" href="styles.css?v=20261117-checkout-ux" />
 </head>
 <body>
   <header class="site-header">
@@ -15,21 +15,35 @@
   <main class="policy-page">
     <section class="policy-hero">
       <p class="eyebrow">Order Care</p>
-      <h1>Track your beauty order</h1>
-      <p>Use your order ID or WhatsApp number to check the latest order stage. For fastest help, message us directly.</p>
+      <h1>Need an order update?</h1>
+      <p>Shopify sends your order confirmation and shipping updates. If you need help, send us your order number and the phone number used at checkout.</p>
     </section>
     <section class="policy-content page-grid">
-      <form class="premium-form track-panel">
-        <label>Order ID<input type="text" placeholder="CH-2026-0001" /></label>
-        <label>WhatsApp number<input type="tel" placeholder="+94 7X XXX XXXX" /></label>
-        <button class="button primary" type="button">Check status</button>
+      <form class="premium-form track-panel" data-track-order-form>
+        <label>Shopify order number
+          <input name="orderId" type="text" placeholder="#1001" autocomplete="off" required />
+        </label>
+        <label>WhatsApp number used at checkout
+          <input name="phone" type="tel" placeholder="+94 7X XXX XXXX" autocomplete="tel" required />
+        </label>
+        <button class="button primary" type="submit">Request an update on WhatsApp</button>
       </form>
       <div class="track-panel">
-        <strong>Order stages</strong>
-        <div class="status-steps"><span>New order</span><span>Confirmed</span><span>Packed</span><span>Dispatched</span><span>Delivered</span></div>
+        <strong>Track your delivery</strong>
+        <p>Use the order-status link in your Shopify confirmation or shipping email for the latest tracking details.</p>
+        <div class="status-steps"><span>Order placed</span><span>Confirmed</span><span>Dispatched</span><span>Delivered</span></div>
       </div>
     </section>
   </main>
+  <script>
+    document.querySelector("[data-track-order-form]")?.addEventListener("submit", (event) => {
+      event.preventDefault();
+      const form = new FormData(event.currentTarget);
+      const orderId = String(form.get("orderId") || "").trim();
+      const phone = String(form.get("phone") || "").trim();
+      const message = `Hi Cosmetic House, I need an update on my order. Order number: ${orderId}. WhatsApp number used at checkout: ${phone}.`;
+      window.location.href = `https://wa.me/94762245570?text=${encodeURIComponent(message)}`;
+    });
+  </script>
 </body>
 </html>
-
