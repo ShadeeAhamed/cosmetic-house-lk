@@ -426,6 +426,8 @@ const customerOrdersList = document.querySelector("[data-customer-orders]");
 const galleryUploadInput = document.querySelector("[data-gallery-upload]");
 const uploadName = document.querySelector("[data-upload-name]");
 const cardForm = document.querySelector("[data-card-form]");
+const paymentChoice = document.querySelector("[data-payment-choice]");
+const shopifyCheckoutNote = document.querySelector("[data-shopify-checkout-note]");
 const paymentStatus = document.querySelector("[data-payment-status]");
 const reviewForm = document.querySelector("[data-review-form]");
 const reviewList = document.querySelector("[data-review-list]");
@@ -1109,10 +1111,13 @@ function renderCart() {
         ? "Pay securely"
         : "Place order";
   }
-  cardForm.hidden = selectedPaymentMethod() !== "Online card payment";
+  const usesShopify = shopifyEnabled();
+  if (paymentChoice) paymentChoice.hidden = usesShopify;
+  if (shopifyCheckoutNote) shopifyCheckoutNote.hidden = !usesShopify;
+  cardForm.hidden = usesShopify || selectedPaymentMethod() !== "Online card payment";
   if (paymentStatus) {
-    paymentStatus.textContent = shopifyEnabled()
-      ? "Secure checkout will open in Shopify."
+    paymentStatus.textContent = usesShopify
+      ? "Payment options will be shown securely in Shopify checkout."
       : paymentGateway.message;
   }
   autofillOrderForm();
@@ -1636,18 +1641,24 @@ async function recordOrder(payload) {
     savedOrders.unshift(finalPayload);
     localStorage.setItem("cosmetic-house-orders", JSON.stringify(savedOrders.slice(0, 50)));
   } catch {
-    // The server/email flow still continues if browser storage is unavailable.
+    // Browser history is optional; the live order service is the source of truth.
   }
-  if (!orderApiBase) return;
+  if (!orderApiBase) return false;
   try {
-    await fetch(`${orderApiBase}/api/orders`, {
+    const response = await fetch(`${orderApiBase}/api/orders`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(finalPayload),
       keepalive: true,
     });
-  } catch {
-    // FormSubmit and WhatsApp backup remain available if the admin API is temporarily unavailable.
+    const result = await response.json().catch(() => ({}));
+    if (!response.ok || result.ok === false) {
+      throw new Error(result.message || "The live order service did not accept the order.");
+    }
+    return true;
+  } catch (error) {
+    console.error("Order could not be saved to the live order service:", error);
+    return false;
   }
 }
 
@@ -2057,7 +2068,10 @@ orderForm?.addEventListener("submit", async (event) => {
     checkoutButton.disabled = true;
     checkoutButton.textContent = "Opening Shopify...";
     try {
-      await recordOrder({ ...payload, source: "website-shopify", status: "Pending", payment: "Shopify checkout" });
+      const leadSaved = await recordOrder({ ...payload, source: "website-shopify", status: "Checkout Started", payment: "Shopify checkout" });
+      if (!leadSaved) {
+        showToast("Shopify checkout will continue. Completed orders are recorded in Shopify.", "info");
+      }
       await startShopifyCheckout();
     } catch (error) {
       alert(error.message);
@@ -2081,7 +2095,13 @@ orderForm?.addEventListener("submit", async (event) => {
   }
   checkoutButton.disabled = true;
   checkoutButton.textContent = "Submitting order...";
-  await recordOrder(payload);
+  const orderSaved = await recordOrder(payload);
+  if (!orderSaved) {
+    showToast("We couldn't submit your order to the store. Please use the WhatsApp option below.", "info");
+    checkoutButton.disabled = false;
+    checkoutButton.textContent = "Place order";
+    return;
+  }
   showOrderSuccess(payload.id);
   state.cart = [];
   state.currentOrderId = null;

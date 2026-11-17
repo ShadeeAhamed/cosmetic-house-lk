@@ -42,7 +42,7 @@
     <link rel="manifest" href="site.webmanifest" />
     <link rel="preload" href="cosmetic-house-logo.jpeg" as="image" />
     <link rel="preload" href="assets/editorial/luxury-skincare-model.jpg" as="image" />
-    <link rel="stylesheet" href="styles.css?v=20260601-koko" />
+    <link rel="stylesheet" href="styles.css?v=20261117-checkout-ux" />
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
@@ -484,7 +484,7 @@
         <div class="cart-items" data-cart-items></div>
         <div class="cart-recommendations" data-cart-recommendations></div>
 
-        <div class="payment-choice" aria-label="Choose payment method">
+        <div class="payment-choice" data-payment-choice aria-label="Choose payment method">
           <strong>Payment method</strong>
           <label><input type="radio" name="payment" value="Online card payment" checked /> Online card payment</label>
           <label><input type="radio" name="payment" value="Cash on delivery" /> Cash on delivery</label>
@@ -498,6 +498,9 @@
             <small>Pay in 3 interest-free installments once KOKO checkout activation is complete.</small>
           </label>
         </div>
+        <p class="cart-note shopify-checkout-note" data-shopify-checkout-note hidden>
+          Choose from the payment methods available in secure Shopify checkout. Your order is confirmed only after checkout is completed.
+        </p>
 
         <div class="card-payment-form" data-card-form>
           <strong>Online card payment</strong>
@@ -517,7 +520,7 @@
         <form
           class="order-form"
           data-order-form
-          action="https://formsubmit.co/cosmetichouse@gmail.com"
+          action="https://formsubmit.co/cosmetichouse.lk@gmail.com"
           method="POST"
         >
           <input type="hidden" name="_subject" data-order-subject />
@@ -589,10 +592,7 @@
             <span>Google Maps location link (optional)</span>
             <input name="location_link" type="url" placeholder="https://maps.google.com/..." />
           </label>
-          <label>
-            <span>Bank transfer proof (optional)</span>
-            <input name="payment_proof" type="file" accept="image/*,.pdf" />
-          </label>
+          <p class="cart-note">If you pay by bank transfer, send your transfer slip to us on WhatsApp after checkout.</p>
           <button class="button primary full" data-checkout type="submit">Place order</button>
           <button class="button secondary full" data-cancel-order type="button">Cancel order</button>
           <div class="cancel-reason-box" data-cancel-reason-box hidden>
@@ -792,6 +792,6 @@
     </script>
     <script src="shopify-config.js?v=20260524-shopify"></script>
     <script src="catalog-data.js?v=20260521-clean-images"></script>
-    <script src="script.js?v=20260601-koko"></script>
+    <script src="script.js?v=20261117-checkout-ux"></script>
   </body>
 </html>

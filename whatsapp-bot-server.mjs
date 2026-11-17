@@ -1195,7 +1195,7 @@ http
         const order = normalizeOrder(payload, payload.source || "website");
         upsertOrder(order);
         await saveOrders();
-        if (ownerNumber) {
+        if (ownerNumber && order.source !== "website-shopify") {
           await sendWhatsAppMessage(
             ownerNumber,
             [

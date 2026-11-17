@@ -1,67 +1,52 @@
 # Cosmetic House Shopify Connection
 
-This site is ready to send customers into Shopify checkout, but it must stay off until the real Shopify store is created and the products are imported.
+## Current live setup
 
-## What Shopify Will Handle
+The storefront's current configuration points to:
 
-- Real order dashboard
-- Card payments and payment status
-- Product stock
-- Refunds and cancellations
-- Customer records
-- Full order processing
+- Shopify store: `cosmetic-house-5.myshopify.com`
+- Shopify checkout: enabled in `shopify-config.js`
+- Product variant mapping: 338 Shopify variant entries are configured.
 
-The local `admin.html` dashboard stays simple for quick business signals: order counts, signup counts, page visits, Shopify checkout leads, and status snapshots.
+Do not replace these values with the older example store name in previous setup notes.
 
-## What You Need From Shopify
+## How checkout works
 
-1. Create or open the Shopify store.
-2. Import the Cosmetic House products into Shopify with the same prices and product images.
-3. In Shopify, enable the Storefront API/headless access.
-4. Copy the Storefront access token.
-5. Copy your Shopify domain, for example:
+1. A customer adds products on `https://cosmetichouse.com.lk`.
+2. The customer enters contact and delivery details in the Cosmetic House cart.
+3. The website records a **checkout-start lead** in its own dashboard.
+4. The customer is redirected to secure Shopify checkout.
+5. Shopify creates the actual order only after the customer completes checkout.
 
-```text
-cosmetic-house-lk.myshopify.com
-```
+A checkout-start lead is not a completed order. If a customer abandons Shopify checkout, it should not be treated as a confirmed sale.
 
-6. For each product, copy the Shopify product variant ID and add it to `shopify-config.js`.
+## Where to see completed orders
 
-## Where To Paste The Details
+Open [Shopify Orders](https://admin.shopify.com/store/cosmetic-house-5/orders) or sign in to the Shopify app on your phone.
 
-Open:
+Shopify is the source of truth for completed orders, payment status, refunds, fulfilment, and customer order details. The Cosmetic House `admin.html` dashboard shows checkout starts, custom/manual orders, customer signups, and website visits; it does not currently import completed Shopify orders.
 
-```text
-C:\Users\U S E R\Documents\New project 6\shopify-config.js
-```
+## Turn on new-order phone alerts (Android)
 
-Fill it like this:
+1. Install the official Shopify app and sign in to the account for `cosmetic-house-5.myshopify.com`.
+2. In the app, open **Menu → Settings → Store notifications**.
+3. Open **Push notifications**.
+4. Turn on **New orders**.
+5. Allow notifications for Shopify in Android Settings → Apps → Shopify → Notifications.
 
-```js
-window.COSMETIC_HOUSE_SHOPIFY = {
-  enabled: true,
-  shopDomain: "cosmetic-house-lk.myshopify.com",
-  storefrontAccessToken: "paste_storefront_token_here",
-  apiVersion: "2026-04",
-  fallbackShopUrl: "https://cosmetic-house-lk.myshopify.com",
-  variantMap: {
-    "the-ordinary-niacinamide-10-zinc-1": "gid://shopify/ProductVariant/1234567890",
-  },
-};
-```
+Shopify's app can send push notifications for new orders. Device-level notifications must also be enabled.
 
-## Important Security Rule
+## WhatsApp alerts
 
-Only paste the Shopify Storefront access token in this public website file. Do not paste Shopify Admin API tokens, private app secrets, PayHere merchant secrets, or bank credentials into the website files.
+The custom backend can send WhatsApp alerts for orders submitted directly to its `/api/orders` route. This requires valid Meta WhatsApp Cloud API credentials in the private backend environment:
 
-## How Checkout Works
+- `WHATSAPP_ACCESS_TOKEN`
+- `WHATSAPP_PHONE_NUMBER_ID`
+- `OWNER_WHATSAPP_NUMBER`
 
-When Shopify is enabled:
+Shopify checkout-start leads are deliberately excluded from that alert so an abandoned checkout is not reported as a new sale. For completed Shopify orders, use Shopify's own new-order push notifications.
 
-1. Customer adds products to cart on `cosmetichouse.com.lk`.
-2. Customer fills delivery/contact details.
-3. A local checkout lead is saved for the admin summary.
-4. Shopify checkout opens securely.
-5. Shopify handles payment and the final order.
+## Security
 
-If a product is missing a Shopify variant ID, checkout will stop and show a clear message so the product can be linked first.
+- The Storefront API token in `shopify-config.js` is a public storefront token and must only have Storefront API access.
+- Never place Shopify Admin API tokens, app client secrets, PayHere secrets, Supabase service-role keys, or the admin PIN in frontend files or public GitHub.
