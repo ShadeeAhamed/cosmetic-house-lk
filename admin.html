@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Cosmetic House Admin | Orders</title>
     <meta name="robots" content="noindex, nofollow" />
-    <link rel="stylesheet" href="styles.css?v=20260527-final" />
+    <link rel="stylesheet" href="styles.css?v=20261117-admin-ux" />
   </head>
   <body class="admin-body">
     <main class="admin-shell">
@@ -23,6 +23,7 @@
           <button class="button primary" type="submit">Connect</button>
         </form>
       </section>
+      <p class="admin-connection-status" data-admin-connection role="status" aria-live="polite">Connecting to the live order service...</p>
 
       <section class="admin-stats" data-admin-stats></section>
 
@@ -39,10 +40,10 @@
       <section class="shopify-admin-note">
         <div>
           <p class="eyebrow">Shopify ready</p>
-          <h2>Main orders stay in Shopify</h2>
-          <p>Use Shopify Admin for live payments, product stock, refunds, customer records, and full order processing. This dashboard stays simple: order counts, local checkout leads, customer signups, visits, and status snapshots.</p>
+          <h2>Completed orders are in Shopify</h2>
+          <p>This dashboard shows checkout starts, custom/manual orders, customer signups, and visits. A Shopify checkout start is not a confirmed order. Use Shopify Admin for completed orders, payments, stock, refunds, and fulfilment.</p>
         </div>
-        <a class="button secondary" href="https://admin.shopify.com/" target="_blank" rel="noreferrer">Open Shopify Admin</a>
+        <a class="button secondary" href="https://admin.shopify.com/store/cosmetic-house-5/orders" target="_blank" rel="noreferrer">Open Shopify Orders</a>
       </section>
 
       <section class="admin-board">
@@ -56,6 +57,7 @@
             <select data-admin-status-filter>
               <option value="">All statuses</option>
               <option>New Order</option>
+              <option>Checkout Started</option>
               <option>Pending</option>
               <option>Confirmed</option>
               <option>Packed</option>
@@ -96,7 +98,7 @@
     <script>
       window.COSMETIC_HOUSE_PAYMENT_API = "https://52-74-89-82.nip.io";
     </script>
-    <script src="admin.js?v=20260528-backend"></script>
+    <script src="admin.js?v=20261117-admin-ux"></script>
   </body>
 </html>
 
