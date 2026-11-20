@@ -492,7 +492,7 @@ function kokoInstallmentValue(price) {
 function kokoMarkup(price, compact = false, context = "product") {
   const installment = kokoInstallmentValue(price);
   const label = compact
-    ? `3 x ${money(installment)} with KOKO`
+    ? `3 x ${money(installment)}`
     : context === "cart"
       ? `Or pay: 3 x ${money(installment)} with KOKO`
       : `Pay in 3 Interest-Free Installments with KOKO - 3 x ${money(installment)}`;
